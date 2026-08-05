@@ -1,0 +1,8 @@
+Flask>=3.0.0
+Flask-CORS>=4.0.0
+filetype>=1.2.0
+werkzeug>=3.0.0
+numpy>=1.24.0
+opencv-python>=4.7.0
+torch>=2.0.0
+torchvision>=0.15.0
