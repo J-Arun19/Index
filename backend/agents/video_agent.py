@@ -1,5 +1,6 @@
 import os
 import torch
+import time
 from backend.utils.config import PipelineConfig
 from backend.utils.logger import setup_logger
 
@@ -18,6 +19,7 @@ class VideoAgent:
         Returns:
             dict: Forensic analysis metrics, verdict, confidence, and metadata.
         """
+        start_time = time.time()
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"File not found: {file_path}")
             
@@ -66,7 +68,8 @@ class VideoAgent:
                     summary = f"Real model inference: Blink cadence and facial flow anomalies detected with {confidence}% confidence. Temporal flicker detected."
                 else:
                     summary = f"Real model inference: Video verified as authentic with {confidence}% confidence. Temporal consistency is stable."
-                    
+                
+                processing_time = round(time.time() - start_time, 4)
                 return {
                     "metadata": {
                         "file_size_bytes": size,
@@ -82,7 +85,8 @@ class VideoAgent:
                         "face_jitter_ratio": face_jitter,
                         "audio_sync_anomaly": audio_sync_anomaly
                     },
-                    "summary": summary
+                    "summary": summary,
+                    "processing_time": processing_time
                 }
             except Exception as e:
                 logger.error(f"Failed to run real video model inference: {str(e)}. Falling back to mock analysis.")
@@ -104,6 +108,7 @@ class VideoAgent:
         else:
             summary = "Frame-to-frame consistency is stable. Natural blink rate and audio-to-video synchronization."
             
+        processing_time = round(time.time() - start_time, 4)
         return {
             "metadata": {
                 "file_size_bytes": size,
@@ -119,5 +124,7 @@ class VideoAgent:
                 "face_jitter_ratio": face_jitter,
                 "audio_sync_anomaly": audio_sync_anomaly
             },
-            "summary": summary
+            "summary": summary,
+            "processing_time": processing_time
         }
+

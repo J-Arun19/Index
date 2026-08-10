@@ -21,6 +21,7 @@ import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { analysisStore, type AnalysisResult } from "@/lib/analysis-store";
+import { useAuthState } from "@/lib/auth-store";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/analysis")({
@@ -49,6 +50,7 @@ const STAGES = [
 
 function AnalysisPage() {
   const navigate = useNavigate();
+  const { user } = useAuthState();
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -125,6 +127,7 @@ function AnalysisPage() {
         body: JSON.stringify({
           file_id: backendId,
           media_type: backendMediaType,
+          user: user ? { id: user.id, name: user.name, email: user.email } : null,
         }),
       });
 
@@ -147,18 +150,24 @@ function AnalysisPage() {
         id: backendId,
         fileName: file.name,
         fileType: backendMediaType,
-        mediaUrl: previewUrl!,
+        mediaUrl: uploadData.filename ? `${API_URL}/api/analysis/uploads/${uploadData.filename}` : previewUrl!,
         verdict: fusionResult.verdict as "REAL" | "DEEPFAKE",
         confidence: fusionResult.confidence,
         explanation: fusionResult.explanation,
         agents: fusionResult.agents,
         createdAt: Date.now(),
+        confidenceLevel: fusionResult.confidence_level,
+        evidence: fusionResult.evidence || [],
+        recommendation: fusionResult.recommendation,
+        timeline: fusionResult.timeline || [],
+        reportUrl: fusionResult.report_url ? `${API_URL}${fusionResult.report_url}` : undefined,
       };
       
       analysisStore.save(result);
       setRunning(false);
       navigate({ to: "/result" });
       toast.success("Analysis pipeline completed!");
+
     } catch (err: any) {
       console.error("Upload/Analysis error:", err);
       toast.error(err.message || "An error occurred during file analysis.");

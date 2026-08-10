@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import {
   Activity,
   ShieldCheck,
@@ -12,7 +13,7 @@ import {
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useAnalysisState } from "@/lib/analysis-store";
+import { useAnalysisState, analysisStore } from "@/lib/analysis-store";
 import { cn } from "@/lib/utils";
 import { useAuthState } from "@/lib/auth-store";
 
@@ -29,6 +30,42 @@ export const Route = createFileRoute("/dashboard")({
 function DashboardPage() {
   const { history } = useAnalysisState();
   const { user } = useAuthState();
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchHistory = async () => {
+      try {
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        const res = await fetch(`${API_URL}/api/history?user_id=${user.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === "success" && data.history) {
+            const formatted = data.history.map((item: any) => ({
+              id: item.id,
+              fileName: item.file_name,
+              fileType: item.media_type as "image" | "video",
+              mediaUrl: `${API_URL}/api/analysis/uploads/${item.file_name}`,
+              verdict: item.prediction as "REAL" | "DEEPFAKE",
+              confidence: Math.round(item.confidence),
+              explanation: `Consensus was reached with a ${item.prediction.toLowerCase()} verdict.`,
+              agents: [
+                { name: "Validation Agent", summary: "Completed" },
+                { name: `${item.media_type === "video" ? "Video" : "Image"} Agent`, summary: "Completed" },
+                { name: "Confidence Agent", summary: "Completed" },
+                { name: "Fusion Agent", summary: "Completed" },
+              ],
+              createdAt: new Date(item.timestamp).getTime(),
+              reportUrl: `${API_URL}/api/analysis/report/${item.id}`,
+            }));
+            analysisStore.setHistory(formatted);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch analysis history:", err);
+      }
+    };
+    fetchHistory();
+  }, [user]);
 
   const firstName = user?.name ? user.name.split(" ")[0] : "Researcher";
 

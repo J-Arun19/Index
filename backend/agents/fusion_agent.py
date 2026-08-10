@@ -1,5 +1,5 @@
 class FusionAgent:
-    def fuse(self, agent_name, agent_output):
+    def fuse(self, agent_name, agent_output, analysis_id=None):
         """
         Fuses outputs from the specialized analysis agents.
         In a production system, this would apply a weighted fusion algorithm,
@@ -9,6 +9,15 @@ class FusionAgent:
         verdict = agent_output["verdict"]
         confidence = agent_output["confidence_score"]
         is_fake = verdict == "DEEPFAKE"
+        
+        # Store prediction in database if analysis_id is provided
+        if analysis_id:
+            try:
+                from backend.services.database_service import DatabaseService
+                DatabaseService.update_fusion_prediction(analysis_id, verdict, confidence)
+            except Exception as e:
+                print(f"FusionAgent: Failed to save final prediction: {str(e)}")
+
         
         if is_fake:
             explanation = (

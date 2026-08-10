@@ -59,34 +59,74 @@ function ResultPage() {
               <RotateCcw className="mr-1.5 h-4 w-4" /> New analysis
             </Link>
           </Button>
-          <Button size="sm" onClick={() => window.print()}>
-            <Download className="mr-1.5 h-4 w-4" /> Download PDF
-          </Button>
+          {latest.reportUrl ? (
+            <Button size="sm" asChild>
+              <a href={latest.reportUrl} target="_blank" rel="noopener noreferrer" download>
+                <Download className="mr-1.5 h-4 w-4" /> Download PDF Report
+              </a>
+            </Button>
+          ) : (
+            <Button size="sm" onClick={() => window.print()}>
+              <Download className="mr-1.5 h-4 w-4" /> Download PDF
+            </Button>
+          )}
         </div>
       }
     >
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
         {/* Media preview */}
-        <div className="rounded-2xl border border-border/70 bg-card p-4">
-          <div className="overflow-hidden rounded-xl border border-border/70 bg-black/40">
-            {latest.fileType === "image" ? (
-              <img
-                src={latest.mediaUrl}
-                alt={latest.fileName}
-                className="mx-auto max-h-[520px] w-full object-contain"
-              />
-            ) : (
-              <video
-                src={latest.mediaUrl}
-                controls
-                className="mx-auto max-h-[520px] w-full"
-              />
-            )}
+        <div className="space-y-6">
+          <div className="rounded-2xl border border-border/70 bg-card p-4">
+            <div className="overflow-hidden rounded-xl border border-border/70 bg-black/40">
+              {latest.fileType === "image" ? (
+                <img
+                  src={latest.mediaUrl}
+                  alt={latest.fileName}
+                  className="mx-auto max-h-[520px] w-full object-contain"
+                />
+              ) : (
+                <video
+                  src={latest.mediaUrl}
+                  controls
+                  className="mx-auto max-h-[520px] w-full"
+                />
+              )}
+            </div>
+            <div className="mt-3 flex items-center justify-between px-1 text-xs text-muted-foreground">
+              <span className="truncate">{latest.fileName}</span>
+              <span className="uppercase tracking-wider">{latest.fileType}</span>
+            </div>
           </div>
-          <div className="mt-3 flex items-center justify-between px-1 text-xs text-muted-foreground">
-            <span className="truncate">{latest.fileName}</span>
-            <span className="uppercase tracking-wider">{latest.fileType}</span>
-          </div>
+
+          {/* Timeline of Agent Executions */}
+          {latest.timeline && latest.timeline.length > 0 && (
+            <div className="rounded-2xl border border-border/70 bg-card p-6">
+              <h3 className="text-sm font-semibold mb-4">Agent Execution Timeline</h3>
+              <div className="relative border-l border-border/70 ml-2.5 pl-5 space-y-5">
+                {latest.timeline.map((t, idx) => (
+                  <div key={idx} className="relative">
+                    <div className={cn(
+                      "absolute -left-[27.5px] top-1.5 h-3.5 w-3.5 rounded-full border border-card",
+                      t.status === "Success" 
+                        ? "bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.5)]" 
+                        : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"
+                    )} />
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <div className="text-sm font-medium text-foreground">{t.agent}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">
+                          Status: <span className={t.status === "Success" ? "text-cyan-400 font-medium" : "text-rose-400 font-medium"}>{t.status}</span>
+                        </div>
+                      </div>
+                      <div className="text-xs font-mono bg-secondary/80 px-2 py-0.5 rounded text-muted-foreground">
+                        {t.duration.toFixed(3)}s
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Verdict + confidence + explanation */}
@@ -122,6 +162,18 @@ function ResultPage() {
                     ? "The pipeline flagged this media as synthetically generated."
                     : "The pipeline found this media to be authentic."}
                 </p>
+                {latest.confidenceLevel && (
+                  <div className="mt-3">
+                    <span className={cn(
+                      "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border",
+                      latest.confidenceLevel === "High" && "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+                      latest.confidenceLevel === "Medium" && "bg-amber-500/10 text-amber-400 border-amber-500/20",
+                      latest.confidenceLevel === "Low" && "bg-rose-500/10 text-rose-400 border-rose-500/20",
+                    )}>
+                      {latest.confidenceLevel} Confidence
+                    </span>
+                  </div>
+                )}
               </div>
               <ConfidenceRing value={latest.confidence} tone={isFake ? "danger" : "ok"} />
             </div>
@@ -133,6 +185,36 @@ function ResultPage() {
               {latest.explanation}
             </p>
           </div>
+
+          {/* Evidence Details */}
+          {latest.evidence && latest.evidence.length > 0 && (
+            <div className="rounded-2xl border border-border/70 bg-card p-6">
+              <h3 className="text-sm font-semibold">Forensic Evidence Details</h3>
+              <ul className="mt-3 space-y-2">
+                {latest.evidence.map((ev, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                    <span>{ev}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Recommendations Banner */}
+          {latest.recommendation && (
+            <div className={cn(
+              "rounded-2xl border p-6",
+              isFake
+                ? "border-rose-500/20 bg-rose-500/5"
+                : "border-emerald-500/20 bg-emerald-500/5",
+            )}>
+              <h3 className="text-sm font-semibold mb-2">Audit Recommendation</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {latest.recommendation}
+              </p>
+            </div>
+          )}
 
           <div className="rounded-2xl border border-border/70 bg-card p-6">
             <h3 className="text-sm font-semibold">Agent summary</h3>
