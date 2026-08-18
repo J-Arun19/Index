@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, ScanSearch, FileCheck2, LogOut } from "lucide-react";
+import { LayoutDashboard, ScanSearch, Activity, FileCheck2, LogOut } from "lucide-react";
 import type { ReactNode } from "react";
 import { Logo } from "./Logo";
 import { cn } from "@/lib/utils";
@@ -9,8 +9,10 @@ import { authStore, useAuthState } from "@/lib/auth-store";
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/analysis", label: "New Analysis", icon: ScanSearch },
+  { to: "/monitoring", label: "Real-Time Monitoring", icon: Activity },
   { to: "/result", label: "Latest Result", icon: FileCheck2 },
 ] as const;
+
 
 export function AppShell({
   children,

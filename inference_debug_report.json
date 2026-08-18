@@ -1,0 +1,196 @@
+{
+    "audit_timestamp": "2026-08-18T19:58:29.895091",
+    "input_media": {
+        "uploaded_file": "14ed56cf-2970-4f3c-ba34-6524dc66e379_Screenshot_2026-08-18_160503.jpg",
+        "file_path": "backend/uploads/14ed56cf-2970-4f3c-ba34-6524dc66e379_Screenshot_2026-08-18_160503.jpg",
+        "detected_media_type": "image",
+        "file_size_bytes": 22900,
+        "dimensions": {
+            "width": 338,
+            "height": 273
+        }
+    },
+    "media_validation_agent": {
+        "status": "VALID",
+        "media_type": "image",
+        "valid": true,
+        "errors": []
+    },
+    "model_registry": {
+        "model_path": "d:\\Download\\satya-vision-guard-main\\satya-vision-guard-main\\backend\\models\\weights\\image_model.pth",
+        "strategy": "both",
+        "pretrained": true,
+        "optimized_threshold": 0.04,
+        "promoted_at": "2026-08-15T23:44:59.526069",
+        "is_baseline": false,
+        "metrics": {
+            "train_loss": 0.31856955234209694,
+            "train_accuracy": 62.5,
+            "val_loss": 1.8858883180618287,
+            "accuracy": 75.8,
+            "precision": 0.8692722371967655,
+            "recall": 0.8164556962025317,
+            "f1_score": 0.8420365535248042,
+            "macro_f1": 0.6624712682153936,
+            "roc_auc": 0.7298372513562387,
+            "ece": 0.6838030628561973,
+            "confusion_matrix": [
+                [
+                    113,
+                    97
+                ],
+                [
+                    145,
+                    645
+                ]
+            ],
+            "real_precision": 0.437984496124031,
+            "real_recall": 0.5380952380952381,
+            "fake_precision": 0.8692722371967655,
+            "fake_recall": 0.8164556962025317
+        }
+    },
+    "checkpoint": {
+        "model_path": "D:\\Download\\satya-vision-guard-main\\satya-vision-guard-main\\backend\\models\\weights\\image_model.pth",
+        "modification_timestamp": "2026-08-15T23:40:33.604216",
+        "sha256_hash": "cc411dafbc845e1fb65197487a87fe409bc0c7ff1520c8e4e83b4aceb4fa8aeb",
+        "architecture": "ResNet-18",
+        "pretrained": false,
+        "num_classes": 2
+    },
+    "class_mapping": {
+        "class_0": "REAL",
+        "class_1": "FAKE"
+    },
+    "preprocessing": {
+        "resize_dimensions": [
+            224,
+            224
+        ],
+        "color_space": "RGB",
+        "imagenet_mean": [
+            0.485,
+            0.456,
+            0.406
+        ],
+        "imagenet_std": [
+            0.229,
+            0.224,
+            0.225
+        ],
+        "face_detection": {
+            "faces_detected_count": 3,
+            "all_bounding_boxes": [
+                [
+                    257,
+                    107,
+                    55,
+                    55
+                ],
+                [
+                    26,
+                    115,
+                    57,
+                    57
+                ],
+                [
+                    118,
+                    29,
+                    95,
+                    95
+                ]
+            ],
+            "selected_crop": {
+                "x": 257,
+                "y": 107,
+                "width": 55,
+                "height": 55
+            },
+            "fallback_to_full_image": false
+        },
+        "tensor_shape": [
+            1,
+            3,
+            224,
+            224
+        ],
+        "dtype": "float32"
+    },
+    "direct_model_inference": {
+        "raw_logits": [
+            1.7537626028060913,
+            -0.263309508562088
+        ],
+        "softmax_probabilities": {
+            "REAL_prob": 0.8826,
+            "FAKE_prob": 0.1174
+        },
+        "raw_argmax": 0,
+        "threshold_used_default": 0.5,
+        "threshold_used_registry": 0.04,
+        "verdict_at_default_threshold": "REAL",
+        "verdict_at_registry_threshold": "DEEPFAKE"
+    },
+    "agentic_layer_trace": {
+        "ImageAgent": {
+            "verdict": "REAL",
+            "confidence_score": 88,
+            "features": {
+                "noise_inconsistency": 0.02,
+                "edge_boundary_artifacts": 0.01,
+                "metadata_anomaly": false
+            },
+            "summary": "Real model inference: Image verified as authentic with 88% confidence. Sensor patterns are consistent."
+        },
+        "MetadataAgent": {
+            "anomalies_detected": false,
+            "software_tag": null
+        },
+        "ConfidenceEvaluationAgent": {
+            "confidence": 88,
+            "level": "High",
+            "recommendation": "Prediction considered reliable. Facial landmarks and noise distributions match the classification with high certainty."
+        },
+        "FusionAgent": {
+            "inputs": {
+                "primary_verdict": "REAL",
+                "primary_score": 88,
+                "p_primary": 0.12
+            },
+            "weights": {
+                "primary": 0.5,
+                "metadata": 0.15
+            },
+            "final_probability": 0.1154,
+            "final_verdict": "REAL",
+            "final_confidence": 88.46
+        },
+        "ExplanationAgent": {
+            "verdict": "REAL",
+            "evidence": [
+                "The image classifier assigned a REAL probability based on learned visual representations.",
+                "No significant high-frequency edge or boundary anomalies were detected in the primary analysis.",
+                "Note: Physiological signals (blink rates, gaze consistency, micro-expressions) were NOT measured during single-frame image analysis."
+            ],
+            "recommendation": "Media appears authentic based on primary model analysis. No manual intervention required under standard auditing procedures."
+        }
+    },
+    "control_set_benchmark": {
+        "sample_count": 10,
+        "accuracy": 0.5,
+        "macro_f1": 0.3333,
+        "real_recall": 1.0,
+        "fake_recall": 0.0,
+        "roc_auc": 0.96,
+        "confusion_matrix": [
+            [
+                5,
+                0
+            ],
+            [
+                5,
+                0
+            ]
+        ]
+    }
+}

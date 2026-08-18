@@ -1,0 +1,16 @@
+{
+    "REAL": {
+        "success_rate": 0.98125,
+        "fallback_rate": 0.018749999999999996,
+        "avg_crop_width": 155.74756944444445,
+        "avg_crop_height": 155.74756944444445,
+        "avg_aspect_ratio": 1.0
+    },
+    "FAKE": {
+        "success_rate": 0.967857142857143,
+        "fallback_rate": 0.03214285714285713,
+        "avg_crop_width": 153.9024765729585,
+        "avg_crop_height": 153.9024765729585,
+        "avg_aspect_ratio": 1.0
+    }
+}

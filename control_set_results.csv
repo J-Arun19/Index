@@ -1,0 +1,11 @@
+sample_id,file_name,ground_truth,ground_truth_label,model_probability_fake,predicted_class,predicted_verdict,correct
+1,id39_0000.mp4,REAL,0,0.1116,0,REAL,True
+2,id39_0000.mp4,REAL,0,0.0523,0,REAL,True
+3,id39_0000.mp4,REAL,0,0.0706,0,REAL,True
+4,id39_0000.mp4,REAL,0,0.0629,0,REAL,True
+5,id39_0000.mp4,REAL,0,0.0334,0,REAL,True
+6,id39_id40_0000.mp4,FAKE,1,0.1502,0,REAL,False
+7,id39_id40_0000.mp4,FAKE,1,0.1458,0,REAL,False
+8,id39_id40_0000.mp4,FAKE,1,0.1651,0,REAL,False
+9,id39_id40_0000.mp4,FAKE,1,0.1004,0,REAL,False
+10,id39_id40_0000.mp4,FAKE,1,0.1334,0,REAL,False

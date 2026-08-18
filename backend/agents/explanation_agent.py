@@ -16,22 +16,36 @@ class ExplanationAgent:
                     evidence.append("Sub-pixel noise inconsistency signals synthetic media composition.")
                 if features.get("edge_boundary_artifacts", 0) > 0.4 or features.get("face_jitter_ratio", 0) > 0.4:
                     evidence.append("Edge boundary anomalies suggest face-swapping or warping techniques.")
+                
+                # Check for new agentic fields
                 if features.get("metadata_anomaly") or features.get("audio_sync_anomaly"):
-                    evidence.append("Media metadata anomalies / lip-sync deviations detected.")
+                    soft = features.get("software_tag")
+                    software_msg = f" ({soft})" if soft else ""
+                    evidence.append(f"Media metadata anomalies / editing software signature detected{software_msg}.")
+                if features.get("artifact_anomaly"):
+                    score = features.get("anomaly_score", 0.0)
+                    evidence.append(f"Deep consistency scan flagged structural manipulation artifacts (anomaly score: {score}).")
             
             if confidence_level == "High":
                 recommendation = "Manual verification not required. The confidence rating is high and artifacts are distinct."
             else:
                 recommendation = "Manual verification recommended. Artifacts are borderline or noisy."
         else:
-            evidence.append("Consistent sensor noise distribution observed across the image planes.")
-            evidence.append("Facial boundaries are natural and seamless with no digital splicing artifacts.")
-            evidence.append("Physiologic features (blink rates, gaze consistency, micro-expressions) conform to standard biological baselines.")
+            evidence.append("The image classifier assigned a REAL probability based on learned visual representations.")
+            evidence.append("No significant high-frequency edge or boundary anomalies were detected in the primary analysis.")
+            evidence.append("Note: Physiological signals (blink rates, gaze consistency, micro-expressions) were NOT measured during single-frame image analysis.")
             
+            if features:
+                if features.get("metadata_anomaly"):
+                    soft = features.get("software_tag")
+                    evidence.append(f"Note: Editing software metadata found ({soft}), but visual elements are authentic.")
+                if features.get("artifact_anomaly"):
+                    evidence.append("Pixel/frame level anomalies detected but insufficient to override primary authenticity verdict.")
+                    
             if confidence_level == "Low":
                 recommendation = "Manual verification recommended due to overall low analysis confidence."
             else:
-                recommendation = "Media appears authentic. No manual intervention required under standard auditing procedures."
+                recommendation = "Media appears authentic based on primary model analysis. No manual intervention required under standard auditing procedures."
 
         return {
             "verdict": verdict,

@@ -270,3 +270,82 @@ class DatabaseService:
         except Exception as e:
             logger.error(f"Failed to record report metadata to Supabase: {str(e)}")
             return False
+
+    @classmethod
+    def create_monitoring_session(cls, session_id: str, user_id: Optional[int], user_name: str) -> bool:
+        """
+        Creates a new monitoring session in Supabase PostgreSQL.
+        """
+        try:
+            client = SupabaseService.get_client()
+            data = {
+                "id": session_id,
+                "user_id": user_id,
+                "user_name": user_name,
+                "status": "active",
+                "frames_received": 0,
+                "frames_analyzed": 0,
+                "frames_skipped": 0,
+                "deepfake_detections": 0,
+                "average_confidence": 0.0,
+                "average_latency_ms": 0.0,
+                "final_verdict": "REAL",
+                "final_risk": "LOW"
+            }
+            client.table("monitoring_sessions").insert(data).execute()
+            logger.info(f"Created monitoring session in Supabase: {session_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to create monitoring session in Supabase: {str(e)}")
+            return False
+
+    @classmethod
+    def update_monitoring_session(cls, session_id: str, stats: Dict[str, Any]) -> bool:
+        """
+        Updates an existing monitoring session with final aggregated statistics.
+        """
+        try:
+            client = SupabaseService.get_client()
+            stats["status"] = "completed"
+            client.table("monitoring_sessions").update(stats).eq("id", session_id).execute()
+            logger.info(f"Updated monitoring session in Supabase: {session_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to update monitoring session in Supabase: {str(e)}")
+            return False
+
+    @classmethod
+    def log_monitoring_event(cls, session_id: str, event_id: str, verdict: str, confidence: float, risk_level: str, latency_ms: float, trigger_reason: str) -> bool:
+        """
+        Logs a meaningful suspicious/deepfake detection event for a monitoring session.
+        """
+        try:
+            client = SupabaseService.get_client()
+            client.table("monitoring_events").insert({
+                "id": event_id,
+                "session_id": session_id,
+                "verdict": verdict,
+                "confidence": confidence,
+                "risk_level": risk_level,
+                "latency_ms": latency_ms,
+                "trigger_reason": trigger_reason
+            }).execute()
+            logger.info(f"Logged monitoring event '{event_id}' for session '{session_id}'")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to log monitoring event in Supabase: {str(e)}")
+            return False
+
+    @classmethod
+    def get_user_monitoring_sessions(cls, user_id: int) -> List[Dict[str, Any]]:
+        """
+        Fetches all monitoring sessions for a specific user.
+        """
+        try:
+            client = SupabaseService.get_client()
+            res = client.table("monitoring_sessions").select("*").eq("user_id", user_id).order("started_at", desc=True).execute()
+            return res.data or []
+        except Exception as e:
+            logger.error(f"Failed to fetch monitoring sessions for user {user_id}: {str(e)}")
+            return []
+

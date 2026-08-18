@@ -1,0 +1,24 @@
+{
+    "brightness": {
+        "real_mean": 93.8494307122263,
+        "fake_mean": 92.3311335685688
+    },
+    "duration": {
+        "real_mean": 10.5,
+        "fake_mean": 10.422222222222224
+    },
+    "file_size": {
+        "real_mean": 1357491.8125,
+        "fake_mean": 1354926.7261904762
+    },
+    "bitrate": {
+        "real_mean": 1039930.197667868,
+        "fake_mean": 1049042.2268975559
+    },
+    "resolution": {
+        "real_width_mean": 777.125,
+        "real_height_mean": 469.5,
+        "fake_width_mean": 807.6190476190476,
+        "fake_height_mean": 470.8333333333333
+    }
+}

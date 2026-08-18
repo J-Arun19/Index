@@ -1,0 +1,49 @@
+Category,Configuration,Probe Classifier,Accuracy,Macro-F1,REAL Recall,FAKE Recall,ROC-AUC
+Temporal Ablation,Middle Frame Spatial (512-dim),Logistic Regression,0.6800,0.5338,0.3750,0.7381,0.6176
+Temporal Ablation,Middle Frame Spatial (512-dim),Linear SVM,0.6700,0.5540,0.5000,0.7024,0.6146
+Temporal Ablation,Middle Frame Spatial (512-dim),Ridge,0.5300,0.4644,0.5625,0.5238,0.5268
+Temporal Ablation,Middle Frame Spatial (512-dim),Nearest Neighbors,0.8400,0.5116,0.0625,0.9881,0.6384
+Temporal Ablation,Mean Pooled Spatial (512-dim),Logistic Regression,0.7700,0.6186,0.4375,0.8333,0.7359
+Temporal Ablation,Mean Pooled Spatial (512-dim),Linear SVM,0.7700,0.6703,0.6875,0.7857,0.7582
+Temporal Ablation,Mean Pooled Spatial (512-dim),Ridge,0.7900,0.6989,0.7500,0.7976,0.8095
+Temporal Ablation,Mean Pooled Spatial (512-dim),Nearest Neighbors,0.8600,0.6425,0.2500,0.9762,0.6663
+Temporal Ablation,Max Pooled Spatial (512-dim),Logistic Regression,0.7900,0.6189,0.3750,0.8690,0.7173
+Temporal Ablation,Max Pooled Spatial (512-dim),Linear SVM,0.7700,0.5827,0.3125,0.8571,0.7217
+Temporal Ablation,Max Pooled Spatial (512-dim),Ridge,0.5600,0.4945,0.6250,0.5476,0.6429
+Temporal Ablation,Max Pooled Spatial (512-dim),Nearest Neighbors,0.8400,0.4565,0.0000,1.0000,0.4888
+Temporal Ablation,LSTM Hidden Rep (256-dim),Logistic Regression,0.8400,0.5116,0.0625,0.9881,0.5997
+Temporal Ablation,LSTM Hidden Rep (256-dim),Linear SVM,0.8300,0.5824,0.1875,0.9524,0.6116
+Temporal Ablation,LSTM Hidden Rep (256-dim),Ridge,0.8400,0.5556,0.1250,0.9762,0.6146
+Temporal Ablation,LSTM Hidden Rep (256-dim),Nearest Neighbors,0.8200,0.6262,0.3125,0.9167,0.6302
+Temporal Ablation,Masked Background Mean Pooled (512-dim),Logistic Regression,0.7900,0.4842,0.0625,0.9286,0.5662
+Temporal Ablation,Masked Background Mean Pooled (512-dim),Linear SVM,0.8100,0.5333,0.1250,0.9405,0.5610
+Temporal Ablation,Masked Background Mean Pooled (512-dim),Ridge,0.6500,0.4982,0.3125,0.7143,0.5082
+Temporal Ablation,Masked Background Mean Pooled (512-dim),Nearest Neighbors,0.7800,0.5432,0.1875,0.8929,0.5312
+Frame Count,3_frames,Logistic Regression,0.6700,0.5540,0.5000,0.7024,0.6964
+Frame Count,3_frames,Linear SVM,0.6600,0.5687,0.6250,0.6667,0.7217
+Frame Count,3_frames,Ridge,0.6400,0.5714,0.7500,0.6190,0.7225
+Frame Count,3_frames,Nearest Neighbors,0.8000,0.5847,0.2500,0.9048,0.5618
+Frame Count,5_frames,Logistic Regression,0.7700,0.6186,0.4375,0.8333,0.7359
+Frame Count,5_frames,Linear SVM,0.7700,0.6703,0.6875,0.7857,0.7582
+Frame Count,5_frames,Ridge,0.7900,0.6989,0.7500,0.7976,0.8095
+Frame Count,5_frames,Nearest Neighbors,0.8600,0.6425,0.2500,0.9762,0.6663
+Frame Count,10_frames,Logistic Regression,0.8200,0.6811,0.5000,0.8810,0.8147
+Frame Count,10_frames,Linear SVM,0.7900,0.6779,0.6250,0.8214,0.8162
+Frame Count,10_frames,Ridge,0.7300,0.6447,0.7500,0.7262,0.7917
+Frame Count,10_frames,Nearest Neighbors,0.8100,0.5657,0.1875,0.9286,0.6406
+Backbone,learned_scratch_resnet18,Logistic Regression,0.8400,0.5556,0.1250,0.9762,0.6302
+Backbone,learned_scratch_resnet18,Linear SVM,0.7400,0.5393,0.2500,0.8333,0.5841
+Backbone,learned_scratch_resnet18,Ridge,0.7500,0.5228,0.1875,0.8571,0.5871
+Backbone,learned_scratch_resnet18,Nearest Neighbors,0.8300,0.4536,0.0000,0.9881,0.4609
+Backbone,learned_pretrained_resnet18,Logistic Regression,0.7700,0.6186,0.4375,0.8333,0.7359
+Backbone,learned_pretrained_resnet18,Linear SVM,0.7700,0.6703,0.6875,0.7857,0.7582
+Backbone,learned_pretrained_resnet18,Ridge,0.7900,0.6989,0.7500,0.7976,0.8095
+Backbone,learned_pretrained_resnet18,Nearest Neighbors,0.8600,0.6425,0.2500,0.9762,0.6663
+Backbone,raw_pretrained_resnet18,Logistic Regression,0.4900,0.4277,0.5000,0.4881,0.5417
+Backbone,raw_pretrained_resnet18,Linear SVM,0.4500,0.4133,0.6250,0.4167,0.5938
+Backbone,raw_pretrained_resnet18,Ridge,0.4600,0.4270,0.6875,0.4167,0.6629
+Backbone,raw_pretrained_resnet18,Nearest Neighbors,0.8000,0.4893,0.0625,0.9405,0.5078
+Backbone,resnet50,Logistic Regression,0.6100,0.4868,0.3750,0.6548,0.6027
+Backbone,resnet50,Linear SVM,0.5900,0.5072,0.5625,0.5952,0.6362
+Backbone,resnet50,Ridge,0.6000,0.5325,0.6875,0.5833,0.6696
+Backbone,resnet50,Nearest Neighbors,0.7900,0.5200,0.1250,0.9167,0.5997

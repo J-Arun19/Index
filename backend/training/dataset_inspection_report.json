@@ -1,0 +1,69 @@
+[
+    {
+        "dataset_name": "Celeb_DF",
+        "total_files": 39174,
+        "video_count": 6529,
+        "image_count": 32645,
+        "REAL_count": 5340,
+        "FAKE_count": 33834,
+        "manipulation_types": [
+            "Celeb-synthesis",
+            "original"
+        ],
+        "compression_information": "none",
+        "existing_splits": {
+            "train": 28602,
+            "val": 5244,
+            "test": 5328
+        },
+        "unreadable_corrupted_files": [],
+        "missing_metadata": false,
+        "detected_directory_structure": "Standard subfolders scanned recursively"
+    },
+    {
+        "dataset_name": "FaceForensics++_C23",
+        "total_files": 42000,
+        "video_count": 7000,
+        "image_count": 35000,
+        "REAL_count": 6000,
+        "FAKE_count": 36000,
+        "manipulation_types": [
+            "FaceSwap",
+            "original",
+            "NeuralTextures",
+            "Deepfakes",
+            "Face2Face",
+            "DeepFakeDetection",
+            "FaceShifter"
+        ],
+        "compression_information": "C23",
+        "existing_splits": {
+            "train": 30948,
+            "val": 5418,
+            "test": 5634
+        },
+        "unreadable_corrupted_files": [],
+        "missing_metadata": false,
+        "detected_directory_structure": "Standard subfolders scanned recursively"
+    },
+    {
+        "dataset_name": "Faceforensic++",
+        "total_files": 2636,
+        "video_count": 0,
+        "image_count": 2636,
+        "REAL_count": 2636,
+        "FAKE_count": 0,
+        "manipulation_types": [
+            "original"
+        ],
+        "compression_information": "none",
+        "existing_splits": {
+            "train": 1732,
+            "val": 523,
+            "test": 381
+        },
+        "unreadable_corrupted_files": [],
+        "missing_metadata": false,
+        "detected_directory_structure": "Standard subfolders scanned recursively"
+    }
+]

@@ -33,10 +33,52 @@ dist-ssr
 
 # Python & Environment
 __pycache__/
-*.pyc
+*.py[cod]
 .venv/
+venv/
 .env
+.env.*
+!.env.example
 backend/.env
+
+# Node & Build
+node_modules/
+dist/
+dist-ssr/
+.output/
+.vinxi/
+.tanstack/**
+.nitro/
+
+# Editor & System
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+
+# Datasets & Media
+datasets/
+dataset/
+SatyaDrishti_Datasets/
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# ML Checkpoints & Outputs
+*.pth
+*.pt
+*.ckpt
+backend/training/results/
+backend/training/checkpoints/
+backend/training/manifests/
+backup_ml/
+backup_ml_phase0/
+backend/backup_ml_controlled_validation/
+
+# Application Logs & Local Uploads
+logs/
+*.log
 backend/uploads/*
 !backend/uploads/.gitkeep
 backend/users.db

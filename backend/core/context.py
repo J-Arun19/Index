@@ -10,10 +10,15 @@ class AnalysisContext:
         self.validation_result = None
         self.image_agent_result = None
         self.video_agent_result = None
+        self.metadata_agent_result = None
+        self.artifact_agent_result = None
         self.confidence_result = None
         self.fusion_result = None
         self.explanation = None
         self.report_path = None
+        self.decision_history = []
+        self.active_agents = []
+        self.failures = []
         self.timestamp = time.time()
         self.agent_logs = []  # List of logs for each agent execution
 
@@ -49,10 +54,15 @@ class AnalysisContext:
             "validation_result": self.validation_result,
             "image_agent_result": self.image_agent_result,
             "video_agent_result": self.video_agent_result,
+            "metadata_agent_result": self.metadata_agent_result,
+            "artifact_agent_result": self.artifact_agent_result,
             "confidence_result": self.confidence_result,
             "fusion_result": self.fusion_result,
             "explanation": self.explanation,
             "report_path": self.report_path,
+            "decision_history": self.decision_history,
+            "active_agents": self.active_agents,
+            "failures": self.failures,
             "timestamp": self.timestamp,
             "agent_logs": self.agent_logs
         }

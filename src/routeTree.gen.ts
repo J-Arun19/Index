@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AnalysisRouteImport } from './routes/analysis'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MonitoringRouteImport } from './routes/monitoring'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -46,12 +47,18 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MonitoringRoute = MonitoringRouteImport.update({
+  id: '/monitoring',
+  path: '/monitoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analysis': typeof AnalysisRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/monitoring': typeof MonitoringRoute
   '/result': typeof ResultRoute
   '/signup': typeof SignupRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/analysis': typeof AnalysisRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/monitoring': typeof MonitoringRoute
   '/result': typeof ResultRoute
   '/signup': typeof SignupRoute
 }
@@ -69,20 +77,22 @@ export interface FileRoutesById {
   '/analysis': typeof AnalysisRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/monitoring': typeof MonitoringRoute
   '/result': typeof ResultRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analysis' | '/dashboard' | '/login' | '/result' | '/signup'
+  fullPaths: '/' | '/analysis' | '/dashboard' | '/login' | '/monitoring' | '/result' | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analysis' | '/dashboard' | '/login' | '/result' | '/signup'
+  to: '/' | '/analysis' | '/dashboard' | '/login' | '/monitoring' | '/result' | '/signup'
   id:
     | '__root__'
     | '/'
     | '/analysis'
     | '/dashboard'
     | '/login'
+    | '/monitoring'
     | '/result'
     | '/signup'
   fileRoutesById: FileRoutesById
@@ -92,6 +102,7 @@ export interface RootRouteChildren {
   AnalysisRoute: typeof AnalysisRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
+  MonitoringRoute: typeof MonitoringRoute
   ResultRoute: typeof ResultRoute
   SignupRoute: typeof SignupRoute
 }
@@ -133,6 +144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnalysisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/monitoring': {
+      id: '/monitoring'
+      path: '/monitoring'
+      fullPath: '/monitoring'
+      preLoaderRoute: typeof MonitoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -148,9 +166,11 @@ const rootRouteChildren: RootRouteChildren = {
   AnalysisRoute: AnalysisRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
+  MonitoringRoute: MonitoringRoute,
   ResultRoute: ResultRoute,
   SignupRoute: SignupRoute,
 }
+
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()

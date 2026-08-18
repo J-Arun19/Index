@@ -1,0 +1,70 @@
+{
+    "image": {
+        "model_path": "d:\\Download\\satya-vision-guard-main\\satya-vision-guard-main\\backend\\models\\weights\\image_model.pth",
+        "strategy": "both",
+        "pretrained": true,
+        "optimized_threshold": 0.04,
+        "promoted_at": "2026-08-15T23:44:59.526069",
+        "is_baseline": false,
+        "metrics": {
+            "train_loss": 0.31856955234209694,
+            "train_accuracy": 62.5,
+            "val_loss": 1.8858883180618287,
+            "accuracy": 75.8,
+            "precision": 0.8692722371967655,
+            "recall": 0.8164556962025317,
+            "f1_score": 0.8420365535248042,
+            "macro_f1": 0.6624712682153936,
+            "roc_auc": 0.7298372513562387,
+            "ece": 0.6838030628561973,
+            "confusion_matrix": [
+                [
+                    113,
+                    97
+                ],
+                [
+                    145,
+                    645
+                ]
+            ],
+            "real_precision": 0.437984496124031,
+            "real_recall": 0.5380952380952381,
+            "fake_precision": 0.8692722371967655,
+            "fake_recall": 0.8164556962025317
+        }
+    },
+    "video": {
+        "model_path": "d:\\Download\\satya-vision-guard-main\\satya-vision-guard-main\\backend\\models\\weights\\video_model.pth",
+        "strategy": "standard",
+        "pretrained": false,
+        "optimized_threshold": 0.8400000000000001,
+        "promoted_at": "2026-08-16T21:13:28.626071",
+        "is_baseline": true,
+        "metrics": {
+            "train_loss": 0.36895843466122946,
+            "train_accuracy": 87.0,
+            "val_loss": 0.43783501625061033,
+            "accuracy": 66.0,
+            "precision": 0.890625,
+            "recall": 0.6785714285714286,
+            "f1_score": 0.7702702702702703,
+            "macro_f1": 0.5582120582120582,
+            "roc_auc": 0.5721726190476191,
+            "ece": 0.01655560970306401,
+            "confusion_matrix": [
+                [
+                    9,
+                    7
+                ],
+                [
+                    27,
+                    57
+                ]
+            ],
+            "real_precision": 0.25,
+            "real_recall": 0.5625,
+            "fake_precision": 0.890625,
+            "fake_recall": 0.6785714285714286
+        }
+    }
+}

@@ -47,21 +47,19 @@ class ImageAgent:
                 # Initialize model and load weights
                 model = ImageModel(num_classes=2)
                 model.load_weights(weights_path)
-                model.eval()
                 
-                # Run inference
-                with torch.no_grad():
-                    logits = model(tensor)
-                    probabilities = torch.softmax(logits, dim=1)[0]
-                    
-                predicted_class = torch.argmax(probabilities).item()
-                confidence = int(probabilities[predicted_class].item() * 100)
+                # Run inference using predict()
+                pred_dict = model.predict(tensor)
+                logits = pred_dict["logits"]
+                probabilities = pred_dict["probabilities"][0]
+                predicted_class = pred_dict["predicted_class"][0].item()
+                confidence = int(pred_dict["confidence_score"][0].item() * 100)
                 is_fake = (predicted_class == 1)
                 
                 # Map probabilities to feature metrics
                 noise_inconsistency = round(probabilities[1].item() * 0.95, 2) if is_fake else round(probabilities[1].item() * 0.15, 2)
                 edge_artifacts = round(probabilities[1].item() * 0.88, 2) if is_fake else round(probabilities[1].item() * 0.08, 2)
-                metadata_anomaly = True if (is_fake and probabilities[1].item() > 0.8) else False
+                metadata_anomaly = True if (is_fake and probabilities[1].item() > PipelineConfig.CLASSIFICATION_THRESHOLD) else False
                 
                 verdict = "DEEPFAKE" if is_fake else "REAL"
                 if is_fake:

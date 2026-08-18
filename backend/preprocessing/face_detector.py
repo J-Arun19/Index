@@ -36,16 +36,38 @@ class FaceDetector:
             # Convert to grayscale for Haar Cascade
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             
+            # Downscale large image for significantly faster Haar Cascade execution on CPU
+            h, w = gray.shape
+            max_dim = 320
+            scale = 1.0
+            if max(h, w) > max_dim:
+                scale = max_dim / max(h, w)
+                gray_small = cv2.resize(gray, (int(w * scale), int(h * scale)))
+            else:
+                gray_small = gray
+            
             # Detect faces with standard parameters
             faces = self.face_cascade.detectMultiScale(
-                gray,
+                gray_small,
                 scaleFactor=1.1,
                 minNeighbors=5,
                 minSize=(30, 30)
             )
             
+            # Scale coordinates back to original size if resized
+            if scale != 1.0:
+                scaled_faces = []
+                for (x, y, w_box, h_box) in faces:
+                    scaled_faces.append((
+                        int(x / scale),
+                        int(y / scale),
+                        int(w_box / scale),
+                        int(h_box / scale)
+                    ))
+                return scaled_faces
+            
             # Return list of coordinates
-            return [(int(x), int(y), int(w), int(h)) for (x, y, w, h) in faces]
+            return [(int(x), int(y), int(w_box), int(h_box)) for (x, y, w_box, h_box) in faces]
         except Exception as e:
             logger.error(f"Error during face detection execution: {str(e)}")
             return []

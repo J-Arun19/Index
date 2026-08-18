@@ -1,11 +1,19 @@
 import os
 import torch
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+_backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(_backend_dir, '.env'))
 
 class PipelineConfig:
     # Directory setup
     BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     
-    # Dataset Directories
+    # Dataset Root Directory
+    SATYADRISHTI_DATASET_ROOT = os.environ.get("SATYADRISHTI_DATASET_ROOT", r"D:\Download\SatyaDrishti_Datasets")
+    
+    # Dataset Directories (Local/Legacy defaults)
     DATASET_DIR = os.path.join(BACKEND_DIR, 'dataset')
     IMAGE_DATASET_DIR = os.path.join(DATASET_DIR, 'images')
     VIDEO_DATASET_DIR = os.path.join(DATASET_DIR, 'videos')
@@ -34,8 +42,32 @@ class PipelineConfig:
     # Training Hyperparameters
     BATCH_SIZE = 16
     LEARNING_RATE = 1e-4
+    BACKBONE_LR = 1e-5
+    HEAD_LR = 1e-3
+    WEIGHT_DECAY = 1e-4
     EPOCHS = 10
-    VAL_SPLIT = 0.2          # 20% validation split
+    PATIENCE = 5
+    CLASSIFICATION_THRESHOLD = 0.5
+    VAL_SPLIT = 0.2
+    
+    # Class Imbalance Strategies: 'standard', 'weighted_loss', 'sampler', 'both'
+    IMBALANCE_STRATEGY = 'standard'
+    
+    # Temporal aggregation strategy: 'lstm' or 'mean'
+    TEMPORAL_POOLING = 'lstm'
+    
+    # Data Augmentation Toggle
+    USE_AUGMENTATION = True
+    
+    # Registry & Results
+    REGISTRY_PATH = os.path.join(BACKEND_DIR, 'models', 'model_registry.json')
+    RESULTS_DIR = os.path.join(BACKEND_DIR, 'training', 'results')
+    
+    # Agentic AI Configurations
+    AGENTIC_CONFIDENCE_THRESHOLD = 0.80
+    WEIGHT_PRIMARY = 0.50
+    WEIGHT_ARTIFACT = 0.35
+    WEIGHT_METADATA = 0.15
     
     # Device Selection
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -52,7 +84,6 @@ class PipelineConfig:
             f"Learning Rate: {cls.LEARNING_RATE}\n"
             f"Frame Sampling Interval: {cls.FRAME_INTERVAL}\n"
             f"Max Frames per Video: {cls.MAX_FRAMES_PER_VIDEO}\n"
-            f"Image Dataset path: {cls.IMAGE_DATASET_DIR}\n"
-            f"Video Dataset path: {cls.VIDEO_DATASET_DIR}\n"
+            f"Dataset Root path: {cls.SATYADRISHTI_DATASET_ROOT}\n"
             f"-----------------------------"
         )

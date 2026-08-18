@@ -8,19 +8,21 @@ logger = setup_logger("ImageModel")
 class ImageModel(nn.Module):
     """ResNet18-based model adapted for binary classification (Real vs Fake)."""
     
-    def __init__(self, num_classes: int = 2):
+    def __init__(self, num_classes: int = 2, pretrained: bool = False):
         super(ImageModel, self).__init__()
+        self.classification_threshold = None
         try:
-            # Modern torchvision syntax
-            self.backbone = models.resnet18(weights=None)
-        except TypeError:
-            # Older torchvision syntax fallback
-            self.backbone = models.resnet18(pretrained=False)
+            if pretrained:
+                self.backbone = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+            else:
+                self.backbone = models.resnet18(weights=None)
+        except (TypeError, AttributeError):
+            self.backbone = models.resnet18(pretrained=pretrained)
             
         # Replace the final linear classifier layer
         in_features = self.backbone.fc.in_features
         self.backbone.fc = nn.Linear(in_features, num_classes)
-        logger.info("Successfully initialized ImageModel with ResNet18 backbone.")
+        logger.info(f"Successfully initialized ImageModel (pretrained={pretrained}) with ResNet18 backbone.")
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -33,6 +35,37 @@ class ImageModel(nn.Module):
             torch.Tensor: Logits tensor, shape (batch_size, num_classes).
         """
         return self.backbone(x)
+
+    def predict(self, x: torch.Tensor, threshold: float = None) -> dict:
+        """
+        Runs inference and returns structured results.
+        
+        Args:
+            x (torch.Tensor): Input batch of images, shape (batch_size, 3, 224, 224).
+            threshold (float, optional): Custom classification threshold.
+            
+        Returns:
+            dict: Containing logits, probabilities, predicted_class, and confidence_score.
+        """
+        from backend.utils.config import PipelineConfig
+        if threshold is None:
+            threshold = self.classification_threshold if self.classification_threshold is not None else PipelineConfig.CLASSIFICATION_THRESHOLD
+            
+        self.eval()
+        with torch.no_grad():
+            logits = self.forward(x)
+            probabilities = torch.softmax(logits, dim=-1)
+            # Binary classification assumed: index 0 = REAL, index 1 = FAKE
+            fake_probs = probabilities[:, 1]
+            predicted_class = (fake_probs >= threshold).long()
+            confidence_score = torch.where(predicted_class == 1, fake_probs, probabilities[:, 0])
+            
+        return {
+            "logits": logits,
+            "probabilities": probabilities,
+            "predicted_class": predicted_class,
+            "confidence_score": confidence_score
+        }
 
     def save_weights(self, path: str) -> None:
         """Saves the weights (state dict) of the model."""

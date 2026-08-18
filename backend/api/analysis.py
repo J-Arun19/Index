@@ -40,6 +40,13 @@ def analyze_media():
         }), 404
         
     except ValueError as e:
+        if hasattr(e, "validation_result"):
+            return jsonify({
+                "success": False,
+                "error": "MEDIA_VALIDATION_FAILED",
+                "message": str(e),
+                "validation": e.validation_result
+            }), 400
         return jsonify({
             'status': 'error',
             'error': str(e)

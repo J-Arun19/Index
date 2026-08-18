@@ -1,0 +1,60 @@
+{
+    "dataset_type": "pilot",
+    "hyperparameters": {
+        "epochs": 2,
+        "batch_size": 128,
+        "learning_rate": 0.0001,
+        "strategy": "standard",
+        "pretrained": false,
+        "optimized_threshold": 0.89
+    },
+    "final_metrics": {
+        "train_loss": 0.36349988675117495,
+        "train_accuracy": 85.1,
+        "val_loss": 0.6022610281705856,
+        "accuracy": 69.89999999999999,
+        "precision": 0.8179453836150845,
+        "recall": 0.7962025316455696,
+        "f1_score": 0.8069275176395125,
+        "macro_f1": 0.562193917549915,
+        "roc_auc": 0.5916576250753466,
+        "ece": 0.1260222187638283,
+        "confusion_matrix": [
+            [
+                70,
+                140
+            ],
+            [
+                161,
+                629
+            ]
+        ],
+        "real_precision": 0.30303030303030304,
+        "real_recall": 0.3333333333333333,
+        "fake_precision": 0.8179453836150845,
+        "fake_recall": 0.7962025316455696
+    },
+    "test_metrics": {
+        "accuracy": 41.99004975124378,
+        "precision": 0.7905759162303665,
+        "recall": 0.37515527950310557,
+        "f1_score": 0.5088458298230834,
+        "macro_f1": 0.4002309343526109,
+        "roc_auc": 0.5166583850931676,
+        "ece": 0.09991820499078555,
+        "confusion_matrix": [
+            [
+                120,
+                80
+            ],
+            [
+                503,
+                302
+            ]
+        ],
+        "real_precision": 0.1926163723916533,
+        "real_recall": 0.6,
+        "fake_precision": 0.7905759162303665,
+        "fake_recall": 0.37515527950310557
+    }
+}

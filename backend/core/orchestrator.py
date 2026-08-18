@@ -5,12 +5,15 @@ from backend.core.context import AnalysisContext
 from backend.agents.media_validation_agent import MediaValidationAgent
 from backend.agents.image_agent import ImageAgent
 from backend.agents.video_agent import VideoAgent
+from backend.agents.metadata_agent import MetadataAgent
+from backend.agents.artifact_agent import ArtifactConsistencyAgent
 from backend.agents.confidence_evaluation_agent import ConfidenceEvaluationAgent
 from backend.agents.fusion_agent import FusionAgent
 from backend.agents.explanation_agent import ExplanationAgent
 from backend.utils.report_generator import ReportGenerator
 from backend.core.database import save_analysis
 from backend.utils.logger import setup_logger
+from backend.utils.config import PipelineConfig
 
 logger = setup_logger("Orchestrator")
 
@@ -19,6 +22,8 @@ class Orchestrator:
         self.validation_agent = MediaValidationAgent()
         self.image_agent = ImageAgent()
         self.video_agent = VideoAgent()
+        self.metadata_agent = MetadataAgent()
+        self.artifact_agent = ArtifactConsistencyAgent()
         self.confidence_agent = ConfidenceEvaluationAgent()
         self.fusion_agent = FusionAgent()
         self.explanation_agent = ExplanationAgent()
@@ -74,16 +79,42 @@ class Orchestrator:
         # 2. Media Validation Agent
         start = time.time()
         try:
-            val_res = self.validation_agent.validate(file_path)
+            val_res = self.validation_agent.validate(file_path, expected_media_type=context.media_type)
             context.validation_result = val_res
-            status = "Success"
-            if val_res.get("status") == "invalid":
+            
+            if not val_res.get("valid", False):
                 status = "Failed"
                 context.add_log("Media Validation Agent", status, start, time.time())
-                raise ValueError(f"Media validation failed: {', '.join(val_res.get('issues', []))}")
+                
+                # Save the failure to analysis history database
+                try:
+                    user_id = context.user.get("id") if context.user else None
+                    user_name = context.user.get("name") if context.user else "Guest"
+                    save_analysis(
+                        analysis_id=context.analysis_id,
+                        user_id=user_id,
+                        user_name=user_name,
+                        file_name=context.uploaded_file,
+                        media_type=context.media_type,
+                        prediction="FAILED_VALIDATION",
+                        confidence=0.0,
+                        report_path=None
+                    )
+                except Exception as db_err:
+                    logger.error(f"Failed to record validation failure in DB: {db_err}")
+                
+                error_msg = "; ".join(val_res.get("errors", ["Unknown validation error"]))
+                val_err = ValueError(f"Media validation failed: {error_msg}")
+                val_err.validation_result = val_res
+                raise val_err
+            
+            status = "Success"
         except Exception as e:
+            if isinstance(e, ValueError) and "Media validation failed" in str(e):
+                raise e
             context.add_log("Media Validation Agent", "Failed", start, time.time())
-            raise e
+            raise ValueError(f"Media validation error: {str(e)}")
+            
         context.add_log("Media Validation Agent", status, start, time.time())
 
         # 3. Select specialised analysis agent
@@ -91,6 +122,7 @@ class Orchestrator:
         agent_name = "Image Agent" if media_type == "image" else "Video Agent"
         
         start = time.time()
+        agent_res = None
         try:
             if media_type == 'image':
                 agent_res = self.image_agent.analyze(file_path)
@@ -101,42 +133,158 @@ class Orchestrator:
             else:
                 raise ValueError(f"Unsupported media type: {context.media_type}")
             status = "Success"
+            context.active_agents.append(agent_name)
         except Exception as e:
-            context.add_log(agent_name, "Failed", start, time.time())
-            raise e
-        context.add_log(agent_name, status, start, time.time())
+            logger.error(f"Primary Agent {agent_name} failed: {e}")
+            context.add_log(agent_name, "Failed (Recovered)", start, time.time())
+            context.failures.append({"agent": agent_name, "error": str(e)})
+            # Fallback output
+            agent_res = {
+                "verdict": "REAL",
+                "confidence_score": 50,
+                "features": {},
+                "summary": f"Primary specialist analysis failed: {str(e)}",
+                "processing_time": 0.0,
+                "metadata": {
+                    "filename": context.uploaded_file,
+                    "format": "PNG" if media_type == "image" else "MP4"
+                }
+            }
+            if media_type == 'image':
+                context.image_agent_result = agent_res
+            else:
+                context.video_agent_result = agent_res
+            status = "Success"
+        
+        if status == "Success":
+            context.add_log(agent_name, status, start, time.time())
 
-        # 4. Confidence Evaluation Agent
+        # 4. Metadata Agent
         start = time.time()
+        metadata_res = None
+        try:
+            metadata_res = self.metadata_agent.analyze(file_path)
+            context.metadata_agent_result = metadata_res
+            context.active_agents.append("MetadataAgent")
+            status = "Success"
+        except Exception as e:
+            logger.error(f"MetadataAgent failed: {e}")
+            context.add_log("MetadataAgent", "Failed (Recovered)", start, time.time())
+            context.failures.append({"agent": "MetadataAgent", "error": str(e)})
+            metadata_res = {
+                "status": "Failed",
+                "metadata_present": False,
+                "anomalies_detected": False,
+                "software_tag": None,
+                "suspicious_indicators": [],
+                "summary": "Metadata analysis was unavailable due to an internal error."
+            }
+            context.metadata_agent_result = metadata_res
+            status = "Success"
+            
+        if status == "Success":
+            context.add_log("MetadataAgent", status, start, time.time())
+
+        # 5. Confidence Evaluation Agent
+        start = time.time()
+        conf_res = None
         try:
             conf_res = self.confidence_agent.evaluate(agent_res)
             context.confidence_result = conf_res
             status = "Success"
         except Exception as e:
-            context.add_log("Confidence Evaluation Agent", "Failed", start, time.time())
-            raise e
-        context.add_log("Confidence Evaluation Agent", status, start, time.time())
+            logger.error(f"Confidence Evaluation Agent failed: {e}")
+            context.add_log("Confidence Evaluation Agent", "Failed (Recovered)", start, time.time())
+            context.failures.append({"agent": "Confidence Evaluation Agent", "error": str(e)})
+            conf_res = {
+                "confidence": agent_res.get("confidence_score", 50),
+                "level": "Medium",
+                "recommendation": "Unable to evaluate confidence tier."
+            }
+            context.confidence_result = conf_res
+            status = "Success"
+            
+        if status == "Success":
+            context.add_log("Confidence Evaluation Agent", status, start, time.time())
 
-        # 5. Fusion Agent (Decision Maker)
+        # 6. DECISION NODE - Check if ArtifactConsistencyAgent is needed
+        primary_confidence = float(agent_res.get("confidence_score", 50)) / 100.0
+        primary_verdict = agent_res.get("verdict", "REAL")
+        metadata_anomalies = metadata_res.get("anomalies_detected", False)
+        
+        # Conflict exists if primary says DEEPFAKE but metadata shows no anomalies, 
+        # or primary says REAL but metadata shows anomalies (editing signatures present).
+        has_conflict = (primary_verdict == "DEEPFAKE" and not metadata_anomalies) or (primary_verdict == "REAL" and metadata_anomalies)
+        
+        decision_reason = ""
+        should_trigger_artifact = False
+        
+        if primary_confidence < PipelineConfig.AGENTIC_CONFIDENCE_THRESHOLD:
+            should_trigger_artifact = True
+            decision_reason = f"ArtifactAgent activated: primary confidence {round(primary_confidence, 2)} < threshold {PipelineConfig.AGENTIC_CONFIDENCE_THRESHOLD}"
+        elif has_conflict:
+            should_trigger_artifact = True
+            decision_reason = f"ArtifactAgent activated: conflict detected (verdict={primary_verdict}, metadata_anomalies={metadata_anomalies})"
+        else:
+            decision_reason = f"ArtifactAgent skipped: primary confidence {round(primary_confidence, 2)} >= threshold {PipelineConfig.AGENTIC_CONFIDENCE_THRESHOLD} and metadata aligned"
+
+        context.decision_history.append(decision_reason)
+        logger.info(decision_reason)
+        
+        # Optionally execute Artifact Agent
+        if should_trigger_artifact:
+            start = time.time()
+            try:
+                artifact_res = self.artifact_agent.analyze(file_path, media_type=media_type)
+                context.artifact_agent_result = artifact_res
+                context.active_agents.append("ArtifactConsistencyAgent")
+                status = "Success"
+            except Exception as e:
+                logger.error(f"ArtifactConsistencyAgent failed: {e}")
+                context.add_log("ArtifactConsistencyAgent", "Failed (Recovered)", start, time.time())
+                context.failures.append({"agent": "ArtifactConsistencyAgent", "error": str(e)})
+                artifact_res = {
+                    "status": "Failed",
+                    "anomaly_score": 0.50,
+                    "verdict": "REAL",
+                    "detected_artifacts": [],
+                    "summary": "Artifact analysis failed (recovered)."
+                }
+                context.artifact_agent_result = artifact_res
+                status = "Success"
+                
+            if status == "Success":
+                context.add_log("ArtifactConsistencyAgent", status, start, time.time())
+
+        # 7. Fusion Agent (Decision Maker)
         start = time.time()
         try:
-            fusion_res = self.fusion_agent.fuse(agent_name.replace(" ", ""), agent_res, analysis_id=context.analysis_id)
-
+            fusion_res = self.fusion_agent.fuse(context)
             context.fusion_result = fusion_res
             status = "Success"
         except Exception as e:
+            logger.error(f"Fusion Agent failed: {e}")
             context.add_log("Fusion Agent", "Failed", start, time.time())
             raise e
         context.add_log("Fusion Agent", status, start, time.time())
 
-        # 6. Explanation Agent
+        # 8. Explanation Agent
         start = time.time()
         try:
+            # Merge additional agent findings into features for explanation enrichment
+            explanation_features = dict(agent_res.get("features", {}))
+            if metadata_res:
+                explanation_features["metadata_anomaly"] = metadata_res.get("anomalies_detected", False)
+                explanation_features["software_tag"] = metadata_res.get("software_tag")
+            if context.artifact_agent_result:
+                explanation_features["artifact_anomaly"] = context.artifact_agent_result.get("verdict") == "DEEPFAKE"
+                explanation_features["anomaly_score"] = context.artifact_agent_result.get("anomaly_score", 0.0)
+
             explanation_res = self.explanation_agent.explain(
                 verdict=fusion_res.get("verdict"),
                 confidence_level=conf_res.get("level"),
                 media_type=media_type,
-                features=agent_res.get("features", {})
+                features=explanation_features
             )
             context.explanation = explanation_res
             
@@ -146,6 +294,7 @@ class Orchestrator:
             fusion_res["recommendation"] = explanation_res.get("recommendation", "N/A")
             status = "Success"
         except Exception as e:
+            logger.error(f"Explanation Agent failed: {e}")
             context.add_log("Explanation Agent", "Failed", start, time.time())
             raise e
         context.add_log("Explanation Agent", status, start, time.time())
@@ -170,7 +319,7 @@ class Orchestrator:
             user_id = context.user.get("id") if context.user else None
             user_name = context.user.get("name") if context.user else "Guest"
             verdict = fusion_res.get("verdict")
-            confidence = float(conf_res.get("confidence", 0))
+            confidence = float(fusion_res.get("confidence", 0))
             
             save_analysis(
                 analysis_id=context.analysis_id,

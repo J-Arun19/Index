@@ -1,0 +1,37 @@
+{
+    "dataset_type": "pilot",
+    "hyperparameters": {
+        "epochs": 2,
+        "batch_size": 16,
+        "learning_rate": 0.0001,
+        "strategy": "sampler",
+        "pretrained": false,
+        "optimized_threshold": 0.78
+    },
+    "final_metrics": {
+        "train_loss": 0.528840294338408,
+        "train_accuracy": 75.23809523809524,
+        "val_loss": 0.49559966087341306,
+        "accuracy": 62.0,
+        "precision": 0.8888888888888888,
+        "recall": 0.6,
+        "f1_score": 0.7164179104477612,
+        "macro_f1": 0.5703301673450927,
+        "roc_auc": 0.69,
+        "ece": 0.11486425399780271,
+        "confusion_matrix": [
+            [
+                7,
+                3
+            ],
+            [
+                16,
+                24
+            ]
+        ],
+        "real_precision": 0.30434782608695654,
+        "real_recall": 0.7,
+        "fake_precision": 0.8888888888888888,
+        "fake_recall": 0.6
+    }
+}

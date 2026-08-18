@@ -59,6 +59,38 @@ def init_db():
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS monitoring_sessions (
+            id TEXT PRIMARY KEY,
+            user_id INTEGER,
+            user_name TEXT,
+            started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            ended_at TIMESTAMP,
+            status TEXT DEFAULT 'active',
+            frames_received INTEGER DEFAULT 0,
+            frames_analyzed INTEGER DEFAULT 0,
+            frames_skipped INTEGER DEFAULT 0,
+            deepfake_detections INTEGER DEFAULT 0,
+            average_confidence REAL DEFAULT 0.0,
+            average_latency_ms REAL DEFAULT 0.0,
+            final_verdict TEXT DEFAULT 'REAL',
+            final_risk TEXT DEFAULT 'LOW',
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS monitoring_events (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            verdict TEXT NOT NULL,
+            confidence REAL NOT NULL,
+            risk_level TEXT NOT NULL,
+            latency_ms REAL NOT NULL,
+            trigger_reason TEXT,
+            FOREIGN KEY(session_id) REFERENCES monitoring_sessions(id)
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -188,3 +220,105 @@ def get_analyses_by_user(user_id):
     rows = cursor.fetchall()
     conn.close()
     return [dict(row) for row in rows]
+
+def create_monitoring_session(session_id, user_id, user_name):
+    if _use_supabase:
+        res = DatabaseService.create_monitoring_session(session_id, user_id, user_name)
+        if res:
+            return True
+
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            '''INSERT INTO monitoring_sessions (id, user_id, user_name) VALUES (?, ?, ?)''',
+            (session_id, user_id, user_name)
+        )
+        conn.commit()
+        return True
+    except sqlite3.Error as e:
+        logger.error(f"Error creating monitoring session: {e}")
+        return False
+    finally:
+        conn.close()
+
+def update_monitoring_session(session_id, stats):
+    if _use_supabase:
+        res = DatabaseService.update_monitoring_session(session_id, stats)
+        if res:
+            return True
+
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            '''UPDATE monitoring_sessions SET 
+               ended_at = CURRENT_TIMESTAMP,
+               status = 'completed',
+               frames_received = ?,
+               frames_analyzed = ?,
+               frames_skipped = ?,
+               deepfake_detections = ?,
+               average_confidence = ?,
+               average_latency_ms = ?,
+               final_verdict = ?,
+               final_risk = ?
+               WHERE id = ?''',
+            (
+                stats.get('frames_received', 0),
+                stats.get('frames_analyzed', 0),
+                stats.get('frames_skipped', 0),
+                stats.get('deepfake_detections', 0),
+                stats.get('average_confidence', 0.0),
+                stats.get('average_latency_ms', 0.0),
+                stats.get('final_verdict', 'REAL'),
+                stats.get('final_risk', 'LOW'),
+                session_id
+            )
+        )
+        conn.commit()
+        return True
+    except sqlite3.Error as e:
+        logger.error(f"Error updating monitoring session: {e}")
+        return False
+    finally:
+        conn.close()
+
+def log_monitoring_event(session_id, event_id, verdict, confidence, risk_level, latency_ms, trigger_reason):
+    if _use_supabase:
+        res = DatabaseService.log_monitoring_event(session_id, event_id, verdict, confidence, risk_level, latency_ms, trigger_reason)
+        if res:
+            return True
+
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            '''INSERT INTO monitoring_events (id, session_id, verdict, confidence, risk_level, latency_ms, trigger_reason)
+               VALUES (?, ?, ?, ?, ?, ?, ?)''',
+            (event_id, session_id, verdict, confidence, risk_level, latency_ms, trigger_reason)
+        )
+        conn.commit()
+        return True
+    except sqlite3.Error as e:
+        logger.error(f"Error logging monitoring event: {e}")
+        return False
+    finally:
+        conn.close()
+
+def get_user_monitoring_sessions(user_id):
+    if _use_supabase:
+        try:
+            sessions = DatabaseService.get_user_monitoring_sessions(int(user_id))
+            if sessions:
+                return sessions
+        except Exception as e:
+            logger.warning(f"Supabase monitoring session lookup failed: {e}")
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM monitoring_sessions WHERE user_id = ? ORDER BY started_at DESC', (user_id,))
+    rows = cursor.fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
