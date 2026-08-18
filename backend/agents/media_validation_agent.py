@@ -1,6 +1,9 @@
 import os
 import cv2
-import filetype
+try:
+    import filetype
+except ImportError:
+    filetype = None
 from PIL import Image
 import numpy as np
 from backend.config import Config
@@ -54,15 +57,14 @@ class MediaValidationAgent:
 
         # 3. Magic number & Signature check
         try:
-            kind = filetype.guess(file_path)
-            if kind is None:
+            from backend.core.validator import guess_mime_and_ext
+            mime, ext = guess_mime_and_ext(file_path)
+
+            if mime is None:
                 result["valid"] = False
                 result["errors"].append("Could not determine file type from magic number signature")
                 result["summary"] = "Media validation failed."
                 return result
-
-            mime = kind.mime
-            ext = kind.extension.lower()
 
             is_image = mime.startswith('image/')
             is_video = mime.startswith('video/')

@@ -1,0 +1,78 @@
+{
+    "split_strategy": {
+        "FaceForensics++": "Official pair-based train/val/test splits mapped to individual sequence numbers.",
+        "DeepFakeDetection": "Disjoint actor pair graph partition to guarantee zero actor identity leakage.",
+        "Celeb-DF": "Official test split from List_of_testing_videos.txt. Deterministic identity-based partitioning (modulo 5 on identity number) for train/val to prevent identity leakage."
+    },
+    "general_statistics": {
+        "total_records": 83810,
+        "total_videos": 13529,
+        "total_images": 70281,
+        "physical_images": 2636,
+        "derived_images": 67645,
+        "samples_per_video": 5
+    },
+    "dataset_statistics": {
+        "Celeb_DF": {
+            "total": 39174,
+            "video": 6529,
+            "image": 32645,
+            "real": 5340,
+            "fake": 33834,
+            "train": 28632,
+            "val": 7434,
+            "test": 3108,
+            "corrupted": 0
+        },
+        "FaceForensics++_C23": {
+            "total": 42000,
+            "video": 7000,
+            "image": 35000,
+            "real": 6000,
+            "fake": 36000,
+            "train": 30948,
+            "val": 5418,
+            "test": 5634,
+            "corrupted": 0
+        },
+        "Faceforensic++": {
+            "total": 2636,
+            "video": 0,
+            "image": 2636,
+            "real": 2636,
+            "fake": 0,
+            "train": 1732,
+            "val": 523,
+            "test": 381,
+            "corrupted": 0
+        }
+    },
+    "image_model_dataset": {
+        "total": 70281,
+        "physical_images": 2636,
+        "derived_images": 67645,
+        "REAL": 12086,
+        "FAKE": 58195,
+        "train": 51382,
+        "val": 11233,
+        "test": 7666
+    },
+    "video_model_dataset": {
+        "total": 13529,
+        "REAL": 1890,
+        "FAKE": 11639,
+        "train": 9930,
+        "val": 2142,
+        "test": 1457
+    },
+    "class_balance_overall": {
+        "REAL": 13976,
+        "FAKE": 69834,
+        "ratio_real_to_fake": 0.20013174098576625
+    },
+    "split_distribution_overall": {
+        "train": 61312,
+        "val": 13375,
+        "test": 9123
+    }
+}

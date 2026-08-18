@@ -1,6 +1,57 @@
 import os
-import filetype
 from backend.config import Config
+
+try:
+    import filetype
+except ImportError:
+    filetype = None
+
+def guess_mime_and_ext(file_storage_or_path):
+    """
+    Pure Python fallback magic-byte detector for image and video formats.
+    """
+    header = b""
+    if isinstance(file_storage_or_path, str):
+        if not os.path.exists(file_storage_or_path) or os.path.getsize(file_storage_or_path) == 0:
+            return None, None
+        with open(file_storage_or_path, "rb") as f:
+            header = f.read(264)
+    else:
+        header = file_storage_or_path.read(264)
+        file_storage_or_path.seek(0)
+
+    if filetype is not None and header:
+        kind = filetype.guess(header)
+        if kind is not None:
+            return kind.mime, kind.extension.lower()
+
+    if len(header) < 4:
+        return None, None
+
+    # Magic byte checks
+    if header.startswith(b'\xff\xd8\xff'):
+        return 'image/jpeg', 'jpg'
+    if header.startswith(b'\x89PNG\r\n\x1a\n'):
+        return 'image/png', 'png'
+    if header.startswith(b'GIF87a') or header.startswith(b'GIF89a'):
+        return 'image/gif', 'gif'
+    if header.startswith(b'RIFF') and len(header) >= 12 and header[8:12] == b'WEBP':
+        return 'image/webp', 'webp'
+    if header.startswith(b'BM'):
+        return 'image/bmp', 'bmp'
+
+    # Video magic bytes
+    if len(header) >= 12 and header[4:8] == b'ftyp':
+        brand = header[8:12]
+        if brand in [b'qt  ', b'moov']:
+            return 'video/quicktime', 'mov'
+        return 'video/mp4', 'mp4'
+    if header.startswith(b'\x1a\x45\xdf\xa3'):
+        return 'video/webm', 'webm'
+    if header.startswith(b'RIFF') and len(header) >= 12 and header[8:12] == b'AVI ':
+        return 'video/x-msvideo', 'avi'
+
+    return None, None
 
 def get_file_extension(filename):
     if '.' not in filename:
@@ -15,13 +66,9 @@ def validate_media_file(file_storage):
     """
     Validates a Flask FileStorage object:
     1. Checks filename extension.
-    2. Reads first 2048 bytes to guess type via magic numbers (filetype).
+    2. Reads magic bytes to guess type.
     3. Checks if the detected mime type is a supported image or video.
     4. Resets the stream pointer to 0.
-    
-    Returns:
-        tuple: (is_valid, media_type, error_message, detected_mime)
-        media_type will be 'image', 'video', or None
     """
     filename = file_storage.filename
     if not filename:
@@ -33,21 +80,16 @@ def validate_media_file(file_storage):
 
     # 2. Check content signature (magic numbers)
     try:
-        # Read header to guess file type
-        header = file_storage.read(2048)
-        # Reset file pointer immediately so subsequent reads get the full file
-        file_storage.seek(0)
-        
-        kind = filetype.guess(header)
-        if kind is None:
+        mime, ext = guess_mime_and_ext(file_storage)
+        if mime is None:
             # Let's check if the file is empty
-            if len(header) == 0:
+            file_storage.seek(0, os.SEEK_END)
+            size = file_storage.tell()
+            file_storage.seek(0)
+            if size == 0:
                 return False, None, "File is empty", None
             return False, None, "Could not determine file type from content signature", None
             
-        mime = kind.mime
-        ext = kind.extension
-        
         # 3. Determine if it's a valid image or video
         is_image = mime.startswith('image/')
         is_video = mime.startswith('video/')
@@ -62,7 +104,6 @@ def validate_media_file(file_storage):
                 ext_to_check = 'jpg'
                 
             if ext_to_check not in Config.ALLOWED_IMAGE_EXTENSIONS:
-                # If filetype reports jpeg/png but it's represented differently, double check
                 filename_ext = get_file_extension(filename)
                 if filename_ext not in Config.ALLOWED_IMAGE_EXTENSIONS:
                     return False, None, f"Image format '{ext}' is not supported. Supported: {', '.join(Config.ALLOWED_IMAGE_EXTENSIONS)}", mime

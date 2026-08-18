@@ -2,7 +2,11 @@ import os
 import logging
 from typing import Optional
 from dotenv import load_dotenv
-from supabase import create_client, Client
+try:
+    from supabase import create_client, Client
+except ImportError:
+    create_client = None
+    Client = None
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -35,6 +39,9 @@ class SupabaseService:
         else:
             load_dotenv()
             logger.warning(f"Dotenv file not found at {env_path}. Using environment-level configuration.")
+
+        if create_client is None:
+            raise RuntimeError("supabase-py package is not installed. Run 'pip install supabase'.")
 
         supabase_url = os.getenv("SUPABASE_URL")
         supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")

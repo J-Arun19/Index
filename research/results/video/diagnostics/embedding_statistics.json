@@ -1,0 +1,26 @@
+{
+    "Middle Frame Spatial (512-dim)": {
+        "euclidean_centroid_distance": 3.5611226558685303,
+        "cosine_centroid_distance": 0.013579726219177246,
+        "within_class_variance": 0.3176831007003784,
+        "between_class_variance": 1.7044063806533813
+    },
+    "Mean Pooled Spatial (512-dim)": {
+        "euclidean_centroid_distance": 2.8766093254089355,
+        "cosine_centroid_distance": 0.008651435375213623,
+        "within_class_variance": 0.17003604769706726,
+        "between_class_variance": 1.1121439933776855
+    },
+    "Max Pooled Spatial (512-dim)": {
+        "euclidean_centroid_distance": 4.217507362365723,
+        "cosine_centroid_distance": 0.007193028926849365,
+        "within_class_variance": 0.4158291518688202,
+        "between_class_variance": 2.390622138977051
+    },
+    "LSTM Hidden Rep (256-dim)": {
+        "euclidean_centroid_distance": 0.309770792722702,
+        "cosine_centroid_distance": 0.0019004344940185547,
+        "within_class_variance": 0.004536385647952557,
+        "between_class_variance": 0.012896746397018433
+    }
+}

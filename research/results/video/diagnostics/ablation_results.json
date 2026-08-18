@@ -1,0 +1,352 @@
+{
+    "Middle Frame Spatial (512-dim)": {
+        "Logistic Regression": {
+            "accuracy": 0.68,
+            "macro_f1": 0.5337995337995338,
+            "real_recall": 0.375,
+            "fake_recall": 0.7380952380952381,
+            "roc_auc": 0.6175595238095238,
+            "confusion_matrix": [
+                [
+                    6,
+                    10
+                ],
+                [
+                    22,
+                    62
+                ]
+            ]
+        },
+        "Linear SVM": {
+            "accuracy": 0.67,
+            "macro_f1": 0.553993782943641,
+            "real_recall": 0.5,
+            "fake_recall": 0.7023809523809523,
+            "roc_auc": 0.6145833333333334,
+            "confusion_matrix": [
+                [
+                    8,
+                    8
+                ],
+                [
+                    25,
+                    59
+                ]
+            ]
+        },
+        "Ridge": {
+            "accuracy": 0.53,
+            "macro_f1": 0.4643874643874644,
+            "real_recall": 0.5625,
+            "fake_recall": 0.5238095238095238,
+            "roc_auc": 0.5267857142857143,
+            "confusion_matrix": [
+                [
+                    9,
+                    7
+                ],
+                [
+                    40,
+                    44
+                ]
+            ]
+        },
+        "Nearest Neighbors": {
+            "accuracy": 0.84,
+            "macro_f1": 0.5115995115995116,
+            "real_recall": 0.0625,
+            "fake_recall": 0.9880952380952381,
+            "roc_auc": 0.6383928571428571,
+            "confusion_matrix": [
+                [
+                    1,
+                    15
+                ],
+                [
+                    1,
+                    83
+                ]
+            ]
+        }
+    },
+    "Mean Pooled Spatial (512-dim)": {
+        "Logistic Regression": {
+            "accuracy": 0.77,
+            "macro_f1": 0.6186370419499254,
+            "real_recall": 0.4375,
+            "fake_recall": 0.8333333333333334,
+            "roc_auc": 0.7358630952380952,
+            "confusion_matrix": [
+                [
+                    7,
+                    9
+                ],
+                [
+                    14,
+                    70
+                ]
+            ]
+        },
+        "Linear SVM": {
+            "accuracy": 0.77,
+            "macro_f1": 0.6702508960573477,
+            "real_recall": 0.6875,
+            "fake_recall": 0.7857142857142857,
+            "roc_auc": 0.7581845238095237,
+            "confusion_matrix": [
+                [
+                    11,
+                    5
+                ],
+                [
+                    18,
+                    66
+                ]
+            ]
+        },
+        "Ridge": {
+            "accuracy": 0.79,
+            "macro_f1": 0.6989247311827957,
+            "real_recall": 0.75,
+            "fake_recall": 0.7976190476190477,
+            "roc_auc": 0.8095238095238095,
+            "confusion_matrix": [
+                [
+                    12,
+                    4
+                ],
+                [
+                    17,
+                    67
+                ]
+            ]
+        },
+        "Nearest Neighbors": {
+            "accuracy": 0.86,
+            "macro_f1": 0.6424923391215527,
+            "real_recall": 0.25,
+            "fake_recall": 0.9761904761904762,
+            "roc_auc": 0.6662946428571429,
+            "confusion_matrix": [
+                [
+                    4,
+                    12
+                ],
+                [
+                    2,
+                    82
+                ]
+            ]
+        }
+    },
+    "Max Pooled Spatial (512-dim)": {
+        "Logistic Regression": {
+            "accuracy": 0.79,
+            "macro_f1": 0.6189439303211759,
+            "real_recall": 0.375,
+            "fake_recall": 0.8690476190476191,
+            "roc_auc": 0.7172619047619048,
+            "confusion_matrix": [
+                [
+                    6,
+                    10
+                ],
+                [
+                    11,
+                    73
+                ]
+            ]
+        },
+        "Linear SVM": {
+            "accuracy": 0.77,
+            "macro_f1": 0.5826528760660498,
+            "real_recall": 0.3125,
+            "fake_recall": 0.8571428571428571,
+            "roc_auc": 0.7217261904761905,
+            "confusion_matrix": [
+                [
+                    5,
+                    11
+                ],
+                [
+                    12,
+                    72
+                ]
+            ]
+        },
+        "Ridge": {
+            "accuracy": 0.56,
+            "macro_f1": 0.4944852941176471,
+            "real_recall": 0.625,
+            "fake_recall": 0.5476190476190477,
+            "roc_auc": 0.6428571428571428,
+            "confusion_matrix": [
+                [
+                    10,
+                    6
+                ],
+                [
+                    38,
+                    46
+                ]
+            ]
+        },
+        "Nearest Neighbors": {
+            "accuracy": 0.84,
+            "macro_f1": 0.45652173913043476,
+            "real_recall": 0.0,
+            "fake_recall": 1.0,
+            "roc_auc": 0.48883928571428575,
+            "confusion_matrix": [
+                [
+                    0,
+                    16
+                ],
+                [
+                    0,
+                    84
+                ]
+            ]
+        }
+    },
+    "LSTM Hidden Rep (256-dim)": {
+        "Logistic Regression": {
+            "accuracy": 0.84,
+            "macro_f1": 0.5115995115995116,
+            "real_recall": 0.0625,
+            "fake_recall": 0.9880952380952381,
+            "roc_auc": 0.5997023809523809,
+            "confusion_matrix": [
+                [
+                    1,
+                    15
+                ],
+                [
+                    1,
+                    83
+                ]
+            ]
+        },
+        "Linear SVM": {
+            "accuracy": 0.83,
+            "macro_f1": 0.5824121837386391,
+            "real_recall": 0.1875,
+            "fake_recall": 0.9523809523809523,
+            "roc_auc": 0.6116071428571428,
+            "confusion_matrix": [
+                [
+                    3,
+                    13
+                ],
+                [
+                    4,
+                    80
+                ]
+            ]
+        },
+        "Ridge": {
+            "accuracy": 0.84,
+            "macro_f1": 0.5555555555555556,
+            "real_recall": 0.125,
+            "fake_recall": 0.9761904761904762,
+            "roc_auc": 0.6145833333333333,
+            "confusion_matrix": [
+                [
+                    2,
+                    14
+                ],
+                [
+                    2,
+                    82
+                ]
+            ]
+        },
+        "Nearest Neighbors": {
+            "accuracy": 0.82,
+            "macro_f1": 0.6262458471760798,
+            "real_recall": 0.3125,
+            "fake_recall": 0.9166666666666666,
+            "roc_auc": 0.6302083333333333,
+            "confusion_matrix": [
+                [
+                    5,
+                    11
+                ],
+                [
+                    7,
+                    77
+                ]
+            ]
+        }
+    },
+    "Masked Background Mean Pooled (512-dim)": {
+        "Logistic Regression": {
+            "accuracy": 0.79,
+            "macro_f1": 0.48415622697126015,
+            "real_recall": 0.0625,
+            "fake_recall": 0.9285714285714286,
+            "roc_auc": 0.5662202380952381,
+            "confusion_matrix": [
+                [
+                    1,
+                    15
+                ],
+                [
+                    6,
+                    78
+                ]
+            ]
+        },
+        "Linear SVM": {
+            "accuracy": 0.81,
+            "macro_f1": 0.5332842053549496,
+            "real_recall": 0.125,
+            "fake_recall": 0.9404761904761905,
+            "roc_auc": 0.5610119047619047,
+            "confusion_matrix": [
+                [
+                    2,
+                    14
+                ],
+                [
+                    5,
+                    79
+                ]
+            ]
+        },
+        "Ridge": {
+            "accuracy": 0.65,
+            "macro_f1": 0.4982078853046595,
+            "real_recall": 0.3125,
+            "fake_recall": 0.7142857142857143,
+            "roc_auc": 0.5081845238095237,
+            "confusion_matrix": [
+                [
+                    5,
+                    11
+                ],
+                [
+                    24,
+                    60
+                ]
+            ]
+        },
+        "Nearest Neighbors": {
+            "accuracy": 0.78,
+            "macro_f1": 0.5431893687707641,
+            "real_recall": 0.1875,
+            "fake_recall": 0.8928571428571429,
+            "roc_auc": 0.53125,
+            "confusion_matrix": [
+                [
+                    3,
+                    13
+                ],
+                [
+                    9,
+                    75
+                ]
+            ]
+        }
+    }
+}

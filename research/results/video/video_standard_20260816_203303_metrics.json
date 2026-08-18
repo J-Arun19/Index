@@ -1,0 +1,50 @@
+{
+    "dataset_type": "dummy",
+    "hyperparameters": {
+        "epochs": 1,
+        "batch_size": 16,
+        "learning_rate": 0.0001,
+        "strategy": "standard",
+        "pretrained": false,
+        "optimized_threshold": 0.01
+    },
+    "final_metrics": {
+        "train_loss": 0.6716556549072266,
+        "train_accuracy": 57.14285714285714,
+        "val_loss": 0.49742391705513,
+        "accuracy": 100.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "macro_f1": 1.0,
+        "roc_auc": NaN,
+        "ece": 0.3919048309326172,
+        "confusion_matrix": [
+            [
+                1
+            ]
+        ],
+        "real_precision": 0.0,
+        "real_recall": 0.0,
+        "fake_precision": 1.0,
+        "fake_recall": 1.0
+    },
+    "test_metrics": {
+        "accuracy": 100.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "macro_f1": 1.0,
+        "roc_auc": NaN,
+        "ece": 0.3919048309326172,
+        "confusion_matrix": [
+            [
+                1
+            ]
+        ],
+        "real_precision": 0.0,
+        "real_recall": 0.0,
+        "fake_precision": 1.0,
+        "fake_recall": 1.0
+    }
+}

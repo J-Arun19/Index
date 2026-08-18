@@ -1,6 +1,6 @@
 {
     "image": {
-        "model_path": "d:\\Download\\satya-vision-guard-main\\satya-vision-guard-main\\backend\\models\\weights\\image_model.pth",
+        "model_path": "backend/models/weights/image_model.pth",
         "strategy": "both",
         "pretrained": true,
         "optimized_threshold": 0.04,
@@ -34,7 +34,7 @@
         }
     },
     "video": {
-        "model_path": "d:\\Download\\satya-vision-guard-main\\satya-vision-guard-main\\backend\\models\\weights\\video_model.pth",
+        "model_path": "backend/models/weights/video_model.pth",
         "strategy": "standard",
         "pretrained": false,
         "optimized_threshold": 0.8400000000000001,
