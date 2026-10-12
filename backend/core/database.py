@@ -9,13 +9,16 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("DatabaseWrapper")
 
 _use_supabase = False
+_db_initialized = False
 
 def init_db():
     """
     Initializes the Supabase database connection and storage buckets.
     Supabase is the sole persistent database. SQLite is not used.
     """
-    global _use_supabase
+    global _use_supabase, _db_initialized
+    if _db_initialized:
+        return _use_supabase
     try:
         SupabaseService.initialize()
         if SupabaseService.verify_connection():
@@ -28,9 +31,9 @@ def init_db():
     except Exception as e:
         _use_supabase = False
         logger.error(f"Database Wrapper: Supabase initialization error: {str(e)}")
-
-# Initialize on module load
-init_db()
+    finally:
+        _db_initialized = True
+    return _use_supabase
 
 def create_user(name: str, email: str, password_hash: str) -> Optional[int]:
     """
@@ -104,15 +107,41 @@ def save_analysis(analysis_id, user_id, user_name, file_name, media_type, predic
 def get_analyses_by_user(user_id):
     """
     Fetches analysis history for a user from Supabase PostgreSQL.
+    Supports both legacy integer user IDs and Supabase Auth string UUIDs.
     """
     if not _use_supabase:
         logger.error("Supabase unavailable. History lookup aborted.")
         return []
     try:
-        u_id = int(user_id)
-        return DatabaseService.get_analysis_history(u_id)
+        return DatabaseService.get_analysis_history(user_id)
     except Exception as e:
         logger.error(f"Supabase analysis lookup failed for user {user_id}: {str(e)}")
+        return []
+
+
+def get_analysis_by_id(analysis_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Retrieves a single analysis run record by its ID.
+    """
+    if not _use_supabase:
+        logger.error("Supabase unavailable. Analysis lookup aborted.")
+        return None
+    try:
+        return DatabaseService.get_analysis_by_id(analysis_id)
+    except Exception as e:
+        logger.error(f"Supabase analysis lookup failed for {analysis_id}: {str(e)}")
+        return None
+
+def get_agent_logs(analysis_id: str) -> List[Dict[str, Any]]:
+    """
+    Retrieves agent logs for an analysis ID.
+    """
+    if not _use_supabase:
+        return []
+    try:
+        return DatabaseService.get_agent_logs(analysis_id)
+    except Exception as e:
+        logger.error(f"Supabase agent logs lookup failed for {analysis_id}: {str(e)}")
         return []
 
 def create_monitoring_session(session_id: str, user_id: Optional[int], user_name: str) -> bool:

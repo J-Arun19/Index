@@ -82,11 +82,13 @@ class DiagnosticsPipeline:
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"Video file not found: {file_path}")
             
-        cap = cv2.VideoCapture(file_path)
-        if not cap.isOpened():
-            raise ValueError(f"Failed to open video file: {file_path}")
-            
-        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        cap = None
+        try:
+            cap = cv2.VideoCapture(file_path)
+            if not cap.isOpened():
+                raise ValueError(f"Failed to open video file: {file_path}")
+                
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         duration = 0.0
         fps = cap.get(cv2.CAP_PROP_FPS)
         if fps > 0:
@@ -159,7 +161,12 @@ class DiagnosticsPipeline:
             face_frames.append(face_rgb)
             bg_frames.append(bg_rgb)
             
-        cap.release()
+        finally:
+            if cap is not None:
+                try:
+                    cap.release()
+                except Exception:
+                    pass
         
         # Fallback if zero frames read
         if not face_frames:

@@ -3,7 +3,21 @@ class ConfidenceEvaluationAgent:
         """
         Evaluates the confidence score of the analysis output and assigns a tier and recommendation.
         """
+        verdict = agent_output.get("verdict") or agent_output.get("prediction")
+        if verdict == "NOT_SUITABLE":
+            return {
+                "confidence": None,
+                "level": "Not Performed",
+                "recommendation": "Upload a clear image containing a visible human face."
+            }
+
         confidence = agent_output.get("confidence_score", 0)
+        if confidence is None:
+            return {
+                "confidence": None,
+                "level": "Not Performed",
+                "recommendation": "Upload a clear image containing a visible human face."
+            }
         
         if confidence >= 80:
             level = "High"

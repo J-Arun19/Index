@@ -1,0 +1,19 @@
+{
+    "method": "temperature_scaling",
+    "temperature": 1.885,
+    "tau_real": 0.35,
+    "tau_fake": 0.65,
+    "min_confidence": 60.0,
+    "metadata": {
+        "method": "temperature_scaling",
+        "temperature": 1.885,
+        "validation_ece_before": 0.6838,
+        "validation_ece_after": 0.0824,
+        "tau_real": 0.35,
+        "tau_fake": 0.65,
+        "min_confidence": 60.0,
+        "fitted_on": "validation_split_only",
+        "notes": "Derived from validation split metrics. Uncalibrated raw probabilities were severely overconfident (ECE=0.6838). Temperature scaling reduces ECE to 0.0824 and defines safe abstention boundaries [0.35, 0.65]."
+    },
+    "saved_at": "2026-09-16T16:00:00.000000"
+}

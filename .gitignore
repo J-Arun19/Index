@@ -47,9 +47,18 @@ SatyaDrishti_Dataset/
 *.pth
 *.pt
 *.ckpt
+*.tar
+*.tar.gz
+*.bin
+*.onnx
 backend/models/weights/*.pth
 backend/models/weights/*.pt
+backend/models/weights/runs/
+backend/models/experimental/weights/
 backend/training/checkpoints/
+scratch/
+backup_ml/
+backup_ml_phase0/
 
 # Temporary Local Uploads & SQLite legacy DBs
 backend/uploads/*

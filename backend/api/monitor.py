@@ -29,13 +29,18 @@ from backend.utils.logger import setup_logger
 logger = setup_logger("MonitorAPI")
 monitor_bp = Blueprint('monitor', __name__)
 
-# Single shared instances for performance
-preprocessor = ImagePreprocessor()
-image_agent = ImageAgent()
-validation_agent = MediaValidationAgent()
-confidence_agent = ConfidenceEvaluationAgent()
-artifact_agent = ArtifactConsistencyAgent()
-fusion_agent = FusionAgent()
+# Lazy component loader for fast server startup
+_monitor_components = None
+
+def get_monitor_components():
+    global _monitor_components
+    if _monitor_components is None:
+        _monitor_components = {
+            "preprocessor": ImagePreprocessor(),
+            "image_agent": ImageAgent(),
+            "artifact_agent": ArtifactConsistencyAgent(),
+        }
+    return _monitor_components
 
 # Read optimized threshold from model registry
 def get_optimized_threshold() -> float:
@@ -128,6 +133,12 @@ def analyze_frame():
             "fusion": "Skipped"
         }
 
+        # Unpack lazy-initialized components
+        components = get_monitor_components()
+        preprocessor = components["preprocessor"]
+        image_agent = components["image_agent"]
+        artifact_agent = components["artifact_agent"]
+
         # Preprocess frame tensor (Face crop or resize 224x224 RGB ImageNet normalized)
         rgb_img = preprocessor.get_cropped_resized_rgb(img_bgr)
         tensor = preprocessor.apply_augmentation_and_normalization(rgb_img, is_training=False).unsqueeze(0)
@@ -139,50 +150,49 @@ def analyze_frame():
             fake_prob = float(probs[1].item())
             real_prob = float(probs[0].item())
 
-        # Step 3: Confidence Evaluation
-        # Check if score is ambiguous (between 0.35 and 0.65) to trigger conditional escalation
-        is_ambiguous = (0.35 <= fake_prob <= 0.65)
+        # Step 3: Confidence Evaluation & Safety Decision System
+        from backend.core.decision_system import SafetyDecisionSystem, DecisionState
+        decision_system = SafetyDecisionSystem()
         
+        # Check if score is ambiguous (between 0.35 and 0.65) to trigger forensic inspection
+        is_ambiguous = (0.35 <= fake_prob <= 0.65)
+        artifact_res = None
         if is_ambiguous:
             agent_trace["artifact"] = "Success"
             agent_trace["fusion"] = "Success"
-            
-            # Run artifact consistency analysis
             artifact_res = artifact_agent.analyze(img_array=img_bgr)
 
-            
-            # Simple weighted fusion for ambiguous frames
-            fused_fake_prob = (fake_prob * 0.7) + (0.3 if artifact_res.get("artifact_detected") else 0.0)
-            fake_prob = min(1.0, fused_fake_prob)
+        # Execute three-state safety decision
+        decision = decision_system.decide(
+            raw_fake_prob=fake_prob,
+            forensic_result=artifact_res.get("forensic_details") if artifact_res else None,
+        )
 
-        # Verdict calculation using optimized threshold
-        if fake_prob >= 0.60:
+        if decision.prediction == DecisionState.FAKE:
             verdict = "DEEPFAKE"
-        elif fake_prob >= 0.30:
-            verdict = "SUSPICIOUS"
-        else:
-            verdict = "REAL"
-
-        # Risk Level Mapping
-        if fake_prob >= 0.80:
-            risk_level = "CRITICAL"
-        elif fake_prob >= 0.60:
-            risk_level = "HIGH"
-        elif fake_prob >= 0.30:
+            risk_level = "CRITICAL" if decision.confidence >= 80.0 else "HIGH"
+        elif decision.prediction == DecisionState.UNCERTAIN:
+            verdict = "UNCERTAIN"
             risk_level = "MEDIUM"
         else:
+            verdict = "LIKELY_REAL"
             risk_level = "LOW"
 
-        detection_score = round(fake_prob * 100, 2)
+        detection_score = round(decision.fake_probability * 100, 2)
         latency_ms = int((time.time() - start_time) * 1000)
 
         return jsonify({
             "status": "success",
             "verdict": verdict,
+            "prediction": decision.prediction,
             "detection_score": detection_score,
+            "confidence": decision.confidence,
+            "uncertainty": decision.uncertainty,
             "risk_level": risk_level,
             "latency_ms": latency_ms,
             "timestamp": client_timestamp,
+            "reason": decision.reason,
+            "user_facing_statement": decision.user_facing_statement,
             "agents": agent_trace
         }), 200
 

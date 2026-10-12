@@ -41,7 +41,7 @@ class Orchestrator:
                 return os.path.join(Config.UPLOAD_FOLDER, filename)
         return None
 
-    def run_orchestration(self, file_id, media_type, user=None):
+    def run_orchestration(self, file_id, media_type=None, user=None):
         """
         Keeps backward compatibility with previous interface, but routes to the rich context workflow.
         """
@@ -52,6 +52,7 @@ class Orchestrator:
     def run_orchestration_context(self, context: AnalysisContext) -> AnalysisContext:
         """
         Coordinates the Agentic AI workflow using a shared AnalysisContext.
+        Autonomously detects media type and routes to Image Agent or Video Agent.
         """
         # 1. Locate file
         file_path = self.locate_file(context.analysis_id)
@@ -60,26 +61,11 @@ class Orchestrator:
             
         context.uploaded_file = os.path.basename(file_path)
 
-        # Initialize database analysis record (Supabase + SQLite fallback)
-        user_id = context.user.get("id") if context.user else None
-        user_name = context.user.get("name") if context.user else "Guest"
-        try:
-            from backend.services.database_service import DatabaseService
-            DatabaseService.create_analysis_record(
-                analysis_id=context.analysis_id,
-                user_id=user_id,
-                user_name=user_name,
-                file_name=context.uploaded_file,
-                media_type=context.media_type
-            )
-        except Exception as e:
-            logger.error(f"Failed to initialize analysis record in DB: {e}")
-
-
-        # 2. Media Validation Agent
+        # 2. Media Validation Agent & Media Type Detection
         start = time.time()
         try:
-            val_res = self.validation_agent.validate(file_path, expected_media_type=context.media_type)
+            # Autonomous validation: detect media type directly from content signature
+            val_res = self.validation_agent.validate(file_path, expected_media_type=None)
             context.validation_result = val_res
             
             if not val_res.get("valid", False):
@@ -95,7 +81,7 @@ class Orchestrator:
                         user_id=user_id,
                         user_name=user_name,
                         file_name=context.uploaded_file,
-                        media_type=context.media_type,
+                        media_type=context.media_type or "unknown",
                         prediction="FAILED_VALIDATION",
                         confidence=0.0,
                         report_path=None
@@ -117,8 +103,38 @@ class Orchestrator:
             
         context.add_log("Media Validation Agent", status, start, time.time())
 
-        # 3. Select specialised analysis agent
-        media_type = context.media_type.lower()
+        # 3. Automatic Media Type Routing
+        # Orchestrator autonomously assigns media_type based strictly on detected media type.
+        # This prevents manual forcing of image files to video pipeline or video files to image pipeline.
+        detected_type = val_res.get("media_type")
+        if not detected_type or detected_type not in ["image", "video"]:
+            raise ValueError(f"Unsupported or unknown media type: {detected_type}")
+
+        if context.media_type and context.media_type.lower() != detected_type:
+            logger.warning(
+                f"Requested media_type '{context.media_type}' does not match detected '{detected_type}'. "
+                f"Overriding with detected type."
+            )
+
+        context.media_type = detected_type
+        media_type = detected_type
+
+        # Initialize database analysis record with verified detected media type
+        user_id = context.user.get("id") if context.user else None
+        user_name = context.user.get("name") if context.user else "Guest"
+        try:
+            from backend.services.database_service import DatabaseService
+            DatabaseService.create_analysis_record(
+                analysis_id=context.analysis_id,
+                user_id=user_id,
+                user_name=user_name,
+                file_name=context.uploaded_file,
+                media_type=context.media_type
+            )
+        except Exception as e:
+            logger.error(f"Failed to initialize analysis record in DB: {e}")
+
+        # 4. Route to specialised analysis agent
         agent_name = "Image Agent" if media_type == "image" else "Video Agent"
         
         start = time.time()
@@ -219,7 +235,10 @@ class Orchestrator:
         decision_reason = ""
         should_trigger_artifact = False
         
-        if primary_confidence < PipelineConfig.AGENTIC_CONFIDENCE_THRESHOLD:
+        if primary_verdict == "NOT_SUITABLE":
+            should_trigger_artifact = False
+            decision_reason = "ArtifactAgent skipped: Media is unsupported for facial forensic analysis (no face detected)."
+        elif primary_confidence < PipelineConfig.AGENTIC_CONFIDENCE_THRESHOLD:
             should_trigger_artifact = True
             decision_reason = f"ArtifactAgent activated: primary confidence {round(primary_confidence, 2)} < threshold {PipelineConfig.AGENTIC_CONFIDENCE_THRESHOLD}"
         elif has_conflict:
@@ -284,7 +303,9 @@ class Orchestrator:
                 verdict=fusion_res.get("verdict"),
                 confidence_level=conf_res.get("level"),
                 media_type=media_type,
-                features=explanation_features
+                features=explanation_features,
+                evidence=fusion_res.get("evidence", []),
+                reason=fusion_res.get("reason"),
             )
             context.explanation = explanation_res
             
@@ -292,6 +313,7 @@ class Orchestrator:
             fusion_res["confidence_level"] = conf_res.get("level")
             fusion_res["evidence"] = explanation_res.get("evidence", [])
             fusion_res["recommendation"] = explanation_res.get("recommendation", "N/A")
+            fusion_res["user_facing_statement"] = explanation_res.get("user_facing_statement")
             status = "Success"
         except Exception as e:
             logger.error(f"Explanation Agent failed: {e}")
@@ -305,7 +327,7 @@ class Orchestrator:
             report_path = ReportGenerator.generate_report(context.to_dict())
             context.report_path = report_path
             # Build clean report URL for the client
-            fusion_res["report_url"] = f"/api/analysis/report/{context.analysis_id}"
+            fusion_res["report_url"] = f"/api/analysis/report/{context.analysis_id}.pdf"
             status = "Success"
         except Exception as e:
             logger.error(f"Report generation failed: {e}")

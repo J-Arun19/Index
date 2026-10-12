@@ -167,9 +167,18 @@ class DatabaseService:
                 bucket = os.getenv("SUPABASE_UPLOADS_BUCKET", "uploads")
                 file_path = f"{bucket}/{folder}/{analysis_id}{extension}"
 
+            # Route integer user ID to user_id (FK to public.users), and UUID to owner_id
+            db_user_id = None
+            db_owner_id = None
+            if isinstance(user_id, int) or (isinstance(user_id, str) and user_id.isdigit()):
+                db_user_id = int(user_id)
+            elif user_id:
+                db_owner_id = str(user_id)
+
             data = {
                 "id": analysis_id,
-                "user_id": user_id,
+                "user_id": db_user_id,
+                "owner_id": db_owner_id,
                 "user_name": user_name,
                 "file_name": file_name,
                 "media_type": media_type,
@@ -178,14 +187,26 @@ class DatabaseService:
                 "report_path": report_path
             }
 
-            # Attempt upsert with file_path. Fall back if the column doesn't exist yet.
+            # Attempt upsert with file_path. Fall back if the column doesn't exist yet or if foreign key is violated.
             try:
                 data["file_path"] = file_path
                 client.table("analysis_history").upsert(data).execute()
             except Exception as e:
-                logger.warning(f"Failed to upsert with file_path: {str(e)}. Retrying without file_path...")
+                err_str = str(e)
+                if "23503" in err_str or "violates foreign key constraint" in err_str:
+                    # Unsynced profile in public.users: preserve analysis data by nullifying foreign keys
+                    data["user_id"] = None
+                    data["owner_id"] = None
                 data.pop("file_path", None)
-                client.table("analysis_history").upsert(data).execute()
+                try:
+                    client.table("analysis_history").upsert(data).execute()
+                except Exception as e2:
+                    if "23503" in str(e2) or "violates foreign key constraint" in str(e2):
+                        data["user_id"] = None
+                        data["owner_id"] = None
+                        client.table("analysis_history").upsert(data).execute()
+                    else:
+                        raise e2
 
             logger.info(f"Saved completed analysis {analysis_id} to Supabase database.")
             return True
@@ -194,16 +215,48 @@ class DatabaseService:
             return False
 
     @classmethod
-    def get_analysis_history(cls, user_id: int) -> List[Dict[str, Any]]:
+    def get_analysis_history(cls, user_id: Any) -> List[Dict[str, Any]]:
         """
         Retrieves the analysis runs history for a specific user, ordered chronologically.
+        Supports integer user_id or string UUID owner_id.
         """
         try:
             client = SupabaseService.get_client()
-            res = client.table("analysis_history").select("*").eq("user_id", user_id).order("timestamp", desc=True).execute()
+            if isinstance(user_id, int) or (isinstance(user_id, str) and user_id.isdigit()):
+                res = client.table("analysis_history").select("*").eq("user_id", int(user_id)).order("timestamp", desc=True).execute()
+            else:
+                res = client.table("analysis_history").select("*").eq("owner_id", str(user_id)).order("timestamp", desc=True).execute()
             return res.data or []
         except Exception as e:
             logger.error(f"Failed to fetch analysis history for user {user_id}: {str(e)}")
+            return []
+
+    @classmethod
+    def get_analysis_by_id(cls, analysis_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Retrieves a single analysis run record by its ID.
+        """
+        try:
+            client = SupabaseService.get_client()
+            res = client.table("analysis_history").select("*").eq("id", analysis_id).execute()
+            if res.data and len(res.data) > 0:
+                return res.data[0]
+            return None
+        except Exception as e:
+            logger.error(f"Failed to fetch analysis {analysis_id}: {str(e)}")
+            return None
+
+    @classmethod
+    def get_agent_logs(cls, analysis_id: str) -> List[Dict[str, Any]]:
+        """
+        Retrieves agent execution trace logs for a specific analysis run.
+        """
+        try:
+            client = SupabaseService.get_client()
+            res = client.table("agent_logs").select("*").eq("analysis_id", analysis_id).order("created_at", desc=False).execute()
+            return res.data or []
+        except Exception as e:
+            logger.error(f"Failed to fetch agent logs for analysis {analysis_id}: {str(e)}")
             return []
 
     @classmethod

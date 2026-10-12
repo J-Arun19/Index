@@ -122,11 +122,18 @@ def get_video_frame_count(file_path: str) -> int:
     if norm_path in _FRAME_COUNT_CACHE:
         return _FRAME_COUNT_CACHE[norm_path]
         
-    cap = cv2.VideoCapture(file_path)
+    cap = None
     count = 0
-    if cap.isOpened():
-        count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        cap.release()
+    try:
+        cap = cv2.VideoCapture(file_path)
+        if cap.isOpened():
+            count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    finally:
+        if cap is not None:
+            try:
+                cap.release()
+            except Exception:
+                pass
     _FRAME_COUNT_CACHE[norm_path] = count
     return count
 

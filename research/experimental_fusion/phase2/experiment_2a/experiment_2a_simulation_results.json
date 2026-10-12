@@ -1,0 +1,1163 @@
+{
+  "metadata": {
+    "simulation_name": "SatyaDrishti Experiment 2A: One-Sided REAL Certification Policy",
+    "source_benchmark": "SatyaDrishti Phase 2 Locked Benchmark",
+    "source_results_path": "research/experimental_fusion/phase2/phase2_benchmark_results.json",
+    "policy_definition": {
+      "rule": "One-Sided REAL Certification",
+      "condition": "LIKELY_REAL only when (p_fused < 0.35) AND (cal_sbi < 0.35) AND (cal_xcep < 0.35)",
+      "rationale": "Prevents asymmetric confidence weighting from allowing a low SBI boundary score to drag a neutral Xception score into an authentic certification."
+    }
+  },
+  "video_simulation": {
+    "baseline_metrics": {
+      "confusion_matrix": {
+        "real_likely_real_tn": 21,
+        "real_uncertain": 78,
+        "real_fake_fp": 1,
+        "fake_likely_real_fn": 4,
+        "fake_uncertain": 70,
+        "fake_fake_tp": 26
+      },
+      "false_positive_rate": 0.01,
+      "false_negative_rate": 0.04,
+      "abstention_rate": 0.74,
+      "real_abstention_rate": 0.78,
+      "fake_abstention_rate": 0.7,
+      "decided_total": 52,
+      "decided_correct": 47,
+      "decided_accuracy": 0.9038,
+      "coverage": 0.26,
+      "raw_accuracy": 0.235,
+      "not_suitable_count": 0,
+      "confidence_intervals_95": {
+        "false_positive_rate": {
+          "k": 1,
+          "n": 100,
+          "proportion": 0.01,
+          "ci_lower": 0.0018,
+          "ci_upper": 0.0545,
+          "ci_percent": "[0.18%, 5.45%]"
+        },
+        "false_negative_rate": {
+          "k": 4,
+          "n": 100,
+          "proportion": 0.04,
+          "ci_lower": 0.0157,
+          "ci_upper": 0.0984,
+          "ci_percent": "[1.57%, 9.84%]"
+        },
+        "abstention_rate": {
+          "k": 148,
+          "n": 200,
+          "proportion": 0.74,
+          "ci_lower": 0.6751,
+          "ci_upper": 0.7959,
+          "ci_percent": "[67.51%, 79.59%]"
+        },
+        "decided_accuracy": {
+          "k": 47,
+          "n": 52,
+          "proportion": 0.9038,
+          "ci_lower": 0.7939,
+          "ci_upper": 0.9582,
+          "ci_percent": "[79.39%, 95.82%]"
+        },
+        "coverage": {
+          "k": 52,
+          "n": 200,
+          "proportion": 0.26,
+          "ci_lower": 0.2041,
+          "ci_upper": 0.3249,
+          "ci_percent": "[20.41%, 32.49%]"
+        },
+        "raw_accuracy": {
+          "k": 47,
+          "n": 200,
+          "proportion": 0.235,
+          "ci_lower": 0.1816,
+          "ci_upper": 0.2984,
+          "ci_percent": "[18.16%, 29.84%]"
+        }
+      }
+    },
+    "alternative_metrics": {
+      "confusion_matrix": {
+        "real_likely_real_tn": 4,
+        "real_uncertain": 95,
+        "real_fake_fp": 1,
+        "fake_likely_real_fn": 0,
+        "fake_uncertain": 74,
+        "fake_fake_tp": 26
+      },
+      "false_positive_rate": 0.01,
+      "false_negative_rate": 0.0,
+      "abstention_rate": 0.845,
+      "real_abstention_rate": 0.95,
+      "fake_abstention_rate": 0.74,
+      "decided_total": 31,
+      "decided_correct": 30,
+      "decided_accuracy": 0.9677,
+      "coverage": 0.155,
+      "raw_accuracy": 0.15,
+      "not_suitable_count": 0,
+      "confidence_intervals_95": {
+        "false_positive_rate": {
+          "k": 1,
+          "n": 100,
+          "proportion": 0.01,
+          "ci_lower": 0.0018,
+          "ci_upper": 0.0545,
+          "ci_percent": "[0.18%, 5.45%]"
+        },
+        "false_negative_rate": {
+          "k": 0,
+          "n": 100,
+          "proportion": 0.0,
+          "ci_lower": 0.0,
+          "ci_upper": 0.037,
+          "ci_percent": "[0.0%, 3.7%]"
+        },
+        "abstention_rate": {
+          "k": 169,
+          "n": 200,
+          "proportion": 0.845,
+          "ci_lower": 0.7884,
+          "ci_upper": 0.8886,
+          "ci_percent": "[78.84%, 88.86%]"
+        },
+        "decided_accuracy": {
+          "k": 30,
+          "n": 31,
+          "proportion": 0.9677,
+          "ci_lower": 0.8381,
+          "ci_upper": 0.9943,
+          "ci_percent": "[83.81%, 99.43%]"
+        },
+        "coverage": {
+          "k": 31,
+          "n": 200,
+          "proportion": 0.155,
+          "ci_lower": 0.1114,
+          "ci_upper": 0.2116,
+          "ci_percent": "[11.14%, 21.16%]"
+        },
+        "raw_accuracy": {
+          "k": 30,
+          "n": 200,
+          "proportion": 0.15,
+          "ci_lower": 0.1071,
+          "ci_upper": 0.2061,
+          "ci_percent": "[10.71%, 20.61%]"
+        }
+      }
+    },
+    "delta_comparison": {
+      "fpr_change": "0.0100 -> 0.0100",
+      "fnr_change": "0.0400 -> 0.0000",
+      "abstention_change": "0.7400 -> 0.8450",
+      "decided_accuracy_change": "0.9038 -> 0.9677",
+      "coverage_change": "0.2600 -> 0.1550"
+    },
+    "audited_target_false_negatives": [
+      {
+        "id": "test_vid_ff_neuraltextures_180",
+        "filename": "494_445.mp4",
+        "subset": "NeuralTextures",
+        "ground_truth": "FAKE",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.3038,
+        "sbi_calibrated": 0.2994,
+        "xception_calibrated": 0.4954,
+        "resolved": true
+      },
+      {
+        "id": "test_vid_ff_faceshifter_191",
+        "filename": "257_420.mp4",
+        "subset": "FaceShifter",
+        "ground_truth": "FAKE",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.3187,
+        "sbi_calibrated": 0.2991,
+        "xception_calibrated": 0.4749,
+        "resolved": true
+      },
+      {
+        "id": "test_vid_ff_faceshifter_194",
+        "filename": "732_691.mp4",
+        "subset": "FaceShifter",
+        "ground_truth": "FAKE",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2598,
+        "sbi_calibrated": 0.2368,
+        "xception_calibrated": 0.4713,
+        "resolved": true
+      },
+      {
+        "id": "test_vid_ff_faceshifter_198",
+        "filename": "625_650.mp4",
+        "subset": "FaceShifter",
+        "ground_truth": "FAKE",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.3105,
+        "sbi_calibrated": 0.3096,
+        "xception_calibrated": 0.5009,
+        "resolved": true
+      }
+    ],
+    "changed_samples_count": 21,
+    "changed_samples": [
+      {
+        "id": "test_vid_celeb_real_001",
+        "filename": "id2_0008.mp4",
+        "dataset": "Celeb-DF_v2",
+        "subset": "Celeb-real",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2998,
+        "sbi_calibrated": 0.2614,
+        "xception_calibrated": 0.4291,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2998), but models did not unanimously agree authentic (SBI_cal=0.261, Xcep_cal=0.429). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_celeb_real_002",
+        "filename": "id3_0001.mp4",
+        "dataset": "Celeb-DF_v2",
+        "subset": "Celeb-real",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2694,
+        "sbi_calibrated": 0.192,
+        "xception_calibrated": 0.5774,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2694), but models did not unanimously agree authentic (SBI_cal=0.192, Xcep_cal=0.577). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_celeb_real_011",
+        "filename": "id32_0008.mp4",
+        "dataset": "Celeb-DF_v2",
+        "subset": "Celeb-real",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2192,
+        "sbi_calibrated": 0.2124,
+        "xception_calibrated": 0.4928,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2192), but models did not unanimously agree authentic (SBI_cal=0.212, Xcep_cal=0.493). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_celeb_real_024",
+        "filename": "id44_0003.mp4",
+        "dataset": "Celeb-DF_v2",
+        "subset": "Celeb-real",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2878,
+        "sbi_calibrated": 0.2536,
+        "xception_calibrated": 0.4471,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2878), but models did not unanimously agree authentic (SBI_cal=0.254, Xcep_cal=0.447). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_yt_real_040",
+        "filename": "00194.mp4",
+        "dataset": "Celeb-DF_v2",
+        "subset": "YouTube-real",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.3187,
+        "sbi_calibrated": 0.3109,
+        "xception_calibrated": 0.5079,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.3187), but models did not unanimously agree authentic (SBI_cal=0.311, Xcep_cal=0.508). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_yt_real_047",
+        "filename": "00076.mp4",
+        "dataset": "Celeb-DF_v2",
+        "subset": "YouTube-real",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.3271,
+        "sbi_calibrated": 0.2956,
+        "xception_calibrated": 0.5316,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.3271), but models did not unanimously agree authentic (SBI_cal=0.296, Xcep_cal=0.532). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_orig_050",
+        "filename": "000.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2883,
+        "sbi_calibrated": 0.247,
+        "xception_calibrated": 0.5413,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2883), but models did not unanimously agree authentic (SBI_cal=0.247, Xcep_cal=0.541). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_orig_058",
+        "filename": "036.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2983,
+        "sbi_calibrated": 0.2467,
+        "xception_calibrated": 0.5516,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2983), but models did not unanimously agree authentic (SBI_cal=0.247, Xcep_cal=0.552). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_orig_061",
+        "filename": "048.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2565,
+        "sbi_calibrated": 0.2099,
+        "xception_calibrated": 0.4141,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2565), but models did not unanimously agree authentic (SBI_cal=0.210, Xcep_cal=0.414). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_orig_064",
+        "filename": "102.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.1911,
+        "sbi_calibrated": 0.1282,
+        "xception_calibrated": 0.3668,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.1911), but models did not unanimously agree authentic (SBI_cal=0.128, Xcep_cal=0.367). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_orig_065",
+        "filename": "114.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.1492,
+        "sbi_calibrated": 0.106,
+        "xception_calibrated": 0.4417,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.1492), but models did not unanimously agree authentic (SBI_cal=0.106, Xcep_cal=0.442). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_orig_070",
+        "filename": "142.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2269,
+        "sbi_calibrated": 0.173,
+        "xception_calibrated": 0.3954,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2269), but models did not unanimously agree authentic (SBI_cal=0.173, Xcep_cal=0.395). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_orig_071",
+        "filename": "154.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2331,
+        "sbi_calibrated": 0.22,
+        "xception_calibrated": 0.5131,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2331), but models did not unanimously agree authentic (SBI_cal=0.220, Xcep_cal=0.513). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_orig_074",
+        "filename": "169.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.224,
+        "sbi_calibrated": 0.1446,
+        "xception_calibrated": 0.5794,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.224), but models did not unanimously agree authentic (SBI_cal=0.145, Xcep_cal=0.579). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_orig_084",
+        "filename": "249.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2318,
+        "sbi_calibrated": 0.1764,
+        "xception_calibrated": 0.3731,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2318), but models did not unanimously agree authentic (SBI_cal=0.176, Xcep_cal=0.373). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_orig_092",
+        "filename": "314.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.3037,
+        "sbi_calibrated": 0.2578,
+        "xception_calibrated": 0.5459,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.3037), but models did not unanimously agree authentic (SBI_cal=0.258, Xcep_cal=0.546). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_orig_097",
+        "filename": "358.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.1212,
+        "sbi_calibrated": 0.1056,
+        "xception_calibrated": 0.4831,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.1212), but models did not unanimously agree authentic (SBI_cal=0.106, Xcep_cal=0.483). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_neuraltextures_180",
+        "filename": "494_445.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "NeuralTextures",
+        "ground_truth": "FAKE",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.3038,
+        "sbi_calibrated": 0.2994,
+        "xception_calibrated": 0.4954,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.3038), but models did not unanimously agree authentic (SBI_cal=0.299, Xcep_cal=0.495). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_faceshifter_191",
+        "filename": "257_420.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "FaceShifter",
+        "ground_truth": "FAKE",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.3187,
+        "sbi_calibrated": 0.2991,
+        "xception_calibrated": 0.4749,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.3187), but models did not unanimously agree authentic (SBI_cal=0.299, Xcep_cal=0.475). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_faceshifter_194",
+        "filename": "732_691.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "FaceShifter",
+        "ground_truth": "FAKE",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2598,
+        "sbi_calibrated": 0.2368,
+        "xception_calibrated": 0.4713,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2598), but models did not unanimously agree authentic (SBI_cal=0.237, Xcep_cal=0.471). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_vid_ff_faceshifter_198",
+        "filename": "625_650.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "FaceShifter",
+        "ground_truth": "FAKE",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.3105,
+        "sbi_calibrated": 0.3096,
+        "xception_calibrated": 0.5009,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.3105), but models did not unanimously agree authentic (SBI_cal=0.310, Xcep_cal=0.501). Withholding authentic certification to prevent false negatives."
+      }
+    ],
+    "subset_breakdown": {
+      "Celeb-real": {
+        "total": 25,
+        "ground_truth": "REAL",
+        "baseline": {
+          "likely_real": 4,
+          "uncertain": 21,
+          "fake": 0
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 25,
+          "fake": 0
+        }
+      },
+      "Celeb-synthesis": {
+        "total": 50,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 34,
+          "fake": 16
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 34,
+          "fake": 16
+        }
+      },
+      "Deepfakes": {
+        "total": 10,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 3,
+          "fake": 7
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 3,
+          "fake": 7
+        }
+      },
+      "Face2Face": {
+        "total": 10,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 9,
+          "fake": 1
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 9,
+          "fake": 1
+        }
+      },
+      "FaceShifter": {
+        "total": 10,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 3,
+          "uncertain": 7,
+          "fake": 0
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 10,
+          "fake": 0
+        }
+      },
+      "FaceSwap": {
+        "total": 10,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 9,
+          "fake": 1
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 9,
+          "fake": 1
+        }
+      },
+      "NeuralTextures": {
+        "total": 10,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 1,
+          "uncertain": 8,
+          "fake": 1
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 9,
+          "fake": 1
+        }
+      },
+      "YouTube-real": {
+        "total": 25,
+        "ground_truth": "REAL",
+        "baseline": {
+          "likely_real": 2,
+          "uncertain": 22,
+          "fake": 1
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 24,
+          "fake": 1
+        }
+      },
+      "original": {
+        "total": 50,
+        "ground_truth": "REAL",
+        "baseline": {
+          "likely_real": 15,
+          "uncertain": 35,
+          "fake": 0
+        },
+        "alternative": {
+          "likely_real": 4,
+          "uncertain": 46,
+          "fake": 0
+        }
+      }
+    }
+  },
+  "still_image_simulation": {
+    "baseline_metrics": {
+      "confusion_matrix": {
+        "real_likely_real_tn": 16,
+        "real_uncertain": 77,
+        "real_fake_fp": 8,
+        "fake_likely_real_fn": 2,
+        "fake_uncertain": 52,
+        "fake_fake_tp": 47
+      },
+      "false_positive_rate": 0.0777,
+      "false_negative_rate": 0.0196,
+      "abstention_rate": 0.6293,
+      "real_abstention_rate": 0.7476,
+      "fake_abstention_rate": 0.5098,
+      "decided_total": 73,
+      "decided_correct": 63,
+      "decided_accuracy": 0.863,
+      "coverage": 0.3561,
+      "raw_accuracy": 0.3073,
+      "not_suitable_count": 3,
+      "confidence_intervals_95": {
+        "false_positive_rate": {
+          "k": 8,
+          "n": 103,
+          "proportion": 0.0777,
+          "ci_lower": 0.0399,
+          "ci_upper": 0.1458,
+          "ci_percent": "[3.99%, 14.58%]"
+        },
+        "false_negative_rate": {
+          "k": 2,
+          "n": 102,
+          "proportion": 0.0196,
+          "ci_lower": 0.0054,
+          "ci_upper": 0.0687,
+          "ci_percent": "[0.54%, 6.87%]"
+        },
+        "abstention_rate": {
+          "k": 129,
+          "n": 205,
+          "proportion": 0.6293,
+          "ci_lower": 0.5613,
+          "ci_upper": 0.6924,
+          "ci_percent": "[56.13%, 69.24%]"
+        },
+        "decided_accuracy": {
+          "k": 63,
+          "n": 73,
+          "proportion": 0.863,
+          "ci_lower": 0.7659,
+          "ci_upper": 0.9239,
+          "ci_percent": "[76.59%, 92.39%]"
+        },
+        "coverage": {
+          "k": 73,
+          "n": 205,
+          "proportion": 0.3561,
+          "ci_lower": 0.2937,
+          "ci_upper": 0.4237,
+          "ci_percent": "[29.37%, 42.37%]"
+        },
+        "raw_accuracy": {
+          "k": 63,
+          "n": 205,
+          "proportion": 0.3073,
+          "ci_lower": 0.2482,
+          "ci_upper": 0.3735,
+          "ci_percent": "[24.82%, 37.35%]"
+        }
+      }
+    },
+    "alternative_metrics": {
+      "confusion_matrix": {
+        "real_likely_real_tn": 4,
+        "real_uncertain": 89,
+        "real_fake_fp": 8,
+        "fake_likely_real_fn": 0,
+        "fake_uncertain": 54,
+        "fake_fake_tp": 47
+      },
+      "false_positive_rate": 0.0777,
+      "false_negative_rate": 0.0,
+      "abstention_rate": 0.6976,
+      "real_abstention_rate": 0.8641,
+      "fake_abstention_rate": 0.5294,
+      "decided_total": 59,
+      "decided_correct": 51,
+      "decided_accuracy": 0.8644,
+      "coverage": 0.2878,
+      "raw_accuracy": 0.2488,
+      "not_suitable_count": 3,
+      "confidence_intervals_95": {
+        "false_positive_rate": {
+          "k": 8,
+          "n": 103,
+          "proportion": 0.0777,
+          "ci_lower": 0.0399,
+          "ci_upper": 0.1458,
+          "ci_percent": "[3.99%, 14.58%]"
+        },
+        "false_negative_rate": {
+          "k": 0,
+          "n": 102,
+          "proportion": 0.0,
+          "ci_lower": 0.0,
+          "ci_upper": 0.0363,
+          "ci_percent": "[0.0%, 3.63%]"
+        },
+        "abstention_rate": {
+          "k": 143,
+          "n": 205,
+          "proportion": 0.6976,
+          "ci_lower": 0.6315,
+          "ci_upper": 0.7563,
+          "ci_percent": "[63.15%, 75.63%]"
+        },
+        "decided_accuracy": {
+          "k": 51,
+          "n": 59,
+          "proportion": 0.8644,
+          "ci_lower": 0.7546,
+          "ci_upper": 0.9297,
+          "ci_percent": "[75.46%, 92.97%]"
+        },
+        "coverage": {
+          "k": 59,
+          "n": 205,
+          "proportion": 0.2878,
+          "ci_lower": 0.2302,
+          "ci_upper": 0.3532,
+          "ci_percent": "[23.02%, 35.32%]"
+        },
+        "raw_accuracy": {
+          "k": 51,
+          "n": 205,
+          "proportion": 0.2488,
+          "ci_lower": 0.1946,
+          "ci_upper": 0.3122,
+          "ci_percent": "[19.46%, 31.22%]"
+        }
+      }
+    },
+    "delta_comparison": {
+      "fpr_change": "0.0777 -> 0.0777",
+      "fnr_change": "0.0196 -> 0.0000",
+      "abstention_change": "0.6293 -> 0.6976",
+      "decided_accuracy_change": "0.8630 -> 0.8644",
+      "coverage_change": "0.3561 -> 0.2878"
+    },
+    "changed_samples_count": 14,
+    "changed_samples": [
+      {
+        "id": "test_img_test_vid_celeb_real_024",
+        "filename": "id44_0003.mp4",
+        "dataset": "Celeb-DF_v2",
+        "subset": "Celeb-real",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.32,
+        "sbi_calibrated": 0.3096,
+        "xception_calibrated": 0.5104,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.32), but models did not unanimously agree authentic (SBI_cal=0.310, Xcep_cal=0.510). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_yt_real_028",
+        "filename": "00024.mp4",
+        "dataset": "Celeb-DF_v2",
+        "subset": "YouTube-real",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.3233,
+        "sbi_calibrated": 0.2793,
+        "xception_calibrated": 0.544,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.3233), but models did not unanimously agree authentic (SBI_cal=0.279, Xcep_cal=0.544). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_yt_real_029",
+        "filename": "00021.mp4",
+        "dataset": "Celeb-DF_v2",
+        "subset": "YouTube-real",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2596,
+        "sbi_calibrated": 0.1926,
+        "xception_calibrated": 0.5669,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2596), but models did not unanimously agree authentic (SBI_cal=0.193, Xcep_cal=0.567). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_ff_orig_052",
+        "filename": "012.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.1523,
+        "sbi_calibrated": 0.1105,
+        "xception_calibrated": 0.4442,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.1523), but models did not unanimously agree authentic (SBI_cal=0.111, Xcep_cal=0.444). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_ff_orig_058",
+        "filename": "036.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.1671,
+        "sbi_calibrated": 0.1341,
+        "xception_calibrated": 0.533,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.1671), but models did not unanimously agree authentic (SBI_cal=0.134, Xcep_cal=0.533). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_ff_orig_066",
+        "filename": "128.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2619,
+        "sbi_calibrated": 0.2138,
+        "xception_calibrated": 0.4012,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2619), but models did not unanimously agree authentic (SBI_cal=0.214, Xcep_cal=0.401). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_ff_orig_073",
+        "filename": "161.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2274,
+        "sbi_calibrated": 0.1926,
+        "xception_calibrated": 0.4526,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2274), but models did not unanimously agree authentic (SBI_cal=0.193, Xcep_cal=0.453). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_ff_orig_080",
+        "filename": "219.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2362,
+        "sbi_calibrated": 0.1872,
+        "xception_calibrated": 0.4136,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2362), but models did not unanimously agree authentic (SBI_cal=0.187, Xcep_cal=0.414). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_ff_orig_087",
+        "filename": "278.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2265,
+        "sbi_calibrated": 0.2206,
+        "xception_calibrated": 0.5059,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2265), but models did not unanimously agree authentic (SBI_cal=0.221, Xcep_cal=0.506). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_ff_orig_088",
+        "filename": "280.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2617,
+        "sbi_calibrated": 0.2124,
+        "xception_calibrated": 0.3772,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2617), but models did not unanimously agree authentic (SBI_cal=0.212, Xcep_cal=0.377). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_ff_orig_092",
+        "filename": "314.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.3381,
+        "sbi_calibrated": 0.2539,
+        "xception_calibrated": 0.5841,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.3381), but models did not unanimously agree authentic (SBI_cal=0.254, Xcep_cal=0.584). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_ff_orig_097",
+        "filename": "358.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "original",
+        "ground_truth": "REAL",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.1332,
+        "sbi_calibrated": 0.1069,
+        "xception_calibrated": 0.4693,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.1332), but models did not unanimously agree authentic (SBI_cal=0.107, Xcep_cal=0.469). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_ff_faceshifter_190",
+        "filename": "035_036.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "FaceShifter",
+        "ground_truth": "FAKE",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.2835,
+        "sbi_calibrated": 0.2422,
+        "xception_calibrated": 0.3589,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.2835), but models did not unanimously agree authentic (SBI_cal=0.242, Xcep_cal=0.359). Withholding authentic certification to prevent false negatives."
+      },
+      {
+        "id": "test_img_test_vid_ff_faceshifter_194",
+        "filename": "732_691.mp4",
+        "dataset": "FaceForensics++_C23",
+        "subset": "FaceShifter",
+        "ground_truth": "FAKE",
+        "baseline_verdict": "LIKELY_REAL",
+        "alternative_verdict": "UNCERTAIN",
+        "fused_probability": 0.1362,
+        "sbi_calibrated": 0.1227,
+        "xception_calibrated": 0.5135,
+        "reason": "Abstained under One-Sided Real Policy: Fused probability leans real (P=0.1362), but models did not unanimously agree authentic (SBI_cal=0.123, Xcep_cal=0.513). Withholding authentic certification to prevent false negatives."
+      }
+    ],
+    "subset_breakdown": {
+      "Celeb-real": {
+        "total": 25,
+        "ground_truth": "REAL",
+        "baseline": {
+          "likely_real": 1,
+          "uncertain": 21,
+          "fake": 2,
+          "not_suitable": 1
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 22,
+          "fake": 2,
+          "not_suitable": 1
+        }
+      },
+      "Celeb-synthesis": {
+        "total": 50,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 29,
+          "fake": 21,
+          "not_suitable": 0
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 29,
+          "fake": 21,
+          "not_suitable": 0
+        }
+      },
+      "Deepfakes": {
+        "total": 10,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 3,
+          "fake": 7,
+          "not_suitable": 0
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 3,
+          "fake": 7,
+          "not_suitable": 0
+        }
+      },
+      "Face2Face": {
+        "total": 10,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 6,
+          "fake": 4,
+          "not_suitable": 0
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 6,
+          "fake": 4,
+          "not_suitable": 0
+        }
+      },
+      "FaceShifter": {
+        "total": 10,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 2,
+          "uncertain": 6,
+          "fake": 1,
+          "not_suitable": 1
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 8,
+          "fake": 1,
+          "not_suitable": 1
+        }
+      },
+      "FaceSwap": {
+        "total": 10,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 4,
+          "fake": 6,
+          "not_suitable": 0
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 4,
+          "fake": 6,
+          "not_suitable": 0
+        }
+      },
+      "NeuralTextures": {
+        "total": 10,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 2,
+          "fake": 8,
+          "not_suitable": 0
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 2,
+          "fake": 8,
+          "not_suitable": 0
+        }
+      },
+      "YouTube-real": {
+        "total": 25,
+        "ground_truth": "REAL",
+        "baseline": {
+          "likely_real": 2,
+          "uncertain": 16,
+          "fake": 6,
+          "not_suitable": 1
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 18,
+          "fake": 6,
+          "not_suitable": 1
+        }
+      },
+      "ai_generated_synthetic_face": {
+        "total": 1,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 1,
+          "fake": 0,
+          "not_suitable": 0
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 1,
+          "fake": 0,
+          "not_suitable": 0
+        }
+      },
+      "degraded_lowlight_real": {
+        "total": 1,
+        "ground_truth": "REAL",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 1,
+          "fake": 0,
+          "not_suitable": 0
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 1,
+          "fake": 0,
+          "not_suitable": 0
+        }
+      },
+      "in_the_wild_face_swap": {
+        "total": 1,
+        "ground_truth": "FAKE",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 1,
+          "fake": 0,
+          "not_suitable": 0
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 1,
+          "fake": 0,
+          "not_suitable": 0
+        }
+      },
+      "in_the_wild_real_portrait": {
+        "total": 2,
+        "ground_truth": "REAL",
+        "baseline": {
+          "likely_real": 0,
+          "uncertain": 2,
+          "fake": 0,
+          "not_suitable": 0
+        },
+        "alternative": {
+          "likely_real": 0,
+          "uncertain": 2,
+          "fake": 0,
+          "not_suitable": 0
+        }
+      },
+      "original": {
+        "total": 50,
+        "ground_truth": "REAL",
+        "baseline": {
+          "likely_real": 13,
+          "uncertain": 37,
+          "fake": 0,
+          "not_suitable": 0
+        },
+        "alternative": {
+          "likely_real": 4,
+          "uncertain": 46,
+          "fake": 0,
+          "not_suitable": 0
+        }
+      }
+    }
+  }
+}

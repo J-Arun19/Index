@@ -1,0 +1,68 @@
+{
+    "dataset_type": "pilot",
+    "hyperparameters": {
+        "epochs": 2,
+        "batch_size": 16,
+        "learning_rate": 0.0001,
+        "strategy": "standard",
+        "pretrained": true,
+        "optimized_threshold": 0.76,
+        "temporal_pooling": "mean",
+        "max_frames_per_video": 10
+    },
+    "final_metrics": {
+        "train_loss": 0.4210196375846863,
+        "train_accuracy": 87.0,
+        "val_loss": 0.4274812108278275,
+        "accuracy": 82.0,
+        "precision": 0.8586956521739131,
+        "recall": 0.9404761904761905,
+        "f1_score": 0.8977272727272727,
+        "macro_f1": 0.5738636363636364,
+        "roc_auc": 0.6488095238095238,
+        "ece": 0.01944301128387449,
+        "confusion_matrix": [
+            [
+                3,
+                13
+            ],
+            [
+                5,
+                79
+            ]
+        ],
+        "real_precision": 0.375,
+        "real_recall": 0.1875,
+        "fake_precision": 0.8586956521739131,
+        "fake_recall": 0.9404761904761905,
+        "class_collapse": false,
+        "real_pred_pct": 0.08,
+        "fake_pred_pct": 0.92
+    },
+    "test_metrics": {
+        "accuracy": 84.0,
+        "precision": 0.8469387755102041,
+        "recall": 0.9880952380952381,
+        "f1_score": 0.9120879120879121,
+        "macro_f1": 0.5115995115995116,
+        "roc_auc": 0.4702380952380953,
+        "ece": 0.01926961779594419,
+        "confusion_matrix": [
+            [
+                1,
+                15
+            ],
+            [
+                1,
+                83
+            ]
+        ],
+        "real_precision": 0.5,
+        "real_recall": 0.0625,
+        "fake_precision": 0.8469387755102041,
+        "fake_recall": 0.9880952380952381,
+        "class_collapse": false,
+        "real_pred_pct": 0.02,
+        "fake_pred_pct": 0.98
+    }
+}

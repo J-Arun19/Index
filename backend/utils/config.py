@@ -37,10 +37,10 @@ class PipelineConfig:
     
     # Video specific preprocessing configuration
     FRAME_INTERVAL = 10      # Process every Nth frame (adjustable)
-    MAX_FRAMES_PER_VIDEO = 30 # Cap maximum number of frames extracted per video to maintain resource constraints
+    MAX_FRAMES_PER_VIDEO = 8 # Default 8 sampled frames per video for GTX 1650 4GB GPU
     
     # Training Hyperparameters
-    BATCH_SIZE = 16
+    BATCH_SIZE = 4           # Conservative batch size suitable for GTX 1650 4GB GPU
     LEARNING_RATE = 1e-4
     BACKBONE_LR = 1e-5
     HEAD_LR = 1e-3
@@ -51,7 +51,7 @@ class PipelineConfig:
     VAL_SPLIT = 0.2
     
     # Class Imbalance Strategies: 'standard', 'weighted_loss', 'sampler', 'both'
-    IMBALANCE_STRATEGY = 'standard'
+    IMBALANCE_STRATEGY = 'weighted_loss'
     
     # Temporal aggregation strategy: 'lstm' or 'mean'
     TEMPORAL_POOLING = 'lstm'
@@ -73,6 +73,18 @@ class PipelineConfig:
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
     @classmethod
+    def update_config(cls, batch_size: int = None, epochs: int = None, lr: float = None, strategy: str = None):
+        """Updates runtime configuration settings with explicit values from CLI or checkpoint."""
+        if batch_size is not None:
+            cls.BATCH_SIZE = batch_size
+        if epochs is not None:
+            cls.EPOCHS = epochs
+        if lr is not None:
+            cls.LEARNING_RATE = lr
+        if strategy is not None:
+            cls.IMBALANCE_STRATEGY = strategy
+
+    @classmethod
     def get_summary(cls) -> str:
         """Returns a string summary of the configuration for logging."""
         return (
@@ -87,3 +99,4 @@ class PipelineConfig:
             f"Dataset Root path: {cls.SATYADRISHTI_DATASET_ROOT}\n"
             f"-----------------------------"
         )
+

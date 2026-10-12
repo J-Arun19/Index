@@ -2,111 +2,104 @@ import os
 import cv2
 import numpy as np
 from backend.utils.logger import setup_logger
+from backend.forensics.forensic_analyzers import ForensicEvidenceSuite
 
 logger = setup_logger("ArtifactConsistencyAgent")
 
 class ArtifactConsistencyAgent:
-    def analyze(self, file_path: str = None, media_type: str = "image", img_array: np.ndarray = None) -> dict:
+    def __init__(self):
+        self.suite = ForensicEvidenceSuite()
+
+    def analyze(self, file_path: str = None, media_type: str = "image", img_array: np.ndarray = None, face_bbox = None) -> dict:
         """
-        Analyzes file or in-memory image array to detect anomalies, double compression, 
-        or edge artifacts. Produces a normalized anomaly_score between 0.0 and 1.0.
+        Analyzes file or in-memory image array using real forensic algorithms:
+        - 2D FFT spectral roll-off & grid artifact detection
+        - Error Level Analysis (ELA) compression consistency
+        - Laplacian gradient transition analysis
+        Produces verifiable anomaly_score between 0.0 and 1.0. Zero fabricated metrics.
         """
         if img_array is None:
             if not file_path or not os.path.exists(file_path):
                 raise FileNotFoundError(f"File not found: {file_path}")
 
-        anomaly_score = 0.20 # default low baseline
+        anomaly_score = 0.15
         detected_artifacts = []
-        
-        # Analyze based on media type
+        forensic_eval = {}
+
         if media_type == "image":
             try:
                 img = img_array if img_array is not None else cv2.imread(file_path)
                 if img is not None:
-                    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-                    # Laplacian variance helps detect blur/double filtering or boundary smoothing
-                    lap_var = cv2.Laplacian(gray, cv2.CV_64F).var()
-                    
-                    # We also analyze JPEG blockiness by taking high-frequency components
-                    # Let's inspect block-level standard deviations as a proxy for JPEG grid artifacts
-                    h, w = gray.shape
-                    if h >= 16 and w >= 16:
-                        # Sample some 8x8 grids
-                        blocks = []
-                        for r in range(0, min(h - 8, 80), 8):
-                            for c in range(0, min(w - 8, 80), 8):
-                                block = gray[r:r+8, c:c+8]
-                                blocks.append(np.std(block))
-                        mean_block_std = np.mean(blocks) if blocks else 10.0
-                        if mean_block_std < 5.0:
-                            detected_artifacts.append("Low local variance indicating potential smoothing/airbrushing")
-                            anomaly_score += 0.15
-                        elif mean_block_std > 50.0:
-                            detected_artifacts.append("High local variance suggesting double compression grid noise")
-                            anomaly_score += 0.10
-                    
-                    # Add deterministic content variation
-                    seed = sum(ord(c) for c in os.path.basename(file_path))
-                    val = (seed % 100) / 300.0  # adds up to 0.33 based on filename seed
-                    anomaly_score = min(0.95, max(0.05, anomaly_score + val))
+                    forensic_eval = self.suite.evaluate(img, face_bbox=face_bbox)
+                    anomaly_score = forensic_eval.get("composite_forensic_score", 0.15)
+                    detected_artifacts = forensic_eval.get("evidence_items", [])
             except Exception as e:
-                logger.warning(f"Failed to analyze image pixel artifacts: {e}")
-                
+                logger.warning(f"Failed to analyze image forensic artifacts: {e}")
+
         elif media_type == "video":
+            cap = None
             try:
                 cap = cv2.VideoCapture(file_path)
                 if cap.isOpened():
                     frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-                    # Sample up to 5 frame differences to calculate temporal jitter
                     diffs = []
                     prev_gray = None
-                    sampled = 0
-                    for idx in range(0, min(frame_count, 20), 4):
-                        cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+                    sampled_frames = []
+
+                    # Sample evenly across video
+                    num_samples = min(10, max(3, frame_count))
+                    indices = np.linspace(0, max(0, frame_count - 1), num_samples, dtype=int)
+
+                    for idx in indices:
+                        cap.set(cv2.CAP_PROP_POS_FRAMES, int(idx))
                         ret, frame = cap.read()
                         if not ret or frame is None:
                             continue
                         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                        gray_resized = cv2.resize(gray, (100, 100)) # small size for fast computation
+                        gray_resized = cv2.resize(gray, (128, 128))
                         if prev_gray is not None:
                             diff = cv2.absdiff(gray_resized, prev_gray)
-                            diffs.append(np.mean(diff))
+                            diffs.append(float(np.mean(diff)))
                         prev_gray = gray_resized
-                        sampled += 1
-                    cap.release()
-                    
+                        if len(sampled_frames) < 3:
+                            sampled_frames.append(frame)
+                    # Run FFT/ELA on key sampled frame
+                    if sampled_frames:
+                        forensic_eval = self.suite.evaluate(sampled_frames[0])
+                        detected_artifacts.extend(forensic_eval.get("evidence_items", []))
+                        anomaly_score = forensic_eval.get("composite_forensic_score", 0.15)
+
                     if diffs:
-                        mean_diff = np.mean(diffs)
-                        std_diff = np.std(diffs)
-                        # High standard deviation of differences suggests sudden temporal flickering or frame drops
-                        if std_diff > 8.0:
-                            detected_artifacts.append("High temporal frame-difference variance suggesting blending jitter")
-                            anomaly_score += 0.25
-                        elif mean_diff < 0.5:
-                            detected_artifacts.append("Static temporal flow with frozen background/face region")
-                            anomaly_score += 0.10
-                    
-                    seed = sum(ord(c) for c in os.path.basename(file_path))
-                    val = (seed % 100) / 300.0
-                    anomaly_score = min(0.95, max(0.05, anomaly_score + val))
+                        mean_diff = float(np.mean(diffs))
+                        std_diff = float(np.std(diffs))
+                        if std_diff > 12.0:
+                            detected_artifacts.append(f"Temporal jitter anomaly: Frame-difference variance {std_diff:.1f} signals temporal flicker.")
+                            anomaly_score = min(1.0, anomaly_score + 0.25)
+                        elif mean_diff < 0.3:
+                            detected_artifacts.append("Static temporal flow: Identical consecutive frames detected.")
+                            anomaly_score = min(1.0, anomaly_score + 0.10)
             except Exception as e:
                 logger.warning(f"Failed to analyze video temporal artifacts: {e}")
+            finally:
+                if cap is not None:
+                    try:
+                        cap.release()
+                    except Exception:
+                        pass
 
-        # Assign verdict based on anomaly score threshold
-        # Anomaly score > 0.5 suggests potential tampering, but is not absolute proof.
-        verdict = "DEEPFAKE" if anomaly_score > 0.5 else "REAL"
+        verdict = "DEEPFAKE" if anomaly_score > 0.45 else "REAL"
 
-        # Formulate summary
         if verdict == "DEEPFAKE":
-            summary = f"Pixel/frame consistency analysis flagged abnormal artifacts (anomaly score: {round(anomaly_score, 2)}). Note: compression noise alone is insufficient evidence of manipulation."
+            summary = f"Forensic consistency analysis flagged abnormal artifacts (anomaly score: {round(anomaly_score, 2)}). Detailed: {'; '.join(detected_artifacts[:2]) if detected_artifacts else 'Frequency/compression irregularities detected.'}"
         else:
-            summary = f"Pixel/frame consistency is within normal bounds (anomaly score: {round(anomaly_score, 2)})."
+            summary = f"Forensic consistency within normal bounds (anomaly score: {round(anomaly_score, 2)}). Sensor noise and compression are consistent."
 
         return {
             "status": "Success",
             "anomaly_score": round(anomaly_score, 4),
             "verdict": verdict,
             "detected_artifacts": detected_artifacts,
+            "forensic_details": forensic_eval,
             "summary": summary
         }
+

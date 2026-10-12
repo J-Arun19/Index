@@ -113,12 +113,31 @@ class ReportGenerator:
         story.append(Spacer(1, 20))
 
         # Verdict Summary Banner
-        banner_color = colors.HexColor('#fef2f2') if verdict == "DEEPFAKE" else colors.HexColor('#ecfdf5')
-        text_color = colors.HexColor('#991b1b') if verdict == "DEEPFAKE" else colors.HexColor('#065f46')
-        border_color = colors.HexColor('#f43f5e') if verdict == "DEEPFAKE" else colors.HexColor('#10b981')
-        verdict_str = f"<b>VERDICT: {verdict}</b>"
-        conf_str = f"<b>Confidence: {conf_score}% ({conf_level} Confidence)</b>"
-        
+        if verdict in ("NOT_SUITABLE", "UNSUPPORTED MEDIA"):
+            banner_color = colors.HexColor('#f8fafc')
+            text_color = colors.HexColor('#334155')
+            border_color = colors.HexColor('#94a3b8')
+            verdict_str = "<b>VERDICT: NOT SUITABLE FOR FACE ANALYSIS</b>"
+            conf_str = "<b>Status: Ineligible (No Face Detected)</b>"
+        elif verdict in ("DEEPFAKE", "FAKE"):
+            banner_color = colors.HexColor('#fef2f2')
+            text_color = colors.HexColor('#991b1b')
+            border_color = colors.HexColor('#f43f5e')
+            verdict_str = f"<b>VERDICT: {verdict}</b>"
+            conf_str = f"<b>Confidence: {conf_score}% ({conf_level} Confidence)</b>"
+        elif verdict == "UNCERTAIN":
+            banner_color = colors.HexColor('#fffbeb')
+            text_color = colors.HexColor('#92400e')
+            border_color = colors.HexColor('#f59e0b')
+            verdict_str = f"<b>VERDICT: {verdict}</b>"
+            conf_str = f"<b>Confidence: {conf_score}% ({conf_level} Confidence)</b>"
+        else:
+            banner_color = colors.HexColor('#ecfdf5')
+            text_color = colors.HexColor('#065f46')
+            border_color = colors.HexColor('#10b981')
+            verdict_str = f"<b>VERDICT: {verdict}</b>"
+            conf_str = f"<b>Confidence: {conf_score}% ({conf_level} Confidence)</b>"
+
         banner_data = [
             [Paragraph(verdict_str, ParagraphStyle('BVerdict', parent=body_style, fontSize=14, textColor=text_color, fontName='Helvetica-Bold')),
              Paragraph(conf_str, ParagraphStyle('BConf', parent=body_style, fontSize=12, textColor=colors.HexColor('#475569'), alignment=2))]
@@ -147,7 +166,10 @@ class ReportGenerator:
         story.append(Spacer(1, 10))
 
         story.append(Paragraph("3. Consensus & Fusion Decision", h2_style))
-        fusion_summary = f"The specialized {media_type.lower()} analysis agent and confidence evaluation agent reached consensus. Classification decision yielded a final verdict of <b>{verdict}</b> with a score of <b>{conf_score}%</b>."
+        if verdict == "NOT_SUITABLE":
+            fusion_summary = "Media suitability verification determined that the uploaded content does not contain a detectable human face. Authenticity analysis was not performed as the deepfake detector requires facial features."
+        else:
+            fusion_summary = f"The specialized {media_type.lower()} analysis agent and confidence evaluation agent reached consensus. Classification decision yielded a final verdict of <b>{verdict}</b> with a score of <b>{conf_score}%</b>."
         story.append(Paragraph(fusion_summary, body_style))
         story.append(Spacer(1, 15))
 

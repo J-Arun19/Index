@@ -55,6 +55,10 @@ class VideoModel(nn.Module):
             # For mean pooling, we take the average of frame features (512-dim) across temporal dimension,
             # and map it directly to classes using a linear head.
             self.fc = nn.Linear(self.feature_dim, num_classes)
+        elif self.temporal_pooling == "max":
+            # For max pooling, we take the max of frame features (512-dim) across temporal dimension,
+            # and map it directly to classes using a linear head.
+            self.fc = nn.Linear(self.feature_dim, num_classes)
         else:
             raise ValueError(f"Unknown temporal_pooling strategy: {temporal_pooling}")
             
@@ -90,6 +94,9 @@ class VideoModel(nn.Module):
         elif self.temporal_pooling == "mean":
             # Mean temporal pooling across frames: (batch_size, 512)
             temporal_out = torch.mean(features, dim=1)
+        elif self.temporal_pooling == "max":
+            # Max temporal pooling across frames: (batch_size, 512)
+            temporal_out = torch.max(features, dim=1)[0]
             
         # Final logits: (batch_size, 2)
         logits = self.fc(temporal_out)

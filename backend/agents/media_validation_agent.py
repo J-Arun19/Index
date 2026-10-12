@@ -57,28 +57,20 @@ class MediaValidationAgent:
 
         # 3. Magic number & Signature check
         try:
-            from backend.core.validator import guess_mime_and_ext
-            mime, ext = guess_mime_and_ext(file_path)
+            from backend.core.validator import detect_media_type
+            detected_type, mime, ext = detect_media_type(file_path)
 
-            if mime is None:
+            if mime is None or detected_type is None:
                 result["valid"] = False
-                result["errors"].append("Could not determine file type from magic number signature")
+                result["errors"].append("Could not determine file type from magic number signature or unsupported format")
                 result["summary"] = "Media validation failed."
                 return result
 
-            is_image = mime.startswith('image/')
-            is_video = mime.startswith('video/')
-
-            if not (is_image or is_video):
-                result["valid"] = False
-                result["errors"].append(f"Unsupported media category. Detected mime: {mime}")
-                result["summary"] = "Media validation failed."
-                return result
-
-            detected_type = "image" if is_image else "video"
+            is_image = detected_type == "image"
+            is_video = detected_type == "video"
             result["media_type"] = detected_type
 
-            # Check if signature matches expected media type
+            # Check if signature matches expected media type (if explicitly provided)
             if expected_media_type:
                 expected_clean = expected_media_type.lower()
                 if detected_type != expected_clean:
@@ -154,54 +146,59 @@ class MediaValidationAgent:
                 result["errors"].append(f"Image decoding exception: {str(e)}")
 
         elif detected_type == "video":
+            cap = None
             try:
-                cap = cv2.VideoCapture(file_path)
-                if not cap.isOpened():
-                    result["errors"].append("OpenCV VideoCapture failed to open video file")
-                else:
-                    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-                    fps = float(cap.get(cv2.CAP_PROP_FPS))
-                    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
-                    if frame_count <= 0:
-                        result["errors"].append(f"Video has invalid frame count: {frame_count}")
-                    if fps <= 0:
-                        result["errors"].append(f"Video has invalid FPS: {fps}")
-                    if width <= 0 or height <= 0:
-                        result["errors"].append(f"Video has invalid dimensions: {width}x{height}")
-
-                    if not result["errors"]:
-                        result["checks"]["dimensions_valid"] = True
-
-                    # Try to decode multiple frames distributed across the video
-                    readable_frames = 0
-                    sample_indices = []
-                    if frame_count > 0:
-                        num_samples = min(5, frame_count)
-                        if num_samples > 1:
-                            sample_indices = np.linspace(0, frame_count - 1, num_samples, dtype=int).tolist()
-                        else:
-                            sample_indices = [0]
-
-                    decoded_at_least_one = False
-                    for idx in sample_indices:
-                        cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
-                        ret, frame = cap.read()
-                        if ret and frame is not None and frame.size > 0:
-                            readable_frames += 1
-                            decoded_at_least_one = True
-
-                    cap.release()
-
-                    if decoded_at_least_one:
-                        result["checks"]["decodable"] = True
-                        if readable_frames < len(sample_indices):
-                            result["warnings"].append(f"Only {readable_frames}/{len(sample_indices)} sampled frames could be decoded.")
-                        result["checks"]["frame_validation"] = True
+                try:
+                    cap = cv2.VideoCapture(file_path)
+                    if not cap.isOpened():
+                        result["errors"].append("OpenCV VideoCapture failed to open video file")
                     else:
-                        result["errors"].append("Video contains no readable frames or is corrupted")
+                        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                        fps = float(cap.get(cv2.CAP_PROP_FPS))
+                        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
+                        if frame_count <= 0:
+                            result["errors"].append(f"Video has invalid frame count: {frame_count}")
+                        if fps <= 0:
+                            result["errors"].append(f"Video has invalid FPS: {fps}")
+                        if width <= 0 or height <= 0:
+                            result["errors"].append(f"Video has invalid dimensions: {width}x{height}")
+
+                        if not result["errors"]:
+                            result["checks"]["dimensions_valid"] = True
+
+                        # Try to decode multiple frames distributed across the video
+                        readable_frames = 0
+                        sample_indices = []
+                        if frame_count > 0:
+                            num_samples = min(5, frame_count)
+                            if num_samples > 1:
+                                sample_indices = np.linspace(0, frame_count - 1, num_samples, dtype=int).tolist()
+                            else:
+                                sample_indices = [0]
+
+                        decoded_at_least_one = False
+                        for idx in sample_indices:
+                            cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+                            ret, frame = cap.read()
+                            if ret and frame is not None and frame.size > 0:
+                                readable_frames += 1
+                                decoded_at_least_one = True
+
+                        if decoded_at_least_one:
+                            result["checks"]["decodable"] = True
+                            if readable_frames < len(sample_indices):
+                                result["warnings"].append(f"Only {readable_frames}/{len(sample_indices)} sampled frames could be decoded.")
+                            result["checks"]["frame_validation"] = True
+                        else:
+                            result["errors"].append("Video contains no readable frames or is corrupted")
+                finally:
+                    if cap is not None:
+                        try:
+                            cap.release()
+                        except Exception:
+                            pass
             except Exception as e:
                 result["errors"].append(f"Video decoding exception: {str(e)}")
 

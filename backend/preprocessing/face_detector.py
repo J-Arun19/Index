@@ -1,7 +1,15 @@
+import os
 import cv2
 import numpy as np
 from typing import List, Tuple
 from backend.utils.logger import setup_logger
+
+# Explicitly disable OpenCV OpenCL to enforce CPU-only execution and prevent CL_OUT_OF_RESOURCES errors
+cv2.ocl.setUseOpenCL(False)
+os.environ["OPENCV_OPENCL_RUNTIME"] = "disabled"
+os.environ["OPENCV_FFMPEG_LOGLEVEL"] = "-8"
+if hasattr(cv2, "setLogLevel"):
+    cv2.setLogLevel(cv2.LOG_LEVEL_ERROR)
 
 logger = setup_logger("FaceDetector")
 
@@ -9,14 +17,39 @@ class FaceDetector:
     """Uses OpenCV's Haar Cascade classifier to locate and crop faces in images/frames."""
     
     def __init__(self):
-        # Load the default frontal face cascade from OpenCV
-        cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-        self.face_cascade = cv2.CascadeClassifier(cascade_path)
-        
-        if self.face_cascade.empty():
-            logger.error(f"Failed to load Haar Cascade from path: {cascade_path}")
-        else:
-            logger.info("Successfully loaded Haar Cascade Face Detector.")
+        # Enforce CPU execution path in OpenCV for Haar face detection
+        cv2.ocl.setUseOpenCL(False)
+        assert cv2.ocl.useOpenCL() == False, "Failed to disable OpenCV OpenCL execution path!"
+        self._face_cascade = None
+
+    @property
+    def face_cascade(self):
+        if getattr(self, '_face_cascade', None) is None:
+            cv2.ocl.setUseOpenCL(False)
+            if hasattr(cv2, "CascadeClassifier") and hasattr(cv2, "data") and hasattr(cv2.data, "haarcascades"):
+                try:
+                    cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+                    self._face_cascade = cv2.CascadeClassifier(cascade_path)
+                    if self._face_cascade.empty():
+                        logger.error(f"Failed to load Haar Cascade from path: {cascade_path}")
+                        self._face_cascade = False
+                    else:
+                        logger.info(f"Successfully loaded Haar Cascade Face Detector (CPU-only, OpenCL enabled: {cv2.ocl.useOpenCL()}).")
+                except Exception as e:
+                    logger.warning(f"Failed to initialize Haar Cascade: {e}")
+                    self._face_cascade = False
+            else:
+                self._face_cascade = False
+        return self._face_cascade if self._face_cascade is not False else None
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['_face_cascade'] = None
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._face_cascade = None
 
     def detect_faces(self, image: np.ndarray) -> List[Tuple[int, int, int, int]]:
         """
@@ -30,6 +63,9 @@ class FaceDetector:
         """
         if image is None:
             logger.warning("Empty image provided to face detection.")
+            return []
+
+        if self.face_cascade is None:
             return []
             
         try:

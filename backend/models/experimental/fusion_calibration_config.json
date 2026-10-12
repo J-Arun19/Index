@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-10-12T10:11:39Z",
+  "fitted_on": "validation_split_only",
+  "validation_manifest": "research/experimental_fusion/datasets/validation_manifest_v2.json",
+  "sample_count": 60,
+  "sbi": {
+    "model": "SBI EfficientNet-B4 (FFc23.tar)",
+    "temperature": 2.7676,
+    "validation_ece_before": 0.9833,
+    "validation_ece_after": 1.0
+  },
+  "xception": {
+    "model": "DeepfakeBench Xception (xception_best.pth)",
+    "temperature": 2.421,
+    "validation_ece_before": 1.0,
+    "validation_ece_after": 1.0
+  },
+  "decision_thresholds": {
+    "tau_real": 0.35,
+    "tau_fake": 0.65,
+    "min_confidence": 60.0,
+    "abstention_strategy": "conservative_disagreement_to_uncertain"
+  },
+  "provenance_notes": "Temperatures T_sbi and T_xcep were independently optimized strictly on the validation split (val.json + non-test Celeb-DF) by minimizing binary negative log-likelihood. Locked test split was strictly excluded from calibration."
+}

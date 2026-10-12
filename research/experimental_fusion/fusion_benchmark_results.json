@@ -1,0 +1,4226 @@
+{
+  "timestamp": "2026-10-12T09:36:17Z",
+  "architecture": {
+    "model_1": "SBI EfficientNet-B4 (Yamasaki Lab checkpoint FFc23.tar)",
+    "model_2": "DeepfakeBench Xception (xception_best.pth)",
+    "baseline": "Production ResNet-18 (image_model.pth) & ResNet-18 + LSTM (video_model.pth)",
+    "fusion_method": "Calibrated Confidence-Weighted Fusion with Conservative Disagreement Abstention",
+    "calibration_temperature": 1.885,
+    "tau_real": 0.35,
+    "tau_fake": 0.65,
+    "min_confidence": 60.0
+  },
+  "still_images": {
+    "total_evaluated": 55,
+    "facial_evaluated": 53,
+    "non_face_edge_cases": 2,
+    "models": {
+      "sbi": {
+        "forced_binary": {
+          "confusion_matrix": {
+            "tp": 21,
+            "fn": 8,
+            "tn": 15,
+            "fp": 9
+          },
+          "accuracy": 0.6792,
+          "precision": 0.7,
+          "recall_tpr": 0.7241,
+          "specificity_tnr": 0.625,
+          "false_positive_rate": 0.375,
+          "false_negative_rate": 0.2759,
+          "f1_score": 0.7119,
+          "macro_f1": 0.6751,
+          "total_samples": 53
+        },
+        "safety_gated_3state": {
+          "real_samples": {
+            "total": 24,
+            "likely_real_tn": 7,
+            "uncertain_abstained": 16,
+            "fake_fp": 1,
+            "false_positive_rate_3state": 0.0417
+          },
+          "fake_samples": {
+            "total": 29,
+            "fake_tp": 17,
+            "uncertain_abstained": 10,
+            "likely_real_fn": 2,
+            "false_negative_rate_3state": 0.069
+          },
+          "abstention_rate_overall": 0.4906,
+          "real_abstention_rate": 0.6667,
+          "fake_abstention_rate": 0.3448,
+          "not_suitable_count": 0
+        },
+        "latency": {
+          "mean_seconds": 0.5192,
+          "median_seconds": 0.3683,
+          "min_seconds": 0.0329,
+          "max_seconds": 2.1382
+        }
+      },
+      "xcep": {
+        "forced_binary": {
+          "confusion_matrix": {
+            "tp": 28,
+            "fn": 1,
+            "tn": 4,
+            "fp": 20
+          },
+          "accuracy": 0.6038,
+          "precision": 0.5833,
+          "recall_tpr": 0.9655,
+          "specificity_tnr": 0.1667,
+          "false_positive_rate": 0.8333,
+          "false_negative_rate": 0.0345,
+          "f1_score": 0.7273,
+          "macro_f1": 0.5016,
+          "total_samples": 53
+        },
+        "safety_gated_3state": {
+          "real_samples": {
+            "total": 24,
+            "likely_real_tn": 1,
+            "uncertain_abstained": 18,
+            "fake_fp": 5,
+            "false_positive_rate_3state": 0.2083
+          },
+          "fake_samples": {
+            "total": 29,
+            "fake_tp": 21,
+            "uncertain_abstained": 8,
+            "likely_real_fn": 0,
+            "false_negative_rate_3state": 0.0
+          },
+          "abstention_rate_overall": 0.4906,
+          "real_abstention_rate": 0.75,
+          "fake_abstention_rate": 0.2759,
+          "not_suitable_count": 0
+        },
+        "latency": {
+          "mean_seconds": 0.3189,
+          "median_seconds": 0.2555,
+          "min_seconds": 0.0136,
+          "max_seconds": 1.3164
+        }
+      },
+      "prod": {
+        "forced_binary": {
+          "confusion_matrix": {
+            "tp": 0,
+            "fn": 29,
+            "tn": 19,
+            "fp": 5
+          },
+          "accuracy": 0.3585,
+          "precision": 0.0,
+          "recall_tpr": 0.0,
+          "specificity_tnr": 0.7917,
+          "false_positive_rate": 0.2083,
+          "false_negative_rate": 1.0,
+          "f1_score": 0.0,
+          "macro_f1": 0.2639,
+          "total_samples": 53
+        },
+        "safety_gated_3state": {
+          "real_samples": {
+            "total": 24,
+            "likely_real_tn": 7,
+            "uncertain_abstained": 17,
+            "fake_fp": 0,
+            "false_positive_rate_3state": 0.0
+          },
+          "fake_samples": {
+            "total": 29,
+            "fake_tp": 0,
+            "uncertain_abstained": 20,
+            "likely_real_fn": 9,
+            "false_negative_rate_3state": 0.3103
+          },
+          "abstention_rate_overall": 0.6981,
+          "real_abstention_rate": 0.7083,
+          "fake_abstention_rate": 0.6897,
+          "not_suitable_count": 0
+        },
+        "latency": {
+          "mean_seconds": 0.9366,
+          "median_seconds": 0.3558,
+          "min_seconds": 0.035,
+          "max_seconds": 6.9926
+        }
+      },
+      "fusion": {
+        "forced_binary": {
+          "confusion_matrix": {
+            "tp": 26,
+            "fn": 3,
+            "tn": 14,
+            "fp": 10
+          },
+          "accuracy": 0.7547,
+          "precision": 0.7222,
+          "recall_tpr": 0.8966,
+          "specificity_tnr": 0.5833,
+          "false_positive_rate": 0.4167,
+          "false_negative_rate": 0.1034,
+          "f1_score": 0.8,
+          "macro_f1": 0.7415,
+          "total_samples": 53
+        },
+        "safety_gated_3state": {
+          "real_samples": {
+            "total": 24,
+            "likely_real_tn": 10,
+            "uncertain_abstained": 12,
+            "fake_fp": 2,
+            "false_positive_rate_3state": 0.0833
+          },
+          "fake_samples": {
+            "total": 29,
+            "fake_tp": 24,
+            "uncertain_abstained": 3,
+            "likely_real_fn": 2,
+            "false_negative_rate_3state": 0.069
+          },
+          "abstention_rate_overall": 0.283,
+          "real_abstention_rate": 0.5,
+          "fake_abstention_rate": 0.1034,
+          "not_suitable_count": 0
+        },
+        "latency": {
+          "mean_seconds": 0.8431,
+          "median_seconds": 0.6715,
+          "min_seconds": 0.0515,
+          "max_seconds": 3.4546
+        }
+      }
+    },
+    "deduplicated_metrics": {
+      "sbi": {
+        "forced_binary": {
+          "confusion_matrix": {
+            "tp": 21,
+            "fn": 8,
+            "tn": 14,
+            "fp": 9
+          },
+          "accuracy": 0.6731,
+          "precision": 0.7,
+          "recall_tpr": 0.7241,
+          "specificity_tnr": 0.6087,
+          "false_positive_rate": 0.3913,
+          "false_negative_rate": 0.2759,
+          "f1_score": 0.7119,
+          "macro_f1": 0.667,
+          "total_samples": 52
+        },
+        "safety_gated_3state": {
+          "real_samples": {
+            "total": 23,
+            "likely_real_tn": 6,
+            "uncertain_abstained": 16,
+            "fake_fp": 1,
+            "false_positive_rate_3state": 0.0435
+          },
+          "fake_samples": {
+            "total": 29,
+            "fake_tp": 17,
+            "uncertain_abstained": 10,
+            "likely_real_fn": 2,
+            "false_negative_rate_3state": 0.069
+          },
+          "abstention_rate_overall": 0.5,
+          "real_abstention_rate": 0.6957,
+          "fake_abstention_rate": 0.3448,
+          "not_suitable_count": 0
+        }
+      },
+      "xcep": {
+        "forced_binary": {
+          "confusion_matrix": {
+            "tp": 28,
+            "fn": 1,
+            "tn": 4,
+            "fp": 19
+          },
+          "accuracy": 0.6154,
+          "precision": 0.5957,
+          "recall_tpr": 0.9655,
+          "specificity_tnr": 0.1739,
+          "false_positive_rate": 0.8261,
+          "false_negative_rate": 0.0345,
+          "f1_score": 0.7368,
+          "macro_f1": 0.5113,
+          "total_samples": 52
+        },
+        "safety_gated_3state": {
+          "real_samples": {
+            "total": 23,
+            "likely_real_tn": 1,
+            "uncertain_abstained": 18,
+            "fake_fp": 4,
+            "false_positive_rate_3state": 0.1739
+          },
+          "fake_samples": {
+            "total": 29,
+            "fake_tp": 21,
+            "uncertain_abstained": 8,
+            "likely_real_fn": 0,
+            "false_negative_rate_3state": 0.0
+          },
+          "abstention_rate_overall": 0.5,
+          "real_abstention_rate": 0.7826,
+          "fake_abstention_rate": 0.2759,
+          "not_suitable_count": 0
+        }
+      },
+      "prod": {
+        "forced_binary": {
+          "confusion_matrix": {
+            "tp": 0,
+            "fn": 29,
+            "tn": 18,
+            "fp": 5
+          },
+          "accuracy": 0.3462,
+          "precision": 0.0,
+          "recall_tpr": 0.0,
+          "specificity_tnr": 0.7826,
+          "false_positive_rate": 0.2174,
+          "false_negative_rate": 1.0,
+          "f1_score": 0.0,
+          "macro_f1": 0.2571,
+          "total_samples": 52
+        },
+        "safety_gated_3state": {
+          "real_samples": {
+            "total": 23,
+            "likely_real_tn": 6,
+            "uncertain_abstained": 17,
+            "fake_fp": 0,
+            "false_positive_rate_3state": 0.0
+          },
+          "fake_samples": {
+            "total": 29,
+            "fake_tp": 0,
+            "uncertain_abstained": 20,
+            "likely_real_fn": 9,
+            "false_negative_rate_3state": 0.3103
+          },
+          "abstention_rate_overall": 0.7115,
+          "real_abstention_rate": 0.7391,
+          "fake_abstention_rate": 0.6897,
+          "not_suitable_count": 0
+        }
+      },
+      "fusion": {
+        "forced_binary": {
+          "confusion_matrix": {
+            "tp": 26,
+            "fn": 3,
+            "tn": 13,
+            "fp": 10
+          },
+          "accuracy": 0.75,
+          "precision": 0.7222,
+          "recall_tpr": 0.8966,
+          "specificity_tnr": 0.5652,
+          "false_positive_rate": 0.4348,
+          "false_negative_rate": 0.1034,
+          "f1_score": 0.8,
+          "macro_f1": 0.7333,
+          "total_samples": 52
+        },
+        "safety_gated_3state": {
+          "real_samples": {
+            "total": 23,
+            "likely_real_tn": 10,
+            "uncertain_abstained": 11,
+            "fake_fp": 2,
+            "false_positive_rate_3state": 0.087
+          },
+          "fake_samples": {
+            "total": 29,
+            "fake_tp": 24,
+            "uncertain_abstained": 3,
+            "likely_real_fn": 2,
+            "false_negative_rate_3state": 0.069
+          },
+          "abstention_rate_overall": 0.2692,
+          "real_abstention_rate": 0.4783,
+          "fake_abstention_rate": 0.1034,
+          "not_suitable_count": 0
+        }
+      }
+    },
+    "duplicate_audit": {
+      "duplicate_hash_groups": 1,
+      "duplicates": {
+        "4c3e1c3789ccd396bbfaa53390bf259b": [
+          "inwild_profile.jpeg",
+          "inwild_HON1.jpg"
+        ]
+      }
+    },
+    "category_breakdown": {
+      "ai_generated_synthetic_face": {
+        "ground_truth": "FAKE",
+        "count": 1,
+        "sbi_forced_correct": 1,
+        "xcep_forced_correct": 0,
+        "prod_forced_correct": 0,
+        "fusion_forced_correct": 1,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 0,
+          "FAKE": 1,
+          "NOT_SUITABLE": 0
+        }
+      },
+      "degraded_lowlight_real": {
+        "ground_truth": "REAL",
+        "count": 1,
+        "sbi_forced_correct": 0,
+        "xcep_forced_correct": 0,
+        "prod_forced_correct": 0,
+        "fusion_forced_correct": 0,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 1,
+          "FAKE": 0,
+          "NOT_SUITABLE": 0
+        }
+      },
+      "face_swap_celebsynth": {
+        "ground_truth": "FAKE",
+        "count": 8,
+        "sbi_forced_correct": 8,
+        "xcep_forced_correct": 8,
+        "prod_forced_correct": 0,
+        "fusion_forced_correct": 8,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 0,
+          "FAKE": 8,
+          "NOT_SUITABLE": 0
+        }
+      },
+      "face_swap_ff_deepfakes": {
+        "ground_truth": "FAKE",
+        "count": 5,
+        "sbi_forced_correct": 4,
+        "xcep_forced_correct": 5,
+        "prod_forced_correct": 0,
+        "fusion_forced_correct": 5,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 1,
+          "FAKE": 4,
+          "NOT_SUITABLE": 0
+        }
+      },
+      "face_swap_ff_faceswap": {
+        "ground_truth": "FAKE",
+        "count": 5,
+        "sbi_forced_correct": 5,
+        "xcep_forced_correct": 5,
+        "prod_forced_correct": 0,
+        "fusion_forced_correct": 5,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 0,
+          "FAKE": 5,
+          "NOT_SUITABLE": 0
+        }
+      },
+      "genuine_portrait_celeb": {
+        "ground_truth": "REAL",
+        "count": 5,
+        "sbi_forced_correct": 3,
+        "xcep_forced_correct": 1,
+        "prod_forced_correct": 4,
+        "fusion_forced_correct": 3,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 2,
+          "UNCERTAIN": 3,
+          "FAKE": 0,
+          "NOT_SUITABLE": 0
+        }
+      },
+      "genuine_portrait_ff": {
+        "ground_truth": "REAL",
+        "count": 10,
+        "sbi_forced_correct": 7,
+        "xcep_forced_correct": 3,
+        "prod_forced_correct": 8,
+        "fusion_forced_correct": 6,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 6,
+          "UNCERTAIN": 4,
+          "FAKE": 0,
+          "NOT_SUITABLE": 0
+        }
+      },
+      "genuine_portrait_youtube": {
+        "ground_truth": "REAL",
+        "count": 5,
+        "sbi_forced_correct": 2,
+        "xcep_forced_correct": 0,
+        "prod_forced_correct": 4,
+        "fusion_forced_correct": 2,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 2,
+          "UNCERTAIN": 1,
+          "FAKE": 2,
+          "NOT_SUITABLE": 0
+        }
+      },
+      "in_the_wild_face_swap": {
+        "ground_truth": "FAKE",
+        "count": 1,
+        "sbi_forced_correct": 0,
+        "xcep_forced_correct": 1,
+        "prod_forced_correct": 0,
+        "fusion_forced_correct": 0,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 1,
+          "FAKE": 0,
+          "NOT_SUITABLE": 0
+        }
+      },
+      "in_the_wild_real_portrait": {
+        "ground_truth": "REAL",
+        "count": 3,
+        "sbi_forced_correct": 3,
+        "xcep_forced_correct": 0,
+        "prod_forced_correct": 3,
+        "fusion_forced_correct": 3,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 3,
+          "FAKE": 0,
+          "NOT_SUITABLE": 0
+        }
+      },
+      "non_face_document": {
+        "ground_truth": "NON-FACE",
+        "count": 1,
+        "sbi_forced_correct": 1,
+        "xcep_forced_correct": 1,
+        "prod_forced_correct": 1,
+        "fusion_forced_correct": 1,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 0,
+          "FAKE": 0,
+          "NOT_SUITABLE": 1
+        }
+      },
+      "non_face_graphic": {
+        "ground_truth": "NON-FACE",
+        "count": 1,
+        "sbi_forced_correct": 1,
+        "xcep_forced_correct": 1,
+        "prod_forced_correct": 1,
+        "fusion_forced_correct": 1,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 0,
+          "FAKE": 0,
+          "NOT_SUITABLE": 1
+        }
+      },
+      "reenactment_ff_face2face": {
+        "ground_truth": "FAKE",
+        "count": 5,
+        "sbi_forced_correct": 2,
+        "xcep_forced_correct": 5,
+        "prod_forced_correct": 0,
+        "fusion_forced_correct": 4,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 1,
+          "UNCERTAIN": 1,
+          "FAKE": 3,
+          "NOT_SUITABLE": 0
+        }
+      },
+      "reenactment_ff_neuraltextures": {
+        "ground_truth": "FAKE",
+        "count": 4,
+        "sbi_forced_correct": 1,
+        "xcep_forced_correct": 4,
+        "prod_forced_correct": 0,
+        "fusion_forced_correct": 3,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 1,
+          "UNCERTAIN": 0,
+          "FAKE": 3,
+          "NOT_SUITABLE": 0
+        }
+      }
+    },
+    "per_image_results": [
+      {
+        "index": 1,
+        "filename": "real_celeb_portrait_00.jpg",
+        "category": "genuine_portrait_celeb",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.7568,
+          "cal": 0.6462,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 1.0367
+        },
+        "xcep": {
+          "raw": 0.7154,
+          "cal": 0.6199,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.5502
+        },
+        "prod": {
+          "raw": 0.082,
+          "cal": 0.2173,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.4798
+        },
+        "fusion": {
+          "calibrated_prob": 0.6343,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 63.43,
+          "reason": "Calibrated probability (0.63) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 1.5919
+        }
+      },
+      {
+        "index": 2,
+        "filename": "real_celeb_portrait_01.jpg",
+        "category": "genuine_portrait_celeb",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.0673,
+          "cal": 0.1987,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.1782
+        },
+        "xcep": {
+          "raw": 0.4307,
+          "cal": 0.4631,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.1397
+        },
+        "prod": {
+          "raw": 0.2072,
+          "cal": 0.3292,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.109
+        },
+        "fusion": {
+          "calibrated_prob": 0.2275,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 77.25,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 0.3229
+        }
+      },
+      {
+        "index": 3,
+        "filename": "real_celeb_portrait_02.jpg",
+        "category": "genuine_portrait_celeb",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.0054,
+          "cal": 0.0591,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.2678
+        },
+        "xcep": {
+          "raw": 0.5713,
+          "cal": 0.538,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1144
+        },
+        "prod": {
+          "raw": 0.1373,
+          "cal": 0.2739,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.0845
+        },
+        "fusion": {
+          "calibrated_prob": 0.0971,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 90.29,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 0.3872
+        }
+      },
+      {
+        "index": 4,
+        "filename": "real_celeb_portrait_03.jpg",
+        "category": "genuine_portrait_celeb",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.2313,
+          "cal": 0.3459,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.159
+        },
+        "xcep": {
+          "raw": 0.752,
+          "cal": 0.643,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1281
+        },
+        "prod": {
+          "raw": 0.3339,
+          "cal": 0.4094,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.1355
+        },
+        "fusion": {
+          "calibrated_prob": 0.4889,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "REAL",
+          "confidence": 51.11,
+          "reason": "Calibrated probability (0.49) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 0.2921
+        }
+      },
+      {
+        "index": 5,
+        "filename": "real_celeb_portrait_04.jpg",
+        "category": "genuine_portrait_celeb",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1025
+        },
+        "xcep": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.0846
+        },
+        "prod": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.0857
+        },
+        "fusion": {
+          "calibrated_prob": 0.5,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 50.0,
+          "reason": "Calibrated probability (0.50) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 0.1921
+        }
+      },
+      {
+        "index": 6,
+        "filename": "real_youtube_portrait_00.jpg",
+        "category": "genuine_portrait_youtube",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.5833,
+          "cal": 0.5445,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1214
+        },
+        "xcep": {
+          "raw": 0.8623,
+          "cal": 0.7258,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.1337
+        },
+        "prod": {
+          "raw": 0.2038,
+          "cal": 0.3267,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.1053
+        },
+        "fusion": {
+          "calibrated_prob": 0.6959,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 69.59,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.70).",
+          "latency_sec": 0.2601
+        }
+      },
+      {
+        "index": 7,
+        "filename": "real_youtube_portrait_01.jpg",
+        "category": "genuine_portrait_youtube",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.0837
+        },
+        "xcep": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.0702
+        },
+        "prod": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.0729
+        },
+        "fusion": {
+          "calibrated_prob": 0.5,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 50.0,
+          "reason": "Calibrated probability (0.50) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 0.1589
+        }
+      },
+      {
+        "index": 8,
+        "filename": "real_youtube_portrait_02.jpg",
+        "category": "genuine_portrait_youtube",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.8492,
+          "cal": 0.7144,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.1583
+        },
+        "xcep": {
+          "raw": 0.7701,
+          "cal": 0.6551,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.0965
+        },
+        "prod": {
+          "raw": 0.0272,
+          "cal": 0.1305,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.111
+        },
+        "fusion": {
+          "calibrated_prob": 0.6895,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 68.95,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.69).",
+          "latency_sec": 0.2598
+        }
+      },
+      {
+        "index": 9,
+        "filename": "real_youtube_portrait_03.jpg",
+        "category": "genuine_portrait_youtube",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.0525,
+          "cal": 0.1773,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.1305
+        },
+        "xcep": {
+          "raw": 0.5727,
+          "cal": 0.5388,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1071
+        },
+        "prod": {
+          "raw": 0.0309,
+          "cal": 0.1385,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.1125
+        },
+        "fusion": {
+          "calibrated_prob": 0.2161,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 78.39,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 0.2426
+        }
+      },
+      {
+        "index": 10,
+        "filename": "real_youtube_portrait_04.jpg",
+        "category": "genuine_portrait_youtube",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.0362,
+          "cal": 0.1492,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.1706
+        },
+        "xcep": {
+          "raw": 0.6418,
+          "cal": 0.5767,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1518
+        },
+        "prod": {
+          "raw": 0.3365,
+          "cal": 0.4109,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.116
+        },
+        "fusion": {
+          "calibrated_prob": 0.2259,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 77.41,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 0.3274
+        }
+      },
+      {
+        "index": 11,
+        "filename": "real_ff_original_00.jpg",
+        "category": "genuine_portrait_ff",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.0011,
+          "cal": 0.0263,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.235
+        },
+        "xcep": {
+          "raw": 0.0819,
+          "cal": 0.2172,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.198
+        },
+        "prod": {
+          "raw": 0.2987,
+          "cal": 0.3887,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.1932
+        },
+        "fusion": {
+          "calibrated_prob": 0.0976,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 90.24,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 0.438
+        }
+      },
+      {
+        "index": 12,
+        "filename": "real_ff_original_01.jpg",
+        "category": "genuine_portrait_ff",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.0065,
+          "cal": 0.0649,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.2108
+        },
+        "xcep": {
+          "raw": 0.5943,
+          "cal": 0.5505,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1473
+        },
+        "prod": {
+          "raw": 0.0374,
+          "cal": 0.1514,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.2234
+        },
+        "fusion": {
+          "calibrated_prob": 0.1153,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 88.47,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 0.3631
+        }
+      },
+      {
+        "index": 13,
+        "filename": "real_ff_original_02.jpg",
+        "category": "genuine_portrait_ff",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.0108,
+          "cal": 0.0834,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.4233
+        },
+        "xcep": {
+          "raw": 0.0295,
+          "cal": 0.1355,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.3067
+        },
+        "prod": {
+          "raw": 0.0584,
+          "cal": 0.1862,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.4002
+        },
+        "fusion": {
+          "calibrated_prob": 0.1077,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 89.23,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 0.735
+        }
+      },
+      {
+        "index": 14,
+        "filename": "real_ff_original_03.jpg",
+        "category": "genuine_portrait_ff",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.1905,
+          "cal": 0.317,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.3683
+        },
+        "xcep": {
+          "raw": 0.5375,
+          "cal": 0.5199,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.2982
+        },
+        "prod": {
+          "raw": 0.128,
+          "cal": 0.2654,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.3558
+        },
+        "fusion": {
+          "calibrated_prob": 0.3369,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 66.31,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 0.6715
+        }
+      },
+      {
+        "index": 15,
+        "filename": "real_ff_original_04.jpg",
+        "category": "genuine_portrait_ff",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.6835,
+          "cal": 0.6007,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.2364
+        },
+        "xcep": {
+          "raw": 0.5848,
+          "cal": 0.5453,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.0595
+        },
+        "prod": {
+          "raw": 0.0473,
+          "cal": 0.169,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.2513
+        },
+        "fusion": {
+          "calibrated_prob": 0.5835,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 58.35,
+          "reason": "Calibrated probability (0.58) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 0.3009
+        }
+      },
+      {
+        "index": 16,
+        "filename": "real_ff_original_05.jpg",
+        "category": "genuine_portrait_ff",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.3684,
+          "cal": 0.429,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.4585
+        },
+        "xcep": {
+          "raw": 0.7954,
+          "cal": 0.6727,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.2551
+        },
+        "prod": {
+          "raw": 0.1202,
+          "cal": 0.258,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.3272
+        },
+        "fusion": {
+          "calibrated_prob": 0.6017,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 60.17,
+          "reason": "Calibrated probability (0.60) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 0.7186
+        }
+      },
+      {
+        "index": 17,
+        "filename": "real_ff_original_06.jpg",
+        "category": "genuine_portrait_ff",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.2303
+        },
+        "xcep": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1635
+        },
+        "prod": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1658
+        },
+        "fusion": {
+          "calibrated_prob": 0.5,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 50.0,
+          "reason": "Calibrated probability (0.50) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 0.3988
+        }
+      },
+      {
+        "index": 18,
+        "filename": "real_ff_original_07.jpg",
+        "category": "genuine_portrait_ff",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.0267,
+          "cal": 0.1292,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.4199
+        },
+        "xcep": {
+          "raw": 0.0677,
+          "cal": 0.1992,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.4154
+        },
+        "prod": {
+          "raw": 0.0817,
+          "cal": 0.2169,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.3671
+        },
+        "fusion": {
+          "calibrated_prob": 0.1606,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 83.94,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 0.8403
+        }
+      },
+      {
+        "index": 19,
+        "filename": "real_ff_original_08.jpg",
+        "category": "genuine_portrait_ff",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1413
+        },
+        "xcep": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1024
+        },
+        "prod": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1075
+        },
+        "fusion": {
+          "calibrated_prob": 0.5,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 50.0,
+          "reason": "Calibrated probability (0.50) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 0.2487
+        }
+      },
+      {
+        "index": 20,
+        "filename": "real_ff_original_09.jpg",
+        "category": "genuine_portrait_ff",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.0294,
+          "cal": 0.1353,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.4172
+        },
+        "xcep": {
+          "raw": 0.6588,
+          "cal": 0.5864,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.3174
+        },
+        "prod": {
+          "raw": 0.0295,
+          "cal": 0.1355,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.4985
+        },
+        "fusion": {
+          "calibrated_prob": 0.2217,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 77.83,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 0.7396
+        }
+      },
+      {
+        "index": 21,
+        "filename": "inwild_profile.jpeg",
+        "category": "in_the_wild_real_portrait",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.0733,
+          "cal": 0.2065,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.4064
+        },
+        "xcep": {
+          "raw": 0.8463,
+          "cal": 0.712,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.4585
+        },
+        "prod": {
+          "raw": 0.0698,
+          "cal": 0.2019,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.7715
+        },
+        "fusion": {
+          "calibrated_prob": 0.4185,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "REAL",
+          "confidence": 58.15,
+          "reason": "Abstained due to direct model disagreement: SBI indicates REAL while Xception indicates FAKE. Conservative safety policy enforces UNCERTAIN.",
+          "latency_sec": 0.8699
+        }
+      },
+      {
+        "index": 22,
+        "filename": "inwild_picture.jpeg",
+        "category": "in_the_wild_real_portrait",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.2951,
+          "cal": 0.3865,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.334
+        },
+        "xcep": {
+          "raw": 0.5256,
+          "cal": 0.5136,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1385
+        },
+        "prod": {
+          "raw": 0.0466,
+          "cal": 0.1677,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.1414
+        },
+        "fusion": {
+          "calibrated_prob": 0.4001,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "REAL",
+          "confidence": 59.99,
+          "reason": "Calibrated probability (0.40) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 0.4775
+        }
+      },
+      {
+        "index": 23,
+        "filename": "inwild_HON1.jpg",
+        "category": "in_the_wild_real_portrait",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.0733,
+          "cal": 0.2065,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.1322
+        },
+        "xcep": {
+          "raw": 0.8463,
+          "cal": 0.712,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.0897
+        },
+        "prod": {
+          "raw": 0.0698,
+          "cal": 0.2019,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.1284
+        },
+        "fusion": {
+          "calibrated_prob": 0.4185,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "REAL",
+          "confidence": 58.15,
+          "reason": "Abstained due to direct model disagreement: SBI indicates REAL while Xception indicates FAKE. Conservative safety policy enforces UNCERTAIN.",
+          "latency_sec": 0.2269
+        }
+      },
+      {
+        "index": 24,
+        "filename": "fake_celeb_synth_00.jpg",
+        "category": "face_swap_celebsynth",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9973,
+          "cal": 0.9584,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.2424
+        },
+        "xcep": {
+          "raw": 0.8261,
+          "cal": 0.6956,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.2555
+        },
+        "prod": {
+          "raw": 0.3541,
+          "cal": 0.421,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.3038
+        },
+        "fusion": {
+          "calibrated_prob": 0.8798,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 87.98,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.88).",
+          "latency_sec": 0.5029
+        }
+      },
+      {
+        "index": 25,
+        "filename": "fake_celeb_synth_01.jpg",
+        "category": "face_swap_celebsynth",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9996,
+          "cal": 0.9845,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.3396
+        },
+        "xcep": {
+          "raw": 0.8862,
+          "cal": 0.7482,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.1591
+        },
+        "prod": {
+          "raw": 0.1902,
+          "cal": 0.3168,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.2551
+        },
+        "fusion": {
+          "calibrated_prob": 0.9044,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 90.44,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.90).",
+          "latency_sec": 0.5037
+        }
+      },
+      {
+        "index": 26,
+        "filename": "fake_celeb_synth_02.jpg",
+        "category": "face_swap_celebsynth",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9998,
+          "cal": 0.9892,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.5327
+        },
+        "xcep": {
+          "raw": 0.7213,
+          "cal": 0.6235,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.3155
+        },
+        "prod": {
+          "raw": 0.219,
+          "cal": 0.3375,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.4611
+        },
+        "fusion": {
+          "calibrated_prob": 0.9155,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 91.55,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.92).",
+          "latency_sec": 0.8532
+        }
+      },
+      {
+        "index": 27,
+        "filename": "fake_celeb_synth_03.jpg",
+        "category": "face_swap_celebsynth",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9537,
+          "cal": 0.8327,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.5991
+        },
+        "xcep": {
+          "raw": 0.6907,
+          "cal": 0.605,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.1802
+        },
+        "prod": {
+          "raw": 0.2044,
+          "cal": 0.3272,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.4557
+        },
+        "fusion": {
+          "calibrated_prob": 0.7781,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 77.81,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.78).",
+          "latency_sec": 0.7843
+        }
+      },
+      {
+        "index": 28,
+        "filename": "fake_celeb_synth_04.jpg",
+        "category": "face_swap_celebsynth",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9994,
+          "cal": 0.9808,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.2593
+        },
+        "xcep": {
+          "raw": 0.7377,
+          "cal": 0.6338,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.3138
+        },
+        "prod": {
+          "raw": 0.1651,
+          "cal": 0.2974,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.3071
+        },
+        "fusion": {
+          "calibrated_prob": 0.9053,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 90.53,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.91).",
+          "latency_sec": 0.5781
+        }
+      },
+      {
+        "index": 29,
+        "filename": "fake_celeb_synth_05.jpg",
+        "category": "face_swap_celebsynth",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.988,
+          "cal": 0.9121,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.5682
+        },
+        "xcep": {
+          "raw": 0.7782,
+          "cal": 0.6606,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.518
+        },
+        "prod": {
+          "raw": 0.1563,
+          "cal": 0.2902,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.5652
+        },
+        "fusion": {
+          "calibrated_prob": 0.8416,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 84.16,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.84).",
+          "latency_sec": 1.0912
+        }
+      },
+      {
+        "index": 30,
+        "filename": "fake_celeb_synth_06.jpg",
+        "category": "face_swap_celebsynth",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9958,
+          "cal": 0.9479,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.6337
+        },
+        "xcep": {
+          "raw": 0.7551,
+          "cal": 0.645,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.5791
+        },
+        "prod": {
+          "raw": 0.2883,
+          "cal": 0.3824,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.7374
+        },
+        "fusion": {
+          "calibrated_prob": 0.8738,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 87.38,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.87).",
+          "latency_sec": 1.2178
+        }
+      },
+      {
+        "index": 31,
+        "filename": "fake_celeb_synth_07.jpg",
+        "category": "face_swap_celebsynth",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9961,
+          "cal": 0.9498,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.5636
+        },
+        "xcep": {
+          "raw": 0.9697,
+          "cal": 0.8628,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.651
+        },
+        "prod": {
+          "raw": 0.4563,
+          "cal": 0.4768,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.3654
+        },
+        "fusion": {
+          "calibrated_prob": 0.911,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 91.1,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.91).",
+          "latency_sec": 1.2196
+        }
+      },
+      {
+        "index": 32,
+        "filename": "fake_ff_deepfakes_00.jpg",
+        "category": "face_swap_ff_deepfakes",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9515,
+          "cal": 0.8291,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 1.3845
+        },
+        "xcep": {
+          "raw": 0.9929,
+          "cal": 0.9322,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.7144
+        },
+        "prod": {
+          "raw": 0.1341,
+          "cal": 0.271,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 6.9926
+        },
+        "fusion": {
+          "calibrated_prob": 0.8876,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 88.76,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.89).",
+          "latency_sec": 2.1039
+        }
+      },
+      {
+        "index": 33,
+        "filename": "fake_ff_deepfakes_01.jpg",
+        "category": "face_swap_ff_deepfakes",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.4336,
+          "cal": 0.4646,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 1.2256
+        },
+        "xcep": {
+          "raw": 0.7138,
+          "cal": 0.6189,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.6568
+        },
+        "prod": {
+          "raw": 0.0291,
+          "cal": 0.1345,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 3.7204
+        },
+        "fusion": {
+          "calibrated_prob": 0.5835,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 58.35,
+          "reason": "Calibrated probability (0.58) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 1.8874
+        }
+      },
+      {
+        "index": 34,
+        "filename": "fake_ff_deepfakes_02.jpg",
+        "category": "face_swap_ff_deepfakes",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9999,
+          "cal": 0.9925,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 2.1332
+        },
+        "xcep": {
+          "raw": 1.0,
+          "cal": 0.9993,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 1.3164
+        },
+        "prod": {
+          "raw": 0.0347,
+          "cal": 0.1463,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 5.7701
+        },
+        "fusion": {
+          "calibrated_prob": 0.9959,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 99.59,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 1.00).",
+          "latency_sec": 3.4546
+        }
+      },
+      {
+        "index": 35,
+        "filename": "fake_ff_deepfakes_03.jpg",
+        "category": "face_swap_ff_deepfakes",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9995,
+          "cal": 0.9826,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 1.6387
+        },
+        "xcep": {
+          "raw": 0.9591,
+          "cal": 0.8421,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.2195
+        },
+        "prod": {
+          "raw": 0.1024,
+          "cal": 0.2402,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 2.8658
+        },
+        "fusion": {
+          "calibrated_prob": 0.9243,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 92.43,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.92).",
+          "latency_sec": 1.8632
+        }
+      },
+      {
+        "index": 36,
+        "filename": "fake_ff_deepfakes_04.jpg",
+        "category": "face_swap_ff_deepfakes",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9762,
+          "cal": 0.8776,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.4019
+        },
+        "xcep": {
+          "raw": 0.9974,
+          "cal": 0.9592,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.7572
+        },
+        "prod": {
+          "raw": 0.167,
+          "cal": 0.2989,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 2.9512
+        },
+        "fusion": {
+          "calibrated_prob": 0.9224,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 92.24,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.92).",
+          "latency_sec": 1.1641
+        }
+      },
+      {
+        "index": 37,
+        "filename": "fake_ff_faceswap_00.jpg",
+        "category": "face_swap_ff_faceswap",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9867,
+          "cal": 0.9076,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 2.1241
+        },
+        "xcep": {
+          "raw": 0.9468,
+          "cal": 0.8216,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.5119
+        },
+        "prod": {
+          "raw": 0.038,
+          "cal": 0.1526,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 4.7831
+        },
+        "fusion": {
+          "calibrated_prob": 0.8697,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 86.97,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.87).",
+          "latency_sec": 2.641
+        }
+      },
+      {
+        "index": 38,
+        "filename": "fake_ff_faceswap_01.jpg",
+        "category": "face_swap_ff_faceswap",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.998,
+          "cal": 0.9643,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.471
+        },
+        "xcep": {
+          "raw": 0.98,
+          "cal": 0.8874,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.6854
+        },
+        "prod": {
+          "raw": 0.0259,
+          "cal": 0.1273,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 4.4792
+        },
+        "fusion": {
+          "calibrated_prob": 0.9293,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 92.93,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.93).",
+          "latency_sec": 1.1614
+        }
+      },
+      {
+        "index": 39,
+        "filename": "fake_ff_faceswap_02.jpg",
+        "category": "face_swap_ff_faceswap",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.6584,
+          "cal": 0.5862,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 2.1382
+        },
+        "xcep": {
+          "raw": 0.9843,
+          "cal": 0.8998,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.6992
+        },
+        "prod": {
+          "raw": 0.0178,
+          "cal": 0.1066,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 4.5547
+        },
+        "fusion": {
+          "calibrated_prob": 0.8442,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 84.42,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.84).",
+          "latency_sec": 2.8424
+        }
+      },
+      {
+        "index": 40,
+        "filename": "fake_ff_faceswap_03.jpg",
+        "category": "face_swap_ff_faceswap",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.8751,
+          "cal": 0.7375,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 1.0537
+        },
+        "xcep": {
+          "raw": 0.9948,
+          "cal": 0.942,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.7458
+        },
+        "prod": {
+          "raw": 0.0831,
+          "cal": 0.2186,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 1.0229
+        },
+        "fusion": {
+          "calibrated_prob": 0.8705,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 87.05,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.87).",
+          "latency_sec": 1.8045
+        }
+      },
+      {
+        "index": 41,
+        "filename": "fake_ff_faceswap_04.jpg",
+        "category": "face_swap_ff_faceswap",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.6595,
+          "cal": 0.5868,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.9555
+        },
+        "xcep": {
+          "raw": 0.995,
+          "cal": 0.9431,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.4338
+        },
+        "prod": {
+          "raw": 0.1677,
+          "cal": 0.2995,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 1.0312
+        },
+        "fusion": {
+          "calibrated_prob": 0.8848,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 88.48,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.88).",
+          "latency_sec": 1.3943
+        }
+      },
+      {
+        "index": 42,
+        "filename": "fake_ff_face2face_00.jpg",
+        "category": "reenactment_ff_face2face",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.0711,
+          "cal": 0.2037,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 1.1884
+        },
+        "xcep": {
+          "raw": 0.6838,
+          "cal": 0.6009,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.7819
+        },
+        "prod": {
+          "raw": 0.1442,
+          "cal": 0.28,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.9771
+        },
+        "fusion": {
+          "calibrated_prob": 0.3046,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 69.54,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 1.9753
+        }
+      },
+      {
+        "index": 43,
+        "filename": "fake_ff_face2face_01.jpg",
+        "category": "reenactment_ff_face2face",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.2675,
+          "cal": 0.3695,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.3018
+        },
+        "xcep": {
+          "raw": 0.9646,
+          "cal": 0.8524,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.2007
+        },
+        "prod": {
+          "raw": 0.1466,
+          "cal": 0.282,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.2618
+        },
+        "fusion": {
+          "calibrated_prob": 0.7219,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 72.19,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.72).",
+          "latency_sec": 0.5075
+        }
+      },
+      {
+        "index": 44,
+        "filename": "fake_ff_face2face_02.jpg",
+        "category": "reenactment_ff_face2face",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.9449,
+          "cal": 0.8187,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.4806
+        },
+        "xcep": {
+          "raw": 0.8863,
+          "cal": 0.7483,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.2594
+        },
+        "prod": {
+          "raw": 0.0545,
+          "cal": 0.1804,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.4297
+        },
+        "fusion": {
+          "calibrated_prob": 0.7879,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 78.79,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.79).",
+          "latency_sec": 0.745
+        }
+      },
+      {
+        "index": 45,
+        "filename": "fake_ff_face2face_03.jpg",
+        "category": "reenactment_ff_face2face",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.303,
+          "cal": 0.3913,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.1913
+        },
+        "xcep": {
+          "raw": 0.8737,
+          "cal": 0.7361,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.0856
+        },
+        "prod": {
+          "raw": 0.1704,
+          "cal": 0.3016,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.1444
+        },
+        "fusion": {
+          "calibrated_prob": 0.6274,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 62.74,
+          "reason": "Calibrated probability (0.63) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 0.2819
+        }
+      },
+      {
+        "index": 46,
+        "filename": "fake_ff_face2face_04.jpg",
+        "category": "reenactment_ff_face2face",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.7261,
+          "cal": 0.6265,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.206
+        },
+        "xcep": {
+          "raw": 0.9991,
+          "cal": 0.9763,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.0981
+        },
+        "prod": {
+          "raw": 0.2294,
+          "cal": 0.3446,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.2226
+        },
+        "fusion": {
+          "calibrated_prob": 0.9029,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 90.29,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.90).",
+          "latency_sec": 0.3091
+        }
+      },
+      {
+        "index": 47,
+        "filename": "fake_ff_neuraltextures_00.jpg",
+        "category": "reenactment_ff_neuraltextures",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.0113,
+          "cal": 0.0853,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.2906
+        },
+        "xcep": {
+          "raw": 0.6523,
+          "cal": 0.5827,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.2796
+        },
+        "prod": {
+          "raw": 0.1125,
+          "cal": 0.2505,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.3712
+        },
+        "fusion": {
+          "calibrated_prob": 0.168,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 83.2,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 0.5752
+        }
+      },
+      {
+        "index": 48,
+        "filename": "fake_ff_neuraltextures_01.jpg",
+        "category": "reenactment_ff_neuraltextures",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.3689,
+          "cal": 0.4293,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.4027
+        },
+        "xcep": {
+          "raw": 0.9777,
+          "cal": 0.8814,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.2791
+        },
+        "prod": {
+          "raw": 0.0423,
+          "cal": 0.1605,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.3176
+        },
+        "fusion": {
+          "calibrated_prob": 0.8107,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 81.07,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.81).",
+          "latency_sec": 0.6868
+        }
+      },
+      {
+        "index": 49,
+        "filename": "fake_ff_neuraltextures_02.jpg",
+        "category": "reenactment_ff_neuraltextures",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.2913,
+          "cal": 0.3842,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.4001
+        },
+        "xcep": {
+          "raw": 0.9917,
+          "cal": 0.9267,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.3947
+        },
+        "prod": {
+          "raw": 0.0702,
+          "cal": 0.2025,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.3938
+        },
+        "fusion": {
+          "calibrated_prob": 0.811,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 81.1,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.81).",
+          "latency_sec": 0.7998
+        }
+      },
+      {
+        "index": 50,
+        "filename": "fake_ff_neuraltextures_03.jpg",
+        "category": "reenactment_ff_neuraltextures",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.6275,
+          "cal": 0.5687,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.5419
+        },
+        "xcep": {
+          "raw": 0.8736,
+          "cal": 0.7361,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.1915
+        },
+        "prod": {
+          "raw": 0.1437,
+          "cal": 0.2795,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency": 0.4756
+        },
+        "fusion": {
+          "calibrated_prob": 0.6983,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 69.83,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.70).",
+          "latency_sec": 0.7384
+        }
+      },
+      {
+        "index": 51,
+        "filename": "inwild_deepy.jpeg",
+        "category": "in_the_wild_face_swap",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.0381,
+          "cal": 0.1528,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.25
+        },
+        "xcep": {
+          "raw": 0.8564,
+          "cal": 0.7206,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.3687
+        },
+        "prod": {
+          "raw": 0.1025,
+          "cal": 0.2403,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.3891
+        },
+        "fusion": {
+          "calibrated_prob": 0.3734,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "REAL",
+          "confidence": 62.66,
+          "reason": "Abstained due to direct model disagreement: SBI indicates REAL while Xception indicates FAKE. Conservative safety policy enforces UNCERTAIN.",
+          "latency_sec": 0.6237
+        }
+      },
+      {
+        "index": 52,
+        "filename": "inwild_professional.jpeg",
+        "category": "ai_generated_synthetic_face",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "raw": 0.808,
+          "cal": 0.6819,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency": 0.4792
+        },
+        "xcep": {
+          "raw": 0.4511,
+          "cal": 0.474,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.274
+        },
+        "prod": {
+          "raw": 0.0846,
+          "cal": 0.2203,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency": 0.4555
+        },
+        "fusion": {
+          "calibrated_prob": 0.6559,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 65.59,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.66).",
+          "latency_sec": 0.7582
+        }
+      },
+      {
+        "index": 53,
+        "filename": "safety_document_contract_sample.png",
+        "category": "non_face_document",
+        "ground_truth": "NON-FACE",
+        "sbi": {
+          "raw": null,
+          "cal": null,
+          "verdict": "NOT_SUITABLE",
+          "forced": "NOT_SUITABLE",
+          "latency": 0.0329
+        },
+        "xcep": {
+          "raw": null,
+          "cal": null,
+          "verdict": "NOT_SUITABLE",
+          "forced": "NOT_SUITABLE",
+          "latency": 0.0136
+        },
+        "prod": {
+          "raw": null,
+          "cal": null,
+          "verdict": "NOT_SUITABLE",
+          "forced": "NOT_SUITABLE",
+          "latency": 0.035
+        },
+        "fusion": {
+          "calibrated_prob": null,
+          "verdict_3state": "NOT_SUITABLE",
+          "forced_binary": "NOT_SUITABLE",
+          "confidence": null,
+          "reason": "No suitable face detected",
+          "latency_sec": 0.0515
+        }
+      },
+      {
+        "index": 54,
+        "filename": "safety_deepfake_logo.png",
+        "category": "non_face_graphic",
+        "ground_truth": "NON-FACE",
+        "sbi": {
+          "raw": null,
+          "cal": null,
+          "verdict": "NOT_SUITABLE",
+          "forced": "NOT_SUITABLE",
+          "latency": 0.0519
+        },
+        "xcep": {
+          "raw": null,
+          "cal": null,
+          "verdict": "NOT_SUITABLE",
+          "forced": "NOT_SUITABLE",
+          "latency": 0.0386
+        },
+        "prod": {
+          "raw": null,
+          "cal": null,
+          "verdict": "NOT_SUITABLE",
+          "forced": "NOT_SUITABLE",
+          "latency": 0.0407
+        },
+        "fusion": {
+          "calibrated_prob": null,
+          "verdict_3state": "NOT_SUITABLE",
+          "forced_binary": "NOT_SUITABLE",
+          "confidence": null,
+          "reason": "No suitable face detected",
+          "latency_sec": 0.0955
+        }
+      },
+      {
+        "index": 55,
+        "filename": "safety_she.jpeg",
+        "category": "degraded_lowlight_real",
+        "ground_truth": "REAL",
+        "sbi": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.05
+        },
+        "xcep": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.0348
+        },
+        "prod": {
+          "raw": 0.5,
+          "cal": 0.5,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency": 0.0361
+        },
+        "fusion": {
+          "calibrated_prob": 0.5,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 50.0,
+          "reason": "Calibrated probability (0.50) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 0.0898
+        }
+      }
+    ]
+  },
+  "videos": {
+    "total_evaluated": 40,
+    "frame_sampling": "8 uniform frames per video",
+    "models": {
+      "sbi": {
+        "forced_binary": {
+          "confusion_matrix": {
+            "tp": 14,
+            "fn": 6,
+            "tn": 18,
+            "fp": 2
+          },
+          "accuracy": 0.8,
+          "precision": 0.875,
+          "recall_tpr": 0.7,
+          "specificity_tnr": 0.9,
+          "false_positive_rate": 0.1,
+          "false_negative_rate": 0.3,
+          "f1_score": 0.7778,
+          "macro_f1": 0.798,
+          "total_samples": 40
+        },
+        "safety_gated_3state": {
+          "real_samples": {
+            "total": 20,
+            "likely_real_tn": 11,
+            "uncertain_abstained": 9,
+            "fake_fp": 0,
+            "false_positive_rate_3state": 0.0
+          },
+          "fake_samples": {
+            "total": 20,
+            "fake_tp": 11,
+            "uncertain_abstained": 6,
+            "likely_real_fn": 3,
+            "false_negative_rate_3state": 0.15
+          },
+          "abstention_rate_overall": 0.375,
+          "real_abstention_rate": 0.45,
+          "fake_abstention_rate": 0.3,
+          "not_suitable_count": 0
+        },
+        "latency": {
+          "mean_seconds": 3.439,
+          "median_seconds": 3.1896,
+          "min_seconds": 0.9272,
+          "max_seconds": 6.3195
+        }
+      },
+      "xcep": {
+        "forced_binary": {
+          "confusion_matrix": {
+            "tp": 20,
+            "fn": 0,
+            "tn": 8,
+            "fp": 12
+          },
+          "accuracy": 0.7,
+          "precision": 0.625,
+          "recall_tpr": 1.0,
+          "specificity_tnr": 0.4,
+          "false_positive_rate": 0.6,
+          "false_negative_rate": 0.0,
+          "f1_score": 0.7692,
+          "macro_f1": 0.6703,
+          "total_samples": 40
+        },
+        "safety_gated_3state": {
+          "real_samples": {
+            "total": 20,
+            "likely_real_tn": 2,
+            "uncertain_abstained": 17,
+            "fake_fp": 1,
+            "false_positive_rate_3state": 0.05
+          },
+          "fake_samples": {
+            "total": 20,
+            "fake_tp": 12,
+            "uncertain_abstained": 8,
+            "likely_real_fn": 0,
+            "false_negative_rate_3state": 0.0
+          },
+          "abstention_rate_overall": 0.625,
+          "real_abstention_rate": 0.85,
+          "fake_abstention_rate": 0.4,
+          "not_suitable_count": 0
+        },
+        "latency": {
+          "mean_seconds": 2.4603,
+          "median_seconds": 2.145,
+          "min_seconds": 0.6216,
+          "max_seconds": 6.88
+        }
+      },
+      "prod": {
+        "forced_binary": {
+          "confusion_matrix": {
+            "tp": 10,
+            "fn": 10,
+            "tn": 16,
+            "fp": 4
+          },
+          "accuracy": 0.65,
+          "precision": 0.7143,
+          "recall_tpr": 0.5,
+          "specificity_tnr": 0.8,
+          "false_positive_rate": 0.2,
+          "false_negative_rate": 0.5,
+          "f1_score": 0.5882,
+          "macro_f1": 0.6419,
+          "total_samples": 40
+        },
+        "safety_gated_3state": {
+          "real_samples": {
+            "total": 20,
+            "likely_real_tn": 0,
+            "uncertain_abstained": 20,
+            "fake_fp": 0,
+            "false_positive_rate_3state": 0.0
+          },
+          "fake_samples": {
+            "total": 20,
+            "fake_tp": 0,
+            "uncertain_abstained": 20,
+            "likely_real_fn": 0,
+            "false_negative_rate_3state": 0.0
+          },
+          "abstention_rate_overall": 1.0,
+          "real_abstention_rate": 1.0,
+          "fake_abstention_rate": 1.0,
+          "not_suitable_count": 0
+        },
+        "latency": {
+          "mean_seconds": 5.2124,
+          "median_seconds": 4.6905,
+          "min_seconds": 1.5044,
+          "max_seconds": 10.2044
+        }
+      },
+      "fusion": {
+        "forced_binary": {
+          "confusion_matrix": {
+            "tp": 18,
+            "fn": 2,
+            "tn": 17,
+            "fp": 3
+          },
+          "accuracy": 0.875,
+          "precision": 0.8571,
+          "recall_tpr": 0.9,
+          "specificity_tnr": 0.85,
+          "false_positive_rate": 0.15,
+          "false_negative_rate": 0.1,
+          "f1_score": 0.878,
+          "macro_f1": 0.8749,
+          "total_samples": 40
+        },
+        "safety_gated_3state": {
+          "real_samples": {
+            "total": 20,
+            "likely_real_tn": 13,
+            "uncertain_abstained": 7,
+            "fake_fp": 0,
+            "false_positive_rate_3state": 0.0
+          },
+          "fake_samples": {
+            "total": 20,
+            "fake_tp": 11,
+            "uncertain_abstained": 9,
+            "likely_real_fn": 0,
+            "false_negative_rate_3state": 0.0
+          },
+          "abstention_rate_overall": 0.4,
+          "real_abstention_rate": 0.35,
+          "fake_abstention_rate": 0.45,
+          "not_suitable_count": 0
+        },
+        "latency": {
+          "mean_seconds": 5.9093,
+          "median_seconds": 5.128,
+          "min_seconds": 3.2432,
+          "max_seconds": 12.2775
+        }
+      }
+    },
+    "subset_breakdown": {
+      "Celeb-DF_Celeb-real": {
+        "ground_truth": "REAL",
+        "count": 5,
+        "sbi_forced_correct": 4,
+        "xcep_forced_correct": 1,
+        "prod_forced_correct": 2,
+        "fusion_forced_correct": 4,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 2,
+          "UNCERTAIN": 3,
+          "FAKE": 0
+        }
+      },
+      "Celeb-DF_YouTube-real": {
+        "ground_truth": "REAL",
+        "count": 5,
+        "sbi_forced_correct": 4,
+        "xcep_forced_correct": 0,
+        "prod_forced_correct": 4,
+        "fusion_forced_correct": 3,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 2,
+          "UNCERTAIN": 3,
+          "FAKE": 0
+        }
+      },
+      "Celeb-DF_synthesis": {
+        "ground_truth": "FAKE",
+        "count": 10,
+        "sbi_forced_correct": 10,
+        "xcep_forced_correct": 10,
+        "prod_forced_correct": 10,
+        "fusion_forced_correct": 10,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 1,
+          "FAKE": 9
+        }
+      },
+      "FF++_Deepfakes": {
+        "ground_truth": "FAKE",
+        "count": 3,
+        "sbi_forced_correct": 2,
+        "xcep_forced_correct": 3,
+        "prod_forced_correct": 0,
+        "fusion_forced_correct": 2,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 2,
+          "FAKE": 1
+        }
+      },
+      "FF++_Face2Face": {
+        "ground_truth": "FAKE",
+        "count": 3,
+        "sbi_forced_correct": 1,
+        "xcep_forced_correct": 3,
+        "prod_forced_correct": 0,
+        "fusion_forced_correct": 3,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 3,
+          "FAKE": 0
+        }
+      },
+      "FF++_FaceSwap": {
+        "ground_truth": "FAKE",
+        "count": 2,
+        "sbi_forced_correct": 1,
+        "xcep_forced_correct": 2,
+        "prod_forced_correct": 0,
+        "fusion_forced_correct": 2,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 1,
+          "FAKE": 1
+        }
+      },
+      "FF++_NeuralTextures": {
+        "ground_truth": "FAKE",
+        "count": 2,
+        "sbi_forced_correct": 0,
+        "xcep_forced_correct": 2,
+        "prod_forced_correct": 0,
+        "fusion_forced_correct": 1,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 0,
+          "UNCERTAIN": 2,
+          "FAKE": 0
+        }
+      },
+      "FF++_original": {
+        "ground_truth": "REAL",
+        "count": 10,
+        "sbi_forced_correct": 10,
+        "xcep_forced_correct": 7,
+        "prod_forced_correct": 10,
+        "fusion_forced_correct": 10,
+        "fusion_3state_verdicts": {
+          "LIKELY_REAL": 9,
+          "UNCERTAIN": 1,
+          "FAKE": 0
+        }
+      }
+    },
+    "per_video_results": [
+      {
+        "index": 1,
+        "filename": "id1_0007.mp4",
+        "subset": "Celeb-DF_Celeb-real",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.5194,
+          "calibrated_prob": 0.5103,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "temporal_std": 0.2139,
+          "latency_sec": 1.7852
+        },
+        "xcep": {
+          "mean_raw_score": 0.626,
+          "calibrated_prob": 0.5679,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 2.7355
+        },
+        "prod": {
+          "mean_raw_score": 0.5063,
+          "calibrated_prob": 0.5034,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 1.5044
+        },
+        "fusion": {
+          "calibrated_prob": 0.5603,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 56.03,
+          "reason": "Calibrated probability (0.56) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 4.5307
+        }
+      },
+      {
+        "index": 2,
+        "filename": "id2_0008.mp4",
+        "subset": "Celeb-DF_Celeb-real",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.0534,
+          "calibrated_prob": 0.1787,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.0339,
+          "latency_sec": 0.9272
+        },
+        "xcep": {
+          "mean_raw_score": 0.3337,
+          "calibrated_prob": 0.4093,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 2.306
+        },
+        "prod": {
+          "mean_raw_score": 0.4856,
+          "calibrated_prob": 0.4923,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 2.9077
+        },
+        "fusion": {
+          "calibrated_prob": 0.2295,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 77.05,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 3.2432
+        }
+      },
+      {
+        "index": 3,
+        "filename": "id3_0001.mp4",
+        "subset": "Celeb-DF_Celeb-real",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.0184,
+          "calibrated_prob": 0.1082,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.0149,
+          "latency_sec": 1.6866
+        },
+        "xcep": {
+          "mean_raw_score": 0.6804,
+          "calibrated_prob": 0.5989,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 1.7066
+        },
+        "prod": {
+          "mean_raw_score": 0.4684,
+          "calibrated_prob": 0.4832,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 1.9509
+        },
+        "fusion": {
+          "calibrated_prob": 0.207,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 79.3,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 3.4032
+        }
+      },
+      {
+        "index": 4,
+        "filename": "id6_0005.mp4",
+        "subset": "Celeb-DF_Celeb-real",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.2788,
+          "calibrated_prob": 0.3766,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "temporal_std": 0.2212,
+          "latency_sec": 2.7484
+        },
+        "xcep": {
+          "mean_raw_score": 0.5665,
+          "calibrated_prob": 0.5354,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 2.7086
+        },
+        "prod": {
+          "mean_raw_score": 0.5625,
+          "calibrated_prob": 0.5333,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 4.4947
+        },
+        "fusion": {
+          "calibrated_prob": 0.412,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "REAL",
+          "confidence": 58.8,
+          "reason": "Abstained due to temporal inconsistency across video frames. Sequential evidence is contradictory.",
+          "latency_sec": 5.467
+        }
+      },
+      {
+        "index": 5,
+        "filename": "id9_0000.mp4",
+        "subset": "Celeb-DF_Celeb-real",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.2063,
+          "calibrated_prob": 0.2063,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "temporal_std": 0.1897,
+          "latency_sec": 3.9665
+        },
+        "xcep": {
+          "mean_raw_score": 0.6734,
+          "calibrated_prob": 0.6734,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 1.2208
+        },
+        "prod": {
+          "mean_raw_score": 0.5977,
+          "calibrated_prob": 0.5977,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 4.3277
+        },
+        "fusion": {
+          "calibrated_prob": 0.4233,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "REAL",
+          "confidence": 57.67,
+          "reason": "Calibrated probability (0.42) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 5.1973
+        }
+      },
+      {
+        "index": 6,
+        "filename": "00170.mp4",
+        "subset": "Celeb-DF_YouTube-real",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.473,
+          "calibrated_prob": 0.4857,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "temporal_std": 0.2662,
+          "latency_sec": 2.5952
+        },
+        "xcep": {
+          "mean_raw_score": 0.7873,
+          "calibrated_prob": 0.6669,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 1.4423
+        },
+        "prod": {
+          "mean_raw_score": 0.4521,
+          "calibrated_prob": 0.4745,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 3.5939
+        },
+        "fusion": {
+          "calibrated_prob": 0.6526,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 65.26,
+          "reason": "Abstained due to temporal inconsistency across video frames. Sequential evidence is contradictory.",
+          "latency_sec": 4.0475
+        }
+      },
+      {
+        "index": 7,
+        "filename": "00208.mp4",
+        "subset": "Celeb-DF_YouTube-real",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.172,
+          "calibrated_prob": 0.172,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "temporal_std": 0.1122,
+          "latency_sec": 2.8534
+        },
+        "xcep": {
+          "mean_raw_score": 0.5858,
+          "calibrated_prob": 0.5858,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 1.8101
+        },
+        "prod": {
+          "mean_raw_score": 0.4629,
+          "calibrated_prob": 0.4629,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 3.4314
+        },
+        "fusion": {
+          "calibrated_prob": 0.3487,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 65.13,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 4.6735
+        }
+      },
+      {
+        "index": 8,
+        "filename": "00063.mp4",
+        "subset": "Celeb-DF_YouTube-real",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.6367,
+          "calibrated_prob": 0.5739,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "temporal_std": 0.2702,
+          "latency_sec": 2.5211
+        },
+        "xcep": {
+          "mean_raw_score": 0.531,
+          "calibrated_prob": 0.5165,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 1.2172
+        },
+        "prod": {
+          "mean_raw_score": 0.4803,
+          "calibrated_prob": 0.4895,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 3.9889
+        },
+        "fusion": {
+          "calibrated_prob": 0.5634,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 56.34,
+          "reason": "Abstained due to temporal inconsistency across video frames. Sequential evidence is contradictory.",
+          "latency_sec": 3.7483
+        }
+      },
+      {
+        "index": 9,
+        "filename": "00024.mp4",
+        "subset": "Celeb-DF_YouTube-real",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.1213,
+          "calibrated_prob": 0.2591,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.0793,
+          "latency_sec": 2.9963
+        },
+        "xcep": {
+          "mean_raw_score": 0.6665,
+          "calibrated_prob": 0.5908,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 1.5063
+        },
+        "prod": {
+          "mean_raw_score": 0.4338,
+          "calibrated_prob": 0.4648,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 3.3146
+        },
+        "fusion": {
+          "calibrated_prob": 0.3499,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 65.01,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 4.5126
+        }
+      },
+      {
+        "index": 10,
+        "filename": "00021.mp4",
+        "subset": "Celeb-DF_YouTube-real",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.1881,
+          "calibrated_prob": 0.3153,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.1545,
+          "latency_sec": 2.5426
+        },
+        "xcep": {
+          "mean_raw_score": 0.664,
+          "calibrated_prob": 0.5894,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 0.715
+        },
+        "prod": {
+          "mean_raw_score": 0.5655,
+          "calibrated_prob": 0.5349,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 3.7858
+        },
+        "fusion": {
+          "calibrated_prob": 0.4046,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "REAL",
+          "confidence": 59.54,
+          "reason": "Calibrated probability (0.40) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 3.2676
+        }
+      },
+      {
+        "index": 11,
+        "filename": "953.mp4",
+        "subset": "FF++_original",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.0037,
+          "calibrated_prob": 0.0491,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.0039,
+          "latency_sec": 3.8412
+        },
+        "xcep": {
+          "mean_raw_score": 0.0132,
+          "calibrated_prob": 0.0922,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency_sec": 4.4778
+        },
+        "prod": {
+          "mean_raw_score": 0.455,
+          "calibrated_prob": 0.4761,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 7.3766
+        },
+        "fusion": {
+          "calibrated_prob": 0.0694,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 93.06,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 8.329
+        }
+      },
+      {
+        "index": 12,
+        "filename": "012.mp4",
+        "subset": "FF++_original",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.0265,
+          "calibrated_prob": 0.1288,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.0355,
+          "latency_sec": 2.8435
+        },
+        "xcep": {
+          "mean_raw_score": 0.5153,
+          "calibrated_prob": 0.5081,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 2.649
+        },
+        "prod": {
+          "mean_raw_score": 0.4403,
+          "calibrated_prob": 0.4682,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 5.7451
+        },
+        "fusion": {
+          "calibrated_prob": 0.1369,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 86.31,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 5.5025
+        }
+      },
+      {
+        "index": 13,
+        "filename": "078.mp4",
+        "subset": "FF++_original",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.0057,
+          "calibrated_prob": 0.0609,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.0029,
+          "latency_sec": 3.8591
+        },
+        "xcep": {
+          "mean_raw_score": 0.037,
+          "calibrated_prob": 0.1508,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "latency_sec": 3.4924
+        },
+        "prod": {
+          "mean_raw_score": 0.3995,
+          "calibrated_prob": 0.4462,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 5.4508
+        },
+        "fusion": {
+          "calibrated_prob": 0.1006,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 89.94,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 7.3615
+        }
+      },
+      {
+        "index": 14,
+        "filename": "623.mp4",
+        "subset": "FF++_original",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.1433,
+          "calibrated_prob": 0.2792,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.1905,
+          "latency_sec": 2.872
+        },
+        "xcep": {
+          "mean_raw_score": 0.4385,
+          "calibrated_prob": 0.4672,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 2.1194
+        },
+        "prod": {
+          "mean_raw_score": 0.4717,
+          "calibrated_prob": 0.485,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 6.5376
+        },
+        "fusion": {
+          "calibrated_prob": 0.3035,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 69.65,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 5.0014
+        }
+      },
+      {
+        "index": 15,
+        "filename": "919.mp4",
+        "subset": "FF++_original",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.0857,
+          "calibrated_prob": 0.2217,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.0595,
+          "latency_sec": 2.8501
+        },
+        "xcep": {
+          "mean_raw_score": 0.3722,
+          "calibrated_prob": 0.4311,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 1.6178
+        },
+        "prod": {
+          "mean_raw_score": 0.4573,
+          "calibrated_prob": 0.4773,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 4.7169
+        },
+        "fusion": {
+          "calibrated_prob": 0.2632,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 73.68,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 4.4779
+        }
+      },
+      {
+        "index": 16,
+        "filename": "367.mp4",
+        "subset": "FF++_original",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.0173,
+          "calibrated_prob": 0.1051,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.0102,
+          "latency_sec": 3.6119
+        },
+        "xcep": {
+          "mean_raw_score": 0.3953,
+          "calibrated_prob": 0.4439,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 2.3527
+        },
+        "prod": {
+          "mean_raw_score": 0.4189,
+          "calibrated_prob": 0.4567,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 4.664
+        },
+        "fusion": {
+          "calibrated_prob": 0.1472,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 85.28,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 5.9746
+        }
+      },
+      {
+        "index": 17,
+        "filename": "847.mp4",
+        "subset": "FF++_original",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.0089,
+          "calibrated_prob": 0.0089,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "temporal_std": 0.0063,
+          "latency_sec": 4.0843
+        },
+        "xcep": {
+          "mean_raw_score": 0.1723,
+          "calibrated_prob": 0.1723,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 6.4899
+        },
+        "prod": {
+          "mean_raw_score": 0.4391,
+          "calibrated_prob": 0.4391,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 6.2394
+        },
+        "fusion": {
+          "calibrated_prob": 0.1479,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 85.21,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 10.5842
+        }
+      },
+      {
+        "index": 18,
+        "filename": "529.mp4",
+        "subset": "FF++_original",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.2289,
+          "calibrated_prob": 0.2289,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "temporal_std": 0.2749,
+          "latency_sec": 5.3875
+        },
+        "xcep": {
+          "mean_raw_score": 0.2441,
+          "calibrated_prob": 0.2441,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 6.88
+        },
+        "prod": {
+          "mean_raw_score": 0.4406,
+          "calibrated_prob": 0.4406,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 8.5779
+        },
+        "fusion": {
+          "calibrated_prob": 0.3492,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "REAL",
+          "confidence": 65.08,
+          "reason": "Abstained due to temporal inconsistency across video frames. Sequential evidence is contradictory.",
+          "latency_sec": 12.2775
+        }
+      },
+      {
+        "index": 19,
+        "filename": "418.mp4",
+        "subset": "FF++_original",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.0533,
+          "calibrated_prob": 0.0533,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "temporal_std": 0.0562,
+          "latency_sec": 4.901
+        },
+        "xcep": {
+          "mean_raw_score": 0.5475,
+          "calibrated_prob": 0.5475,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 4.2755
+        },
+        "prod": {
+          "mean_raw_score": 0.3991,
+          "calibrated_prob": 0.3991,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 6.3939
+        },
+        "fusion": {
+          "calibrated_prob": 0.2038,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 79.62,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 9.1865
+        }
+      },
+      {
+        "index": 20,
+        "filename": "227.mp4",
+        "subset": "FF++_original",
+        "ground_truth": "REAL",
+        "sbi": {
+          "mean_raw_score": 0.0528,
+          "calibrated_prob": 0.1777,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.0186,
+          "latency_sec": 3.9638
+        },
+        "xcep": {
+          "mean_raw_score": 0.6524,
+          "calibrated_prob": 0.5827,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 4.7729
+        },
+        "prod": {
+          "mean_raw_score": 0.4008,
+          "calibrated_prob": 0.4469,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 6.6233
+        },
+        "fusion": {
+          "calibrated_prob": 0.2605,
+          "verdict_3state": "LIKELY_REAL",
+          "forced_binary": "REAL",
+          "confidence": 73.95,
+          "reason": "No significant evidence of manipulation detected. Both forensic models agree on authentic representation.",
+          "latency_sec": 8.7467
+        }
+      },
+      {
+        "index": 21,
+        "filename": "id1_id0_0007.mp4",
+        "subset": "Celeb-DF_synthesis",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.9176,
+          "calibrated_prob": 0.7822,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "temporal_std": 0.1843,
+          "latency_sec": 2.808
+        },
+        "xcep": {
+          "mean_raw_score": 0.6869,
+          "calibrated_prob": 0.6027,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 2.2407
+        },
+        "prod": {
+          "mean_raw_score": 0.5667,
+          "calibrated_prob": 0.5355,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 4.1608
+        },
+        "fusion": {
+          "calibrated_prob": 0.7343,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 73.43,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.73).",
+          "latency_sec": 5.0587
+        }
+      },
+      {
+        "index": 22,
+        "filename": "id1_id3_0007.mp4",
+        "subset": "Celeb-DF_synthesis",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.9148,
+          "calibrated_prob": 0.7789,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "temporal_std": 0.1862,
+          "latency_sec": 2.9832
+        },
+        "xcep": {
+          "mean_raw_score": 0.6755,
+          "calibrated_prob": 0.596,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 1.4262
+        },
+        "prod": {
+          "mean_raw_score": 0.5219,
+          "calibrated_prob": 0.5116,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 4.4495
+        },
+        "fusion": {
+          "calibrated_prob": 0.7321,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 73.21,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.73).",
+          "latency_sec": 4.4194
+        }
+      },
+      {
+        "index": 23,
+        "filename": "id1_id4_0007.mp4",
+        "subset": "Celeb-DF_synthesis",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.9277,
+          "calibrated_prob": 0.7948,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "temporal_std": 0.1905,
+          "latency_sec": 3.1799
+        },
+        "xcep": {
+          "mean_raw_score": 0.7623,
+          "calibrated_prob": 0.6498,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 0.6216
+        },
+        "prod": {
+          "mean_raw_score": 0.5614,
+          "calibrated_prob": 0.5327,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 4.2404
+        },
+        "fusion": {
+          "calibrated_prob": 0.7459,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 74.59,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.75).",
+          "latency_sec": 3.8115
+        }
+      },
+      {
+        "index": 24,
+        "filename": "id1_id9_0007.mp4",
+        "subset": "Celeb-DF_synthesis",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.8742,
+          "calibrated_prob": 0.7367,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "temporal_std": 0.2021,
+          "latency_sec": 2.6539
+        },
+        "xcep": {
+          "mean_raw_score": 0.7025,
+          "calibrated_prob": 0.612,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 1.3947
+        },
+        "prod": {
+          "mean_raw_score": 0.5462,
+          "calibrated_prob": 0.5246,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 4.2734
+        },
+        "fusion": {
+          "calibrated_prob": 0.6966,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 69.66,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.70).",
+          "latency_sec": 4.0586
+        }
+      },
+      {
+        "index": 25,
+        "filename": "id1_id16_0007.mp4",
+        "subset": "Celeb-DF_synthesis",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.927,
+          "calibrated_prob": 0.7939,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "temporal_std": 0.187,
+          "latency_sec": 2.9512
+        },
+        "xcep": {
+          "mean_raw_score": 0.7378,
+          "calibrated_prob": 0.6339,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 0.8284
+        },
+        "prod": {
+          "mean_raw_score": 0.5344,
+          "calibrated_prob": 0.5183,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 4.4155
+        },
+        "fusion": {
+          "calibrated_prob": 0.7438,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 74.38,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.74).",
+          "latency_sec": 3.7896
+        }
+      },
+      {
+        "index": 26,
+        "filename": "id1_id17_0007.mp4",
+        "subset": "Celeb-DF_synthesis",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.8984,
+          "calibrated_prob": 0.7607,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "temporal_std": 0.1853,
+          "latency_sec": 3.1993
+        },
+        "xcep": {
+          "mean_raw_score": 0.7138,
+          "calibrated_prob": 0.6189,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 0.9007
+        },
+        "prod": {
+          "mean_raw_score": 0.5095,
+          "calibrated_prob": 0.505,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 6.3987
+        },
+        "fusion": {
+          "calibrated_prob": 0.7162,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 71.62,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.72).",
+          "latency_sec": 4.11
+        }
+      },
+      {
+        "index": 27,
+        "filename": "id2_id0_0008.mp4",
+        "subset": "Celeb-DF_synthesis",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.9952,
+          "calibrated_prob": 0.9441,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "temporal_std": 0.0072,
+          "latency_sec": 2.8708
+        },
+        "xcep": {
+          "mean_raw_score": 0.8888,
+          "calibrated_prob": 0.7507,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 1.8513
+        },
+        "prod": {
+          "mean_raw_score": 0.5821,
+          "calibrated_prob": 0.5439,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 3.8296
+        },
+        "fusion": {
+          "calibrated_prob": 0.8745,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 87.45,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.87).",
+          "latency_sec": 4.7321
+        }
+      },
+      {
+        "index": 28,
+        "filename": "id2_id3_0008.mp4",
+        "subset": "Celeb-DF_synthesis",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.845,
+          "calibrated_prob": 0.7108,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "temporal_std": 0.1872,
+          "latency_sec": 2.6246
+        },
+        "xcep": {
+          "mean_raw_score": 0.8974,
+          "calibrated_prob": 0.7596,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 1.9214
+        },
+        "prod": {
+          "mean_raw_score": 0.5811,
+          "calibrated_prob": 0.5433,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 3.561
+        },
+        "fusion": {
+          "calibrated_prob": 0.7378,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 73.78,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.74).",
+          "latency_sec": 4.556
+        }
+      },
+      {
+        "index": 29,
+        "filename": "id2_id9_0008.mp4",
+        "subset": "Celeb-DF_synthesis",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.9536,
+          "calibrated_prob": 0.8326,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "temporal_std": 0.0997,
+          "latency_sec": 2.5913
+        },
+        "xcep": {
+          "mean_raw_score": 0.8385,
+          "calibrated_prob": 0.7056,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 1.5513
+        },
+        "prod": {
+          "mean_raw_score": 0.5714,
+          "calibrated_prob": 0.5381,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 4.518
+        },
+        "fusion": {
+          "calibrated_prob": 0.784,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 78.4,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.78).",
+          "latency_sec": 4.1526
+        }
+      },
+      {
+        "index": 30,
+        "filename": "id3_id1_0001.mp4",
+        "subset": "Celeb-DF_synthesis",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.6679,
+          "calibrated_prob": 0.5916,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "temporal_std": 0.3563,
+          "latency_sec": 3.4083
+        },
+        "xcep": {
+          "mean_raw_score": 0.6116,
+          "calibrated_prob": 0.5599,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 2.5808
+        },
+        "prod": {
+          "mean_raw_score": 0.5007,
+          "calibrated_prob": 0.5004,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 3.4342
+        },
+        "fusion": {
+          "calibrated_prob": 0.5791,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 57.91,
+          "reason": "Abstained due to temporal inconsistency across video frames. Sequential evidence is contradictory.",
+          "latency_sec": 5.9991
+        }
+      },
+      {
+        "index": 31,
+        "filename": "953_974.mp4",
+        "subset": "FF++_Deepfakes",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.8909,
+          "calibrated_prob": 0.7529,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "temporal_std": 0.2788,
+          "latency_sec": 4.9168
+        },
+        "xcep": {
+          "mean_raw_score": 0.9776,
+          "calibrated_prob": 0.8812,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 3.9189
+        },
+        "prod": {
+          "mean_raw_score": 0.4611,
+          "calibrated_prob": 0.4793,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 10.2044
+        },
+        "fusion": {
+          "calibrated_prob": 0.83,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 83.0,
+          "reason": "Abstained due to temporal inconsistency across video frames. Sequential evidence is contradictory.",
+          "latency_sec": 8.8457
+        }
+      },
+      {
+        "index": 32,
+        "filename": "012_026.mp4",
+        "subset": "FF++_Deepfakes",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.0803,
+          "calibrated_prob": 0.2152,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.0664,
+          "latency_sec": 6.3195
+        },
+        "xcep": {
+          "mean_raw_score": 0.7679,
+          "calibrated_prob": 0.6536,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 2.1473
+        },
+        "prod": {
+          "mean_raw_score": 0.4269,
+          "calibrated_prob": 0.461,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 7.1569
+        },
+        "fusion": {
+          "calibrated_prob": 0.3688,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "REAL",
+          "confidence": 63.12,
+          "reason": "Abstained due to direct model disagreement: SBI indicates REAL while Xception indicates FAKE. Conservative safety policy enforces UNCERTAIN.",
+          "latency_sec": 8.4768
+        }
+      },
+      {
+        "index": 33,
+        "filename": "078_955.mp4",
+        "subset": "FF++_Deepfakes",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.9999,
+          "calibrated_prob": 0.9941,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "temporal_std": 0.0,
+          "latency_sec": 4.5339
+        },
+        "xcep": {
+          "mean_raw_score": 0.9999,
+          "calibrated_prob": 0.9907,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 2.7626
+        },
+        "prod": {
+          "mean_raw_score": 0.4083,
+          "calibrated_prob": 0.4509,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 6.3443
+        },
+        "fusion": {
+          "calibrated_prob": 0.9925,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 99.25,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.99).",
+          "latency_sec": 7.3065
+        }
+      },
+      {
+        "index": 34,
+        "filename": "953_974.mp4",
+        "subset": "FF++_Face2Face",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.1372,
+          "calibrated_prob": 0.2738,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.1237,
+          "latency_sec": 4.5302
+        },
+        "xcep": {
+          "mean_raw_score": 0.9661,
+          "calibrated_prob": 0.8554,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 3.4015
+        },
+        "prod": {
+          "mean_raw_score": 0.4654,
+          "calibrated_prob": 0.4816,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 6.0466
+        },
+        "fusion": {
+          "calibrated_prob": 0.6291,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 62.91,
+          "reason": "Abstained due to direct model disagreement: SBI indicates REAL while Xception indicates FAKE. Conservative safety policy enforces UNCERTAIN.",
+          "latency_sec": 7.9417
+        }
+      },
+      {
+        "index": 35,
+        "filename": "012_026.mp4",
+        "subset": "FF++_Face2Face",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.3979,
+          "calibrated_prob": 0.4453,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "temporal_std": 0.2774,
+          "latency_sec": 3.3784
+        },
+        "xcep": {
+          "mean_raw_score": 0.9691,
+          "calibrated_prob": 0.8615,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 1.652
+        },
+        "prod": {
+          "mean_raw_score": 0.4573,
+          "calibrated_prob": 0.4773,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 6.2032
+        },
+        "fusion": {
+          "calibrated_prob": 0.8068,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 80.68,
+          "reason": "Abstained due to temporal inconsistency across video frames. Sequential evidence is contradictory.",
+          "latency_sec": 5.0404
+        }
+      },
+      {
+        "index": 36,
+        "filename": "078_955.mp4",
+        "subset": "FF++_Face2Face",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.6046,
+          "calibrated_prob": 0.5561,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "temporal_std": 0.2028,
+          "latency_sec": 3.7146
+        },
+        "xcep": {
+          "mean_raw_score": 0.7061,
+          "calibrated_prob": 0.6142,
+          "verdict": "UNCERTAIN",
+          "forced": "FAKE",
+          "latency_sec": 2.1427
+        },
+        "prod": {
+          "mean_raw_score": 0.4018,
+          "calibrated_prob": 0.4474,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 5.8006
+        },
+        "fusion": {
+          "calibrated_prob": 0.5951,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 59.51,
+          "reason": "Calibrated probability (0.60) lies in the ambiguous decision boundary [0.35 - 0.65]. Evidence is inconclusive.",
+          "latency_sec": 5.8673
+        }
+      },
+      {
+        "index": 37,
+        "filename": "953_974.mp4",
+        "subset": "FF++_FaceSwap",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.3402,
+          "calibrated_prob": 0.4131,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "temporal_std": 0.3803,
+          "latency_sec": 5.0182
+        },
+        "xcep": {
+          "mean_raw_score": 0.8525,
+          "calibrated_prob": 0.7172,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 2.7139
+        },
+        "prod": {
+          "mean_raw_score": 0.4369,
+          "calibrated_prob": 0.4664,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 7.7213
+        },
+        "fusion": {
+          "calibrated_prob": 0.6303,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 63.03,
+          "reason": "Abstained due to temporal inconsistency across video frames. Sequential evidence is contradictory.",
+          "latency_sec": 7.7421
+        }
+      },
+      {
+        "index": 38,
+        "filename": "012_026.mp4",
+        "subset": "FF++_FaceSwap",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.9387,
+          "calibrated_prob": 0.8096,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "temporal_std": 0.073,
+          "latency_sec": 4.1184
+        },
+        "xcep": {
+          "mean_raw_score": 0.9428,
+          "calibrated_prob": 0.8156,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 2.5487
+        },
+        "prod": {
+          "mean_raw_score": 0.4165,
+          "calibrated_prob": 0.4554,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 5.6725
+        },
+        "fusion": {
+          "calibrated_prob": 0.8126,
+          "verdict_3state": "FAKE",
+          "forced_binary": "FAKE",
+          "confidence": 81.26,
+          "reason": "Strong evidence of synthetic manipulation (fused calibrated probability: 0.81).",
+          "latency_sec": 6.6771
+        }
+      },
+      {
+        "index": 39,
+        "filename": "953_974.mp4",
+        "subset": "FF++_NeuralTextures",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.0104,
+          "calibrated_prob": 0.082,
+          "verdict": "LIKELY_REAL",
+          "forced": "REAL",
+          "temporal_std": 0.0044,
+          "latency_sec": 4.5663
+        },
+        "xcep": {
+          "mean_raw_score": 0.7976,
+          "calibrated_prob": 0.6742,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 3.6639
+        },
+        "prod": {
+          "mean_raw_score": 0.4641,
+          "calibrated_prob": 0.481,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 8.5552
+        },
+        "fusion": {
+          "calibrated_prob": 0.2562,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "REAL",
+          "confidence": 74.38,
+          "reason": "Abstained due to direct model disagreement: SBI indicates REAL while Xception indicates FAKE. Conservative safety policy enforces UNCERTAIN.",
+          "latency_sec": 8.2402
+        }
+      },
+      {
+        "index": 40,
+        "filename": "012_026.mp4",
+        "subset": "FF++_NeuralTextures",
+        "ground_truth": "FAKE",
+        "sbi": {
+          "mean_raw_score": 0.2272,
+          "calibrated_prob": 0.3431,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "temporal_std": 0.2336,
+          "latency_sec": 4.3571
+        },
+        "xcep": {
+          "mean_raw_score": 0.9912,
+          "calibrated_prob": 0.9245,
+          "verdict": "FAKE",
+          "forced": "FAKE",
+          "latency_sec": 1.648
+        },
+        "prod": {
+          "mean_raw_score": 0.4291,
+          "calibrated_prob": 0.4622,
+          "verdict": "UNCERTAIN",
+          "forced": "REAL",
+          "latency_sec": 5.884
+        },
+        "fusion": {
+          "calibrated_prob": 0.7677,
+          "verdict_3state": "UNCERTAIN",
+          "forced_binary": "FAKE",
+          "confidence": 76.77,
+          "reason": "Abstained due to temporal inconsistency across video frames. Sequential evidence is contradictory.",
+          "latency_sec": 6.0151
+        }
+      }
+    ]
+  }
+}

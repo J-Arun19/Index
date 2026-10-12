@@ -13,5 +13,5 @@ app = create_app()
 
 if __name__ == '__main__':
     print("Starting SatyaDrishti Flask Backend...")
-    # Run server locally on port 5000
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    # Run server locally on port 5000 with use_reloader=False to prevent thread conflicts on Windows
+    app.run(host='127.0.0.1', port=5000, debug=False, use_reloader=False)

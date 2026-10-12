@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { 
   Play, 
   Square, 
@@ -28,9 +28,10 @@ export const Route = createFileRoute("/monitoring")({
 });
 
 interface FrameAnalysisResult {
+  status?: string;
   id: string;
   timestamp: string;
-  verdict: "REAL" | "SUSPICIOUS" | "DEEPFAKE" | "INVALID_FRAME" | "ERROR";
+  verdict: "REAL" | "LIKELY_REAL" | "UNCERTAIN" | "SUSPICIOUS" | "DEEPFAKE" | "INVALID_FRAME" | "ERROR";
   detection_score: number;
   risk_level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   latency_ms: number;
@@ -54,8 +55,31 @@ interface SessionStats {
   final_risk: string;
 }
 
+interface MonitoringSessionSummary {
+  session_id: string;
+  user_name: string;
+  status: string;
+  started_at: string;
+  ended_at?: string;
+  frames_received: number;
+  frames_analyzed: number;
+  frames_skipped: number;
+  deepfake_detections: number;
+  average_confidence: number;
+  average_latency_ms: number;
+  final_verdict: string;
+  final_risk: string;
+}
+
 export function RealTimeMonitoringPage() {
-  const { user } = useAuthState();
+  const navigate = useNavigate();
+  const { user, isInitialized } = useAuthState();
+
+  useEffect(() => {
+    if (isInitialized && !user) {
+      navigate({ to: "/login" });
+    }
+  }, [user, isInitialized, navigate]);
 
   // Stream & Hardware state
   const [isMonitoring, setIsMonitoring] = useState(false);
@@ -379,296 +403,266 @@ export function RealTimeMonitoringPage() {
 
   return (
     <AppShell
-      title="Real-Time Deepfake Monitoring"
-      description="Live camera stream with continuous deepfake-risk analysis and temporal evidence aggregation."
+      title="Real-Time Monitoring Console"
+      description="Continuous stream sampling with temporal evidence aggregation."
     >
-      <div className="space-y-6">
+      <div className="space-y-5">
         {/* Hidden Canvas for Frame Capture */}
         <canvas ref={canvasRef} style={{ display: "none" }} />
 
         {/* Camera Permission / Error Banner */}
         {cameraError && (
-          <div className="flex items-center gap-3 rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
-            <AlertTriangle className="h-5 w-5 shrink-0" />
+          <div className="flex items-center gap-3 rounded-md border border-rose-500/40 bg-rose-500/10 p-3.5 text-xs text-rose-300">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-rose-400" />
             <div className="flex-1">
-              <span className="font-semibold">Camera Access Error:</span> {cameraError}
+              <span className="font-semibold text-rose-200">Camera Access Error:</span> {cameraError}
             </div>
           </div>
         )}
 
         {/* Temporal Risk Alert Banner */}
         {isMonitoring && (temporalState.verdict === "DEEPFAKE" || temporalState.verdict === "SUSPICIOUS") && (
-          <div className="flex items-center gap-4 rounded-lg border border-amber-500/50 bg-amber-500/10 p-4 text-amber-500 animate-pulse">
-            <AlertTriangle className="h-6 w-6 shrink-0" />
+          <div className="flex items-center gap-3 rounded-md border border-amber-500/40 bg-amber-500/10 p-3.5 text-amber-300">
+            <AlertTriangle className="h-5 w-5 shrink-0 text-amber-400" />
             <div className="flex-1">
-              <div className="font-bold text-base">⚠ POSSIBLE MANIPULATION DETECTED</div>
-              <div className="text-xs opacity-90 mt-0.5">
+              <div className="font-semibold text-xs text-amber-200 uppercase tracking-wider">⚠ Media Manipulation Flagged</div>
+              <div className="text-[11px] opacity-90 mt-0.5">
                 Detection Score: {temporalState.score}% | Risk Level: {temporalState.risk} | 
-                Sustained evidence accumulated across {windowPredictions.length}-frame temporal window. Further verification recommended.
+                Sustained evidence accumulated across {windowPredictions.length}-frame temporal window.
               </div>
             </div>
           </div>
         )}
 
         {/* Main Grid: Video Stream + Controls */}
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-5 lg:grid-cols-3">
           {/* Video Stream Container (2 cols) */}
-          <Card className="lg:col-span-2 overflow-hidden border-border/70 bg-card/80">
-            <CardHeader className="flex flex-row items-center justify-between pb-3">
+          <div className="lg:col-span-2 overflow-hidden rounded-md border border-border/80 bg-slate-900/60 p-4 space-y-3">
+            <div className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="text-lg font-bold flex items-center gap-2">
-                  <Video className="h-5 w-5 text-primary" /> Camera Stream
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Native MediaDevices input | Controlled Sampling (2 FPS)
-                </CardDescription>
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+                  <Video className="h-4 w-4 text-sky-400" /> Live Media Stream Input
+                </h2>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  Native MediaDevices Feed | Controlled Sampling Rate (2 FPS)
+                </p>
               </div>
-              <div className="flex items-center gap-2">
+              <div>
                 {isMonitoring ? (
-                  <Badge variant="outline" className="gap-1.5 border-emerald-500/40 bg-emerald-500/10 text-emerald-400">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                  <span className="inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-[10px] font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     LIVE (2 FPS)
-                  </Badge>
+                  </span>
                 ) : (
-                  <Badge variant="outline" className="text-muted-foreground">
-                    OFFLINE
-                  </Badge>
+                  <span className="inline-flex items-center rounded px-2 py-0.5 text-[10px] font-medium border border-slate-700 bg-slate-800 text-slate-400">
+                    STREAM OFFLINE
+                  </span>
                 )}
               </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-border/60 bg-black/90 flex items-center justify-center">
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className={cn("h-full w-full object-cover", !isMonitoring && "hidden")}
-                />
+            </div>
 
-                {!isMonitoring && (
-                  <div className="flex flex-col items-center gap-3 text-muted-foreground p-6 text-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary/80 text-foreground">
-                      <Camera className="h-8 w-8 text-primary" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-foreground">Camera Monitoring Inactive</div>
-                      <div className="text-xs text-muted-foreground mt-1 max-w-sm">
-                        Click "START MONITORING" below to request camera permission and initiate real-time deepfake analysis.
-                      </div>
+            <div className="relative aspect-video w-full overflow-hidden rounded border border-border/80 bg-slate-950 flex items-center justify-center">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className={cn("h-full w-full object-cover", !isMonitoring && "hidden")}
+              />
+
+              {!isMonitoring && (
+                <div className="flex flex-col items-center gap-3 text-slate-400 p-6 text-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded border border-slate-700 bg-slate-800 text-slate-300">
+                    <Camera className="h-6 w-6 text-sky-400" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-xs text-slate-200">Camera Feed Inactive</div>
+                    <div className="text-[11px] text-slate-400 mt-0.5 max-w-sm">
+                      Click "Start Stream Monitoring" below to grant camera access and initiate continuous deepfake risk sampling.
                     </div>
                   </div>
-                )}
+                </div>
+              )}
 
-                {/* Live Overlays */}
-                {isMonitoring && (
-                  <div className="absolute top-3 left-3 flex flex-wrap gap-2">
-                    <Badge className={cn(
-                      "px-2.5 py-1 text-xs font-bold",
-                      temporalState.verdict === "REAL" && "bg-emerald-600 text-white",
-                      temporalState.verdict === "SUSPICIOUS" && "bg-amber-600 text-white",
-                      temporalState.verdict === "DEEPFAKE" && "bg-rose-600 text-white"
-                    )}>
-                      Verdict: {temporalState.verdict}
-                    </Badge>
-                    <Badge variant="secondary" className="bg-black/70 backdrop-blur text-white border border-white/10">
-                      Detection Score: {currentScore.toFixed(1)}%
-                    </Badge>
-                    <Badge variant="outline" className={cn(
-                      "bg-black/70 backdrop-blur",
-                      temporalState.risk === "LOW" && "text-emerald-400 border-emerald-500/40",
-                      temporalState.risk === "MEDIUM" && "text-amber-400 border-amber-500/40",
-                      (temporalState.risk === "HIGH" || temporalState.risk === "CRITICAL") && "text-rose-400 border-rose-500/40"
-                    )}>
-                      Risk: {temporalState.risk}
-                    </Badge>
-                  </div>
-                )}
-              </div>
+              {/* Live Overlays */}
+              {isMonitoring && (
+                <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+                  <span className={cn(
+                    "px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider text-white border",
+                    (temporalState.verdict === "REAL" || temporalState.verdict === "LIKELY_REAL") && "bg-emerald-600 border-emerald-500",
+                    (temporalState.verdict === "SUSPICIOUS" || temporalState.verdict === "UNCERTAIN") && "bg-amber-600 border-amber-500",
+                    temporalState.verdict === "DEEPFAKE" && "bg-rose-600 border-rose-500"
+                  )}>
+                    Verdict: {temporalState.verdict}
+                  </span>
+                  <span className="px-2 py-0.5 text-[10px] font-mono font-medium rounded bg-slate-900/90 text-slate-200 border border-slate-700">
+                    Score: {currentScore.toFixed(1)}%
+                  </span>
+                  <span className={cn(
+                    "px-2 py-0.5 text-[10px] font-semibold rounded bg-slate-900/90 border",
+                    temporalState.risk === "LOW" && "text-emerald-400 border-emerald-500/30",
+                    temporalState.risk === "MEDIUM" && "text-amber-400 border-amber-500/30",
+                    (temporalState.risk === "HIGH" || temporalState.risk === "CRITICAL") && "text-rose-400 border-rose-500/30"
+                  )}>
+                    Risk: {temporalState.risk}
+                  </span>
+                </div>
+              )}
+            </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-4">
-                {!isMonitoring ? (
-                  <Button onClick={handleStartMonitoring} className="flex-1 bg-primary text-primary-foreground gap-2 font-semibold">
-                    <Play className="h-4 w-4" /> START MONITORING
-                  </Button>
-                ) : (
-                  <Button onClick={handleStopMonitoring} variant="destructive" className="flex-1 gap-2 font-semibold">
-                    <Square className="h-4 w-4" /> STOP MONITORING
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+            {/* Action Buttons */}
+            <div className="pt-1">
+              {!isMonitoring ? (
+                <Button onClick={handleStartMonitoring} className="w-full h-9 bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs gap-2">
+                  <Play className="h-3.5 w-3.5" /> Start Stream Monitoring
+                </Button>
+              ) : (
+                <Button onClick={handleStopMonitoring} variant="destructive" className="w-full h-9 font-medium text-xs gap-2 bg-rose-600 hover:bg-rose-500">
+                  <Square className="h-3.5 w-3.5" /> Stop Stream Monitoring
+                </Button>
+              )}
+            </div>
+          </div>
 
           {/* Current Real-Time Metrics (1 col) */}
-          <Card className="border-border/70 bg-card/80 flex flex-col justify-between">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-bold flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-primary" /> Live Risk Status
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Temporal Evidence Aggregation (5-frame window)
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="rounded-xl border border-border/70 bg-secondary/30 p-4 text-center space-y-2">
-                <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Current Temporal Verdict</div>
+          <div className="rounded-md border border-border/80 bg-slate-900/60 p-4 flex flex-col justify-between space-y-4">
+            <div>
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-sky-400" /> Live Telemetry Status
+              </h2>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                5-Frame Sliding Temporal Window
+              </p>
+            </div>
+
+            <div className="rounded border border-border/80 bg-slate-950/60 p-3.5 text-center space-y-1">
+              <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Current Temporal Verdict</div>
+              <div className={cn(
+                "text-2xl font-bold tracking-tight",
+                (temporalState.verdict === "REAL" || temporalState.verdict === "LIKELY_REAL") && "text-emerald-400",
+                (temporalState.verdict === "SUSPICIOUS" || temporalState.verdict === "UNCERTAIN") && "text-amber-400",
+                temporalState.verdict === "DEEPFAKE" && "text-rose-400",
+                temporalState.verdict === "IDLE" && "text-slate-400"
+              )}>
+                {temporalState.verdict}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="rounded border border-border/80 bg-slate-950/40 p-2.5">
+                <div className="text-[10px] uppercase font-semibold text-slate-400">Score</div>
+                <div className="mt-0.5 text-lg font-bold text-slate-100 font-mono">{currentScore.toFixed(1)}%</div>
+              </div>
+              <div className="rounded border border-border/80 bg-slate-950/40 p-2.5">
+                <div className="text-[10px] uppercase font-semibold text-slate-400">Risk</div>
                 <div className={cn(
-                  "text-3xl font-extrabold tracking-tight",
-                  temporalState.verdict === "REAL" && "text-emerald-400",
-                  temporalState.verdict === "SUSPICIOUS" && "text-amber-400",
-                  temporalState.verdict === "DEEPFAKE" && "text-rose-400",
-                  temporalState.verdict === "IDLE" && "text-muted-foreground"
+                  "mt-0.5 text-lg font-bold",
+                  temporalState.risk === "LOW" && "text-emerald-400",
+                  temporalState.risk === "MEDIUM" && "text-amber-400",
+                  (temporalState.risk === "HIGH" || temporalState.risk === "CRITICAL") && "text-rose-400"
                 )}>
-                  {temporalState.verdict}
+                  {temporalState.risk}
                 </div>
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-lg border border-border/60 bg-card p-3">
-                  <div className="text-xs text-muted-foreground">Detection Score</div>
-                  <div className="mt-1 text-xl font-bold text-foreground">{currentScore.toFixed(1)}%</div>
+            {/* Agent Execution Pipeline Checklist */}
+            <div className="space-y-2">
+              <div className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Activity className="h-3.5 w-3.5 text-sky-400" /> Pipeline Modules
+              </div>
+              <div className="space-y-1 text-xs font-mono">
+                <div className="flex items-center justify-between rounded bg-slate-950/60 px-2.5 py-1 text-[11px]">
+                  <span className="text-slate-400">Media Validation</span>
+                  <span className="text-emerald-400 font-semibold">{currentAgents.validation || "ACTIVE"}</span>
                 </div>
-                <div className="rounded-lg border border-border/60 bg-card p-3">
-                  <div className="text-xs text-muted-foreground">Risk Level</div>
-                  <div className={cn(
-                    "mt-1 text-xl font-bold",
-                    temporalState.risk === "LOW" && "text-emerald-400",
-                    temporalState.risk === "MEDIUM" && "text-amber-400",
-                    (temporalState.risk === "HIGH" || temporalState.risk === "CRITICAL") && "text-rose-400"
-                  )}>
-                    {temporalState.risk}
-                  </div>
+                <div className="flex items-center justify-between rounded bg-slate-950/60 px-2.5 py-1 text-[11px]">
+                  <span className="text-slate-400">Image Agent</span>
+                  <span className="text-emerald-400 font-semibold">{currentAgents.image || "IDLE"}</span>
+                </div>
+                <div className="flex items-center justify-between rounded bg-slate-950/60 px-2.5 py-1 text-[11px]">
+                  <span className="text-slate-400">Confidence Eval</span>
+                  <span className="text-emerald-400 font-semibold">{currentAgents.confidence || "IDLE"}</span>
+                </div>
+                <div className="flex items-center justify-between rounded bg-slate-950/60 px-2.5 py-1 text-[11px]">
+                  <span className="text-slate-400">Artifact Agent</span>
+                  <span className="text-slate-400 font-semibold">{currentAgents.artifact || "SKIPPED"}</span>
+                </div>
+                <div className="flex items-center justify-between rounded bg-slate-950/60 px-2.5 py-1 text-[11px]">
+                  <span className="text-slate-400">Fusion Agent</span>
+                  <span className="text-slate-400 font-semibold">{currentAgents.fusion || "SKIPPED"}</span>
                 </div>
               </div>
-
-              {/* Agent Execution Timeline Status */}
-              <div className="space-y-2">
-                <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                  <Activity className="h-3.5 w-3.5 text-primary" /> Agent Execution Pipeline
-                </div>
-                <div className="space-y-1.5 text-xs">
-                  <div className="flex items-center justify-between rounded bg-secondary/50 px-2.5 py-1.5">
-                    <span className="text-muted-foreground">Media Validation</span>
-                    <Badge variant="outline" className="text-[10px] py-0 px-1.5 border-emerald-500/40 text-emerald-400">
-                      {currentAgents.validation || "ACTIVE"}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between rounded bg-secondary/50 px-2.5 py-1.5">
-                    <span className="text-muted-foreground">Image Agent (ResNet-18)</span>
-                    <Badge variant="outline" className="text-[10px] py-0 px-1.5 border-emerald-500/40 text-emerald-400">
-                      {currentAgents.image || "IDLE"}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between rounded bg-secondary/50 px-2.5 py-1.5">
-                    <span className="text-muted-foreground">Confidence Evaluation</span>
-                    <Badge variant="outline" className="text-[10px] py-0 px-1.5 border-emerald-500/40 text-emerald-400">
-                      {currentAgents.confidence || "IDLE"}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between rounded bg-secondary/50 px-2.5 py-1.5">
-                    <span className="text-muted-foreground">Artifact Agent</span>
-                    <Badge variant="outline" className={cn(
-                      "text-[10px] py-0 px-1.5",
-                      currentAgents.artifact === "Success" ? "border-amber-500/40 text-amber-400" : "text-muted-foreground border-border/50"
-                    )}>
-                      {currentAgents.artifact || "SKIPPED"}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between rounded bg-secondary/50 px-2.5 py-1.5">
-                    <span className="text-muted-foreground">Fusion Agent</span>
-                    <Badge variant="outline" className={cn(
-                      "text-[10px] py-0 px-1.5",
-                      currentAgents.fusion === "Success" ? "border-amber-500/40 text-amber-400" : "text-muted-foreground border-border/50"
-                    )}>
-                      {currentAgents.fusion || "SKIPPED"}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
-        {/* Monitoring Statistics Grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-          <Card className="border-border/70 bg-card/60">
-            <CardContent className="p-4">
-              <div className="text-xs font-medium text-muted-foreground">Frames Received</div>
-              <div className="mt-1 text-2xl font-bold text-foreground">{framesReceived}</div>
-            </CardContent>
-          </Card>
-          <Card className="border-border/70 bg-card/60">
-            <CardContent className="p-4">
-              <div className="text-xs font-medium text-muted-foreground">Frames Analyzed</div>
-              <div className="mt-1 text-2xl font-bold text-primary">{framesAnalyzed}</div>
-            </CardContent>
-          </Card>
-          <Card className="border-border/70 bg-card/60">
-            <CardContent className="p-4">
-              <div className="text-xs font-medium text-muted-foreground">Frames Skipped</div>
-              <div className="mt-1 text-2xl font-bold text-amber-400">{framesSkipped}</div>
-            </CardContent>
-          </Card>
-          <Card className="border-border/70 bg-card/60">
-            <CardContent className="p-4">
-              <div className="text-xs font-medium text-muted-foreground">Deepfake Detections</div>
-              <div className="mt-1 text-2xl font-bold text-rose-400">{deepfakeDetections}</div>
-            </CardContent>
-          </Card>
-          <Card className="border-border/70 bg-card/60">
-            <CardContent className="p-4">
-              <div className="text-xs font-medium text-muted-foreground">Average Score</div>
-              <div className="mt-1 text-2xl font-bold text-foreground">{avgConfidence}%</div>
-            </CardContent>
-          </Card>
-          <Card className="border-border/70 bg-card/60">
-            <CardContent className="p-4">
-              <div className="text-xs font-medium text-muted-foreground">Average Latency</div>
-              <div className="mt-1 text-2xl font-bold text-foreground">{avgLatency} ms</div>
-            </CardContent>
-          </Card>
+        {/* Operational Telemetry Grid */}
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+          <div className="rounded-md border border-border/80 bg-slate-900/60 p-3.5">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Frames Received</div>
+            <div className="mt-1 text-xl font-bold text-slate-100 font-mono">{framesReceived}</div>
+          </div>
+          <div className="rounded-md border border-border/80 bg-slate-900/60 p-3.5">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Frames Analyzed</div>
+            <div className="mt-1 text-xl font-bold text-sky-400 font-mono">{framesAnalyzed}</div>
+          </div>
+          <div className="rounded-md border border-border/80 bg-slate-900/60 p-3.5">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Frames Skipped</div>
+            <div className="mt-1 text-xl font-bold text-amber-400 font-mono">{framesSkipped}</div>
+          </div>
+          <div className="rounded-md border border-border/80 bg-slate-900/60 p-3.5">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Deepfake Detections</div>
+            <div className="mt-1 text-xl font-bold text-rose-400 font-mono">{deepfakeDetections}</div>
+          </div>
+          <div className="rounded-md border border-border/80 bg-slate-900/60 p-3.5">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Average Score</div>
+            <div className="mt-1 text-xl font-bold text-slate-100 font-mono">{avgConfidence}%</div>
+          </div>
+          <div className="rounded-md border border-border/80 bg-slate-900/60 p-3.5">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Average Latency</div>
+            <div className="mt-1 text-xl font-bold text-slate-100 font-mono">{avgLatency} ms</div>
+          </div>
         </div>
 
-        {/* Detection Timeline */}
-        <Card className="border-border/70 bg-card/80">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-bold flex items-center gap-2">
-              <Clock className="h-4 w-4 text-primary" /> Detection Timeline (Recent Frames)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+        {/* Detection Event Log Timeline */}
+        <div className="rounded-md border border-border/80 bg-slate-900/60">
+          <div className="flex items-center justify-between border-b border-border/80 px-4 py-3">
+            <h3 className="text-xs font-semibold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <Clock className="h-3.5 w-3.5 text-sky-400" /> Detection Telemetry Stream (Recent Samples)
+            </h3>
+          </div>
+          <div className="p-4">
             {timeline.length === 0 ? (
-              <div className="py-8 text-center text-xs text-muted-foreground">
-                No frames analyzed yet. Start monitoring to populate live timeline.
+              <div className="py-6 text-center text-xs text-slate-400">
+                No telemetry samples recorded yet. Initiate stream monitoring to log live events.
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {timeline.map((item, i) => (
                   <div
                     key={item.id || i}
-                    className="flex items-center justify-between rounded-lg border border-border/50 bg-secondary/20 px-4 py-2.5 text-xs transition-colors hover:bg-secondary/40"
+                    className="flex items-center justify-between rounded border border-border/60 bg-slate-950/40 px-3.5 py-2 text-xs font-mono"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="font-mono text-muted-foreground">{item.timestamp}</span>
-                      <Badge className={cn(
-                        "font-semibold text-[11px]",
-                        item.verdict === "REAL" && "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-                        item.verdict === "SUSPICIOUS" && "bg-amber-500/20 text-amber-400 border-amber-500/30",
-                        item.verdict === "DEEPFAKE" && "bg-rose-500/20 text-rose-400 border-rose-500/30"
+                      <span className="text-slate-400 text-[11px]">{item.timestamp}</span>
+                      <span className={cn(
+                        "rounded px-2 py-0.5 text-[10px] font-semibold border",
+                        (item.verdict === "REAL" || item.verdict === "LIKELY_REAL") && "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+                        (item.verdict === "SUSPICIOUS" || item.verdict === "UNCERTAIN") && "bg-amber-500/10 text-amber-400 border-amber-500/20",
+                        item.verdict === "DEEPFAKE" && "bg-rose-500/10 text-rose-400 border-rose-500/20"
                       )}>
                         {item.verdict}
-                      </Badge>
+                      </span>
                     </div>
 
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-5 text-[11px]">
                       <div>
-                        <span className="text-muted-foreground mr-1">Score:</span>
-                        <span className="font-semibold text-foreground">{item.detection_score}%</span>
+                        <span className="text-slate-400 mr-1">Score:</span>
+                        <span className="font-semibold text-slate-200">{item.detection_score}%</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground mr-1">Risk:</span>
+                        <span className="text-slate-400 mr-1">Risk:</span>
                         <span className={cn(
                           "font-semibold",
                           item.risk_level === "LOW" && "text-emerald-400",
@@ -679,64 +673,65 @@ export function RealTimeMonitoringPage() {
                         </span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground mr-1">Latency:</span>
-                        <span className="font-mono text-foreground">{item.latency_ms} ms</span>
+                        <span className="text-slate-400 mr-1">Latency:</span>
+                        <span className="text-slate-300">{item.latency_ms}ms</span>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Session Summary Modal / Card */}
+        {/* Session Summary Panel */}
         {sessionSummary && (
-          <Card className="border-primary/50 bg-card p-6 shadow-xl">
-            <CardHeader className="px-0 pt-0 pb-4 border-b border-border/60">
-              <CardTitle className="text-lg font-bold text-foreground">Monitoring Session Summary</CardTitle>
-              <CardDescription className="text-xs">Aggregated metrics for completed real-time session</CardDescription>
-            </CardHeader>
-            <CardContent className="px-0 pt-4 space-y-4">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-                <div className="rounded-lg bg-secondary/40 p-3">
-                  <div className="text-muted-foreground">Frames Analyzed</div>
-                  <div className="text-lg font-bold text-foreground mt-1">{sessionSummary.frames_analyzed}</div>
-                </div>
-                <div className="rounded-lg bg-secondary/40 p-3">
-                  <div className="text-muted-foreground">Frames Skipped</div>
-                  <div className="text-lg font-bold text-foreground mt-1">{sessionSummary.frames_skipped}</div>
-                </div>
-                <div className="rounded-lg bg-secondary/40 p-3">
-                  <div className="text-muted-foreground">Deepfake Detections</div>
-                  <div className="text-lg font-bold text-rose-400 mt-1">{sessionSummary.deepfake_detections}</div>
-                </div>
-                <div className="rounded-lg bg-secondary/40 p-3">
-                  <div className="text-muted-foreground">Avg Latency</div>
-                  <div className="text-lg font-bold text-foreground mt-1">{sessionSummary.average_latency_ms} ms</div>
-                </div>
-              </div>
+          <div className="rounded-md border border-sky-500/30 bg-slate-900/80 p-5 space-y-4">
+            <div className="border-b border-border/80 pb-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">Monitoring Session Summary</h3>
+              <p className="text-[11px] text-slate-400">Aggregated telemetry for completed real-time session</p>
+            </div>
 
-              <div className="flex items-center justify-between rounded-lg border border-border/60 p-4">
-                <div>
-                  <div className="text-xs text-muted-foreground">Overall Session Verdict & Risk</div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xl font-extrabold text-foreground">{sessionSummary.final_verdict}</span>
-                    <Badge variant="outline">{sessionSummary.final_risk} RISK</Badge>
-                  </div>
-                </div>
-                {sessionSavedSuccess ? (
-                  <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 gap-1 py-1.5 px-3">
-                    <CheckCircle2 className="h-4 w-4" /> Session Saved
-                  </Badge>
-                ) : (
-                  <Button size="sm" onClick={() => setSessionSavedSuccess(true)} className="gap-2">
-                    <Save className="h-4 w-4" /> Save Session Summary
-                  </Button>
-                )}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div className="rounded bg-slate-950/60 p-3 border border-border/60">
+                <div className="text-slate-400 text-[10px] uppercase font-semibold">Frames Analyzed</div>
+                <div className="text-lg font-bold text-slate-100 mt-0.5 font-mono">{sessionSummary.frames_analyzed}</div>
               </div>
-            </CardContent>
-          </Card>
+              <div className="rounded bg-slate-950/60 p-3 border border-border/60">
+                <div className="text-slate-400 text-[10px] uppercase font-semibold">Frames Skipped</div>
+                <div className="text-lg font-bold text-amber-400 mt-0.5 font-mono">{sessionSummary.frames_skipped}</div>
+              </div>
+              <div className="rounded bg-slate-950/60 p-3 border border-border/60">
+                <div className="text-slate-400 text-[10px] uppercase font-semibold">Deepfake Detections</div>
+                <div className="text-lg font-bold text-rose-400 mt-0.5 font-mono">{sessionSummary.deepfake_detections}</div>
+              </div>
+              <div className="rounded bg-slate-950/60 p-3 border border-border/60">
+                <div className="text-slate-400 text-[10px] uppercase font-semibold">Avg Latency</div>
+                <div className="text-lg font-bold text-slate-100 mt-0.5 font-mono">{sessionSummary.average_latency_ms} ms</div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between rounded border border-border/80 bg-slate-950/40 p-3.5">
+              <div>
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Session Final Verdict & Risk</div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-lg font-bold text-slate-100">{sessionSummary.final_verdict}</span>
+                  <span className="rounded px-2 py-0.5 text-[10px] font-semibold border border-slate-700 text-slate-300 font-mono">
+                    {sessionSummary.final_risk} RISK
+                  </span>
+                </div>
+              </div>
+              {sessionSavedSuccess ? (
+                <span className="inline-flex items-center gap-1.5 rounded px-3 py-1 text-xs font-semibold text-emerald-400 border border-emerald-500/30 bg-emerald-500/10">
+                  <CheckCircle2 className="h-3.5 w-3.5" /> Session Saved
+                </span>
+              ) : (
+                <Button size="sm" onClick={() => setSessionSavedSuccess(true)} className="h-8 text-xs bg-sky-600 hover:bg-sky-500 text-white gap-1.5 font-medium">
+                  <Save className="h-3.5 w-3.5" /> Save Session Record
+                </Button>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </AppShell>

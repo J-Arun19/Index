@@ -1,128 +1,197 @@
 import os
-import torch
+import cv2
 import time
+import torch
+from typing import Optional, Dict, Any
+
 from backend.utils.config import PipelineConfig
 from backend.utils.logger import setup_logger
+from backend.models.image_model import ImageModel
+from backend.preprocessing.image_preprocessor import ImagePreprocessor
+from backend.preprocessing.quality_gate import ImageQualityGate
+from backend.forensics.forensic_analyzers import ForensicEvidenceSuite
+from backend.core.decision_system import SafetyDecisionSystem, DecisionState
 
 logger = setup_logger("ImageAgent")
 
+
 class ImageAgent:
-    """Analyzes an image using real model inference if weights exist, otherwise falls back to deterministic mock logic."""
-    
-    def analyze(self, file_path: str) -> dict:
+    """
+    Forensic image analysis agent.
+    Combines input quality validation, genuine frequency/compression forensics,
+    calibrated neural network inference, and a three-state decision engine.
+    """
+
+    def __init__(self, weights_path: Optional[str] = None):
+        self.weights_path = weights_path or PipelineConfig.IMAGE_MODEL_PATH
+        self.quality_gate = ImageQualityGate()
+        self.forensics = ForensicEvidenceSuite()
+        self.decision_system = SafetyDecisionSystem()
+        self.preprocessor = ImagePreprocessor()
+        self._model: Optional[ImageModel] = None
+
+    @property
+    def model(self) -> ImageModel:
+        """Lazily initializes and caches the neural network."""
+        if self._model is None:
+            model = ImageModel(num_classes=2, pretrained=False)
+            if os.path.exists(self.weights_path):
+                try:
+                    model.load_weights(self.weights_path)
+                    logger.info(f"ImageAgent: Loaded model weights from {self.weights_path}")
+                except Exception as e:
+                    logger.error(f"ImageAgent: Failed to load weights from {self.weights_path}: {e}")
+            else:
+                logger.warning(f"ImageAgent: No weights found at {self.weights_path}. Model uninitialized.")
+            model.eval()
+            self._model = model
+        return self._model
+
+    def analyze(self, file_path: str, require_face: bool = True) -> Dict[str, Any]:
         """
-        Analyzes an image file.
-        
-        Args:
-            file_path (str): Path to the image file to analyze.
-            
-        Returns:
-            dict: Forensic analysis metrics, verdict, confidence, and metadata.
+        Executes complete forensic verification on an image file.
         """
         start_time = time.time()
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"File not found: {file_path}")
-            
+
         filename = os.path.basename(file_path)
         size = os.path.getsize(file_path)
-        
-        # Extract format
         _, ext = os.path.splitext(filename)
         fmt = ext[1:].upper() if ext else "PNG"
-        
-        weights_path = PipelineConfig.IMAGE_MODEL_PATH
-        
-        # Check if the trained model weights exist
-        if os.path.exists(weights_path):
-            logger.info(f"Trained image model weights found at {weights_path}. Initializing real inference...")
+
+        # 1. Image Quality Gate
+        img_bgr = cv2.imread(file_path)
+        quality_res = self.quality_gate.evaluate(img_bgr, require_face=require_face)
+
+        # Separate media suitability from authenticity:
+        # If media is unsupported (no human face detected), bypass model and forensic analysis
+        if getattr(quality_res, "eligibility", None) == "UNSUPPORTED":
+            decision = self.decision_system.decide(
+                raw_fake_prob=None,
+                quality_result=quality_res,
+                forensic_result={},
+            )
+            processing_time = round(time.time() - start_time, 4)
+            return self._format_response(
+                decision=decision,
+                quality_res=quality_res,
+                forensic_res={},
+                filename=filename,
+                size=size,
+                fmt=fmt,
+                processing_time=processing_time,
+                img_shape=img_bgr.shape if img_bgr is not None else (0, 0, 0),
+            )
+
+        # 2. Genuine Forensic Evidence
+        face_bbox = quality_res.primary_face_bbox if quality_res.face_detected else None
+        forensic_res = self.forensics.evaluate(img_bgr, face_bbox=face_bbox) if img_bgr is not None else {}
+
+        # If quality gate failed (LOW QUALITY: blurry or face too small), abstain via decision system
+        if not quality_res.is_suitable:
+            decision = self.decision_system.decide(
+                raw_fake_prob=0.50,
+                quality_result=quality_res,
+                forensic_result=forensic_res,
+            )
+            processing_time = round(time.time() - start_time, 4)
+            return self._format_response(
+                decision=decision,
+                quality_res=quality_res,
+                forensic_res=forensic_res,
+                filename=filename,
+                size=size,
+                fmt=fmt,
+                processing_time=processing_time,
+                img_shape=img_bgr.shape if img_bgr is not None else (0, 0, 0),
+            )
+
+        # 3. Model Inference (Raw Probability)
+        raw_fake_prob = 0.50
+        if os.path.exists(self.weights_path):
             try:
-                from backend.models.image_model import ImageModel
-                from backend.preprocessing.image_preprocessor import ImagePreprocessor
-                
-                # Preprocess image to tensor
-                preprocessor = ImagePreprocessor()
-                tensor = preprocessor.preprocess_image(file_path)  # (3, H, W)
-                tensor = tensor.unsqueeze(0)  # Add batch dimension: (1, 3, H, W)
-                
-                # Initialize model and load weights
-                model = ImageModel(num_classes=2)
-                model.load_weights(weights_path)
-                
-                # Run inference using predict()
-                pred_dict = model.predict(tensor)
-                logits = pred_dict["logits"]
-                probabilities = pred_dict["probabilities"][0]
-                predicted_class = pred_dict["predicted_class"][0].item()
-                confidence = int(pred_dict["confidence_score"][0].item() * 100)
-                is_fake = (predicted_class == 1)
-                
-                # Map probabilities to feature metrics
-                noise_inconsistency = round(probabilities[1].item() * 0.95, 2) if is_fake else round(probabilities[1].item() * 0.15, 2)
-                edge_artifacts = round(probabilities[1].item() * 0.88, 2) if is_fake else round(probabilities[1].item() * 0.08, 2)
-                metadata_anomaly = True if (is_fake and probabilities[1].item() > PipelineConfig.CLASSIFICATION_THRESHOLD) else False
-                
-                verdict = "DEEPFAKE" if is_fake else "REAL"
-                if is_fake:
-                    summary = f"Real model inference: Flagged boundary/facial anomalies with {confidence}% confidence. Structural artifacts detected."
-                else:
-                    summary = f"Real model inference: Image verified as authentic with {confidence}% confidence. Sensor patterns are consistent."
-                
-                processing_time = round(time.time() - start_time, 4)
-                return {
-                    "metadata": {
-                        "file_size_bytes": size,
-                        "filename": filename,
-                        "width": 224,
-                        "height": 224,
-                        "format": fmt
-                    },
-                    "confidence_score": confidence,
-                    "verdict": verdict,
-                    "features": {
-                        "noise_inconsistency": noise_inconsistency,
-                        "edge_boundary_artifacts": edge_artifacts,
-                        "metadata_anomaly": metadata_anomaly
-                    },
-                    "summary": summary,
-                    "processing_time": processing_time
-                }
+                tensor = self.preprocessor.preprocess_image(file_path)
+                tensor = tensor.unsqueeze(0)  # (1, 3, H, W)
+                pred_dict = self.model.predict(tensor)
+                probs = pred_dict["probabilities"][0]
+                raw_fake_prob = float(probs[1].item())
             except Exception as e:
-                logger.error(f"Failed to run real image model inference: {str(e)}. Falling back to mock analysis.")
-                
-        # Mock analysis fallback (stable demo behavior)
-        logger.info("Using deterministic mock analysis for image.")
-        seed = sum(ord(c) for c in filename)
-        is_fake = seed % 2 == 0
-        confidence = 82 + (seed % 15)
-        
-        noise_inconsistency = round(0.65 + (seed % 3) * 0.1, 2) if is_fake else round(0.12 + (seed % 3) * 0.05, 2)
-        edge_artifacts = round(0.70 + (seed % 2) * 0.15, 2) if is_fake else round(0.08 + (seed % 2) * 0.04, 2)
-        metadata_anomaly = True if (is_fake and seed % 4 == 0) else False
-        
-        verdict = "DEEPFAKE" if is_fake else "REAL"
-        
-        if is_fake:
-            summary = "Flagged compression + boundary artifacts. Inconsistent frequency artifacts around facial contours."
+                logger.error(f"Inference execution failed on {file_path}: {e}")
+                raw_fake_prob = 0.50
         else:
-            summary = "Consistent sensor noise distribution. Facial boundaries are natural with no splicing artifacts."
-            
+            logger.warning("Using baseline inference as weights path does not exist.")
+            raw_fake_prob = 0.50
+
+        # 4. Three-State Safety Decision Fusion
+        decision = self.decision_system.decide(
+            raw_fake_prob=raw_fake_prob,
+            quality_result=quality_res,
+            forensic_result=forensic_res,
+        )
+
         processing_time = round(time.time() - start_time, 4)
+        return self._format_response(
+            decision=decision,
+            quality_res=quality_res,
+            forensic_res=forensic_res,
+            filename=filename,
+            size=size,
+            fmt=fmt,
+            processing_time=processing_time,
+            img_shape=img_bgr.shape if img_bgr is not None else (0, 0, 0),
+        )
+
+    def _format_response(
+        self,
+        decision,
+        quality_res,
+        forensic_res: Dict[str, Any],
+        filename: str,
+        size: int,
+        fmt: str,
+        processing_time: float,
+        img_shape: tuple,
+    ) -> Dict[str, Any]:
+        """Formats the structured forensic response."""
+        is_not_suitable = decision.prediction == DecisionState.NOT_SUITABLE
+        fft_data = forensic_res.get("fft_analysis", {})
+        ela_data = forensic_res.get("ela_analysis", {})
+        edge_data = forensic_res.get("edge_analysis", {})
+
         return {
             "metadata": {
                 "file_size_bytes": size,
                 "filename": filename,
-                "width": 1920,
-                "height": 1080,
-                "format": fmt
+                "width": img_shape[1] if len(img_shape) > 1 else 0,
+                "height": img_shape[0] if len(img_shape) > 0 else 0,
+                "format": fmt,
             },
-            "confidence_score": confidence,
-            "verdict": verdict,
+            "prediction": decision.prediction,
+            "verdict": decision.verdict,
+            "confidence": decision.confidence,
+            "confidence_score": decision.confidence,
+            "confidence_level": decision.confidence_level,
+            "fake_probability": decision.fake_probability,
+            "real_probability": decision.real_probability,
+            "raw_model_score": decision.raw_model_score,
+            "uncertainty": decision.uncertainty,
+            "evidence": decision.evidence,
+            "reason": decision.reason,
+            "summary": decision.user_facing_statement,
+            "user_facing_statement": decision.user_facing_statement,
+            "recommendation": getattr(decision, "recommendation", None),
+            "analysis_status": getattr(decision, "analysis_status", "Completed"),
+            "face_detected": quality_res.face_detected,
+            "media_category": getattr(decision, "media_category", "Facial Media"),
+            "quality_gate": quality_res.to_dict(),
             "features": {
-                "noise_inconsistency": noise_inconsistency,
-                "edge_boundary_artifacts": edge_artifacts,
-                "metadata_anomaly": metadata_anomaly
+                "noise_inconsistency": 0.0 if is_not_suitable else forensic_res.get("composite_forensic_score", 0.15),
+                "edge_boundary_artifacts": 0.0 if is_not_suitable else edge_data.get("edge_score", 0.10),
+                "fft_spectral_anomaly": 0.0 if is_not_suitable else fft_data.get("fft_score", 0.10),
+                "ela_compression_anomaly": 0.0 if is_not_suitable else ela_data.get("ela_score", 0.10),
+                "metadata_anomaly": False,
+                "blur_score": quality_res.blur_score,
             },
-            "summary": summary,
-            "processing_time": processing_time
+            "processing_time": processing_time,
         }
-

@@ -14,7 +14,7 @@ def create_app(config_class=Config):
 
     
     # Enable CORS for all routes under /api/
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    CORS(app, resources={r"/api/*": {"origins": "*"}}, expose_headers=["Content-Disposition"])
     
     # Ensure upload directory exists
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -36,6 +36,12 @@ def create_app(config_class=Config):
         return jsonify({
             'message': 'Welcome to SatyaDrishti API. Use /api/upload to upload files.'
         }), 200
+
+    # Analysis root route alias
+    @app.route('/analysis', methods=['POST'])
+    def analysis_root():
+        from backend.api.analysis import analyze_media
+        return analyze_media()
         
     # Error Handlers
     @app.errorhandler(413)
