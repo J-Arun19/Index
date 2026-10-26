@@ -1,0 +1,61 @@
+{
+  "experiment": "SatyaDrishti Experiment 2B",
+  "description": "Controlled Validation Inference and Policy Evaluation",
+  "timestamp": "2026-10-12T17:43:20Z",
+  "execution_device": "cpu",
+  "execution_status": "PASS",
+  "validation_manifest": {
+    "path": "research/experimental_fusion/datasets/validation_manifest_v2.json",
+    "sha256": "baf6f6615bc176341fd08cfa5e6fdc2797ba0e2c501876f2c04d40dcdb94d21a",
+    "sample_counts": {
+      "total_videos": 60,
+      "total_images": 60,
+      "video_failures": 0,
+      "image_failures": 0,
+      "image_not_suitable": 0
+    }
+  },
+  "model_weights": {
+    "sbi": {
+      "path": "backend/models/experimental/weights/sbi_ffc23.tar",
+      "sha256": "2b05c2ba36ccb9e9f4f9e1aae9acd443ae2e6400ce725f56104fdb175d3c3267"
+    },
+    "xception": {
+      "path": "backend/models/experimental/weights/xception_best.pth",
+      "sha256": "dd61186f9ac8e99aae85982cae338b555dfaeef042f6b699e5a55cae3998ba47"
+    }
+  },
+  "calibration_config": {
+    "path": "backend/models/experimental/fusion_calibration_config.json",
+    "sha256": "982a567e5322285f8437e2d009626d815a7bf5363149371ff36ef45d1bedf5de",
+    "temperatures": {
+      "sbi": 2.7676,
+      "xception": 2.421
+    },
+    "thresholds": {
+      "tau_real": 0.35,
+      "tau_fake": 0.65,
+      "min_confidence": 60.0
+    }
+  },
+  "runtime_seconds": {
+    "video_inference_total": 350.19,
+    "image_inference_total": 48.74,
+    "total_elapsed": 398.93
+  },
+  "policy_evaluation": {
+    "selected_policy": "Candidate 3 (Directional Temporal Conflict Gating)",
+    "status": "FROZEN_VALIDATION_ONLY",
+    "validation_combined_coverage": 0.3417,
+    "validation_combined_fpr": 0.05,
+    "validation_combined_fnr": 0.0167,
+    "validation_combined_decided_accuracy": 0.9024
+  },
+  "artifacts_generated": [
+    "research/experimental_fusion/phase2/experiment_2b/validation_sample_predictions.json",
+    "research/experimental_fusion/phase2/experiment_2b/validation_policy_comparison_results.json",
+    "research/experimental_fusion/phase2/experiment_2b/FROZEN_POLICY.json",
+    "research/experimental_fusion/phase2/experiment_2b/VALIDATION_POLICY_COMPARISON.md",
+    "research/experimental_fusion/phase2/experiment_2b/RUN_MANIFEST.json"
+  ]
+}

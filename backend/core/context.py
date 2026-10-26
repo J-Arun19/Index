@@ -1,11 +1,12 @@
 import time
 
 class AnalysisContext:
-    def __init__(self, analysis_id: str, user: dict = None, uploaded_file: str = None, media_type: str = None):
+    def __init__(self, analysis_id: str, user: dict = None, uploaded_file: str = None, media_type: str = None, selected_providers: list = None):
         self.analysis_id = analysis_id
         self.user = user  # E.g. {"id": 1, "name": "Admin", "email": "admin@example.com"} or None
         self.uploaded_file = uploaded_file
         self.media_type = media_type  # "image" or "video"
+        self.selected_providers = selected_providers
         
         self.validation_result = None
         self.image_agent_result = None
@@ -64,5 +65,30 @@ class AnalysisContext:
             "active_agents": self.active_agents,
             "failures": self.failures,
             "timestamp": self.timestamp,
-            "agent_logs": self.agent_logs
+            "agent_logs": self.agent_logs,
+            "selected_providers": self.selected_providers
         }
+
+    def __getitem__(self, key: str):
+        if hasattr(self, key):
+            return getattr(self, key)
+        raise KeyError(key)
+
+    def __setitem__(self, key: str, value):
+        setattr(self, key, value)
+
+    def __contains__(self, key: str) -> bool:
+        return hasattr(self, key)
+
+    def get(self, key: str, default=None):
+        return getattr(self, key, default)
+
+    def keys(self):
+        return self.to_dict().keys()
+
+    def values(self):
+        return self.to_dict().values()
+
+    def items(self):
+        return self.to_dict().items()
+

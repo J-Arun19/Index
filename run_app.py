@@ -112,7 +112,7 @@ def main():
     # 3. Start Vite Frontend
     print("[3/3] Launching Vite Frontend on port 8080...")
     run_vite = os.path.join(ROOT_DIR, "run-vite.js")
-    frontend_cmd = ["node", run_vite, "preview", "--port", "8080", "--host", "127.0.0.1"]
+    frontend_cmd = ["node", run_vite, "--port", "8080", "--host", "127.0.0.1"]
 
     frontend_proc = subprocess.Popen(
         frontend_cmd,

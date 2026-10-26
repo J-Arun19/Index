@@ -4,15 +4,25 @@ import torch
 import numpy as np
 import json
 
-from backend.models.experimental.vit_detector import ViTDetector
-from backend.models.experimental.xception_detector import XceptionDetector
-from backend.agents.experimental.experimental_image_agent import ExperimentalImageAgent
-from backend.agents.experimental.experimental_video_agent import ExperimentalVideoAgent
+try:
+    from backend.models.experimental.vit_detector import ViTDetector, TRANSFORMERS_AVAILABLE
+    from backend.models.experimental.xception_detector import XceptionDetector
+    from backend.agents.experimental.experimental_image_agent import ExperimentalImageAgent
+    from backend.agents.experimental.experimental_video_agent import ExperimentalVideoAgent
+    HAS_EXPERIMENTAL_DEPS = TRANSFORMERS_AVAILABLE
+except ImportError:
+    ViTDetector = None
+    XceptionDetector = None
+    ExperimentalImageAgent = None
+    ExperimentalVideoAgent = None
+    HAS_EXPERIMENTAL_DEPS = False
+
 from backend.agents.image_agent import ImageAgent
 from backend.agents.video_agent import VideoAgent
 from backend.utils.config import PipelineConfig
 from backend.core.decision_system import DecisionState
 
+@unittest.skipUnless(HAS_EXPERIMENTAL_DEPS, "Experimental dependencies (transformers) not installed")
 class TestExperimentalPipeline(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -60,8 +70,8 @@ class TestExperimentalPipeline(unittest.TestCase):
         with open(cal_path, "r") as f:
             cal = json.load(f)
         self.assertEqual(cal["temperature"], 1.885)
-        self.assertEqual(cal["tau_real"], 0.35)
-        self.assertEqual(cal["tau_fake"], 0.65)
+        self.assertEqual(cal["tau_real"], 0.44)
+        self.assertEqual(cal["tau_fake"], 0.56)
 
         # 3. Verify production agent defaults unchanged
         prod_img = ImageAgent()

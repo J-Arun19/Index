@@ -24,6 +24,7 @@ def create_app(config_class=Config):
     
     # Health check route
     @app.route('/health', methods=['GET'])
+    @app.route('/api/health', methods=['GET'])
     def health():
         return jsonify({
             'status': 'healthy',

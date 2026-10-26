@@ -6,6 +6,7 @@ class ExplanationAgent:
     """
     Synthesizes human-readable explanations based strictly on factual evidence.
     Enforces forensic safety disclaimers and prevents fabricated claims.
+    Guarantees agreement with the unified DecisionState: REAL, FAKE, UNCERTAIN, NOT_SUITABLE.
     """
 
     def explain(
@@ -16,28 +17,25 @@ class ExplanationAgent:
         features: dict,
         evidence: list = None,
         reason: str = None,
+        user_facing_statement: str = None,
     ) -> Dict[str, Any]:
         """
-        Synthesizes factual forensic explanations.
+        Synthesizes factual forensic explanations aligned with the canonical verdict.
         """
-        # Check for media suitability
+        # Canonical normalization
         if verdict in ("NOT_SUITABLE", getattr(DecisionState, "NOT_SUITABLE", "NOT_SUITABLE")):
+            state = DecisionState.NOT_SUITABLE
             user_statement = USER_FACING_STATEMENTS[DecisionState.NOT_SUITABLE]
             return {
-                "verdict": DecisionState.NOT_SUITABLE,
-                "prediction": DecisionState.NOT_SUITABLE,
-                "evidence": evidence if evidence else ["Eligibility: Unsupported media (No detectable human face found in image)."],
-                "recommendation": "Upload a clear image containing a visible human face.",
+                "verdict": state,
+                "prediction": state,
+                "evidence": evidence if evidence else ["Eligibility: Unsupported media (No detectable human face found in media)."],
+                "recommendation": "Upload a clear media file containing a visible human face.",
                 "user_facing_statement": user_statement,
             }
 
-        # Normalize verdict
-        if verdict in ("DEEPFAKE", "FAKE"):
-            state = DecisionState.FAKE
-        elif verdict in ("LIKELY_REAL", "REAL"):
-            state = DecisionState.LIKELY_REAL
-        else:
-            state = DecisionState.UNCERTAIN
+        from backend.core.decision_system import PresentationDecisionPolicy
+        state = PresentationDecisionPolicy.normalize_verdict(verdict)
 
         evidence_items: List[str] = list(evidence) if evidence else []
 
@@ -61,11 +59,11 @@ class ExplanationAgent:
                 if item not in evidence_items:
                     evidence_items.append(item)
             if features.get("temporal_flicker_score", 0.0) > 0.22:
-                item = "Temporal: Inter-frame inconsistency and motion flicker detected."
+                item = "Temporal: Inter-frame inconsistency and appearance variance detected."
                 if item not in evidence_items:
                     evidence_items.append(item)
 
-        # Standardized recommendation and statements
+        # Unified recommendations and statements
         if state == DecisionState.FAKE:
             if not evidence_items:
                 evidence_items.append("Neural feature extraction identified deepfake manipulation patterns.")
@@ -73,25 +71,26 @@ class ExplanationAgent:
                 "Deepfake manipulation flagged. Secondary forensic inspection or source provenance "
                 "verification is recommended before publishing or trusting this media."
             )
-        elif state == DecisionState.LIKELY_REAL:
+            user_statement = user_facing_statement or USER_FACING_STATEMENTS[DecisionState.FAKE]
+        elif state == DecisionState.REAL:
             if not evidence_items:
                 evidence_items.append("No significant high-frequency or boundary anomalies detected in primary inspection.")
-            evidence_items.append("Notice: Physiological signals and deep temporal flows were not measured.")
+            evidence_items.append("Notice: Absence of detected manipulation does not prove absolute authenticity.")
             recommendation = (
-                "No strong evidence of manipulation was detected. Note: This assessment does not prove "
-                "absolute authenticity, as novel synthesis techniques may bypass standard detectors."
+                "No strong evidence of manipulation was detected across evaluated detectors. "
+                "Note: This does not prove authenticity, as novel synthesis techniques or clean recaptures may leave no detectable trace."
             )
+            user_statement = user_facing_statement or USER_FACING_STATEMENTS[DecisionState.REAL]
         else:  # UNCERTAIN
             if reason and reason not in evidence_items:
                 evidence_items.insert(0, f"Abstention Reason: {reason}")
             if not evidence_items:
-                evidence_items.append("Evidence is ambiguous, noisy, or conflicting.")
+                evidence_items.append("Evidence lies in indeterminate boundary margin or contains conflicting indicators.")
             recommendation = (
-                "Insufficient evidence to determine authenticity reliably. Additional verification, "
-                "original uncompressed file inspection, or multi-frame video analysis is strongly recommended."
+                "Insufficient evidence to determine authenticity reliably. "
+                "Additional verification, original uncompressed file inspection, or source provenance verification is recommended."
             )
-
-        user_statement = USER_FACING_STATEMENTS.get(state, USER_FACING_STATEMENTS[DecisionState.UNCERTAIN])
+            user_statement = user_facing_statement or USER_FACING_STATEMENTS[DecisionState.UNCERTAIN]
 
         return {
             "verdict": state,

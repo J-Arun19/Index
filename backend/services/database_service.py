@@ -101,9 +101,23 @@ class DatabaseService:
             bucket = os.getenv("SUPABASE_UPLOADS_BUCKET", "uploads")
             file_path = f"{bucket}/{folder}/{analysis_id}{extension}"
 
+            # Route integer user ID to user_id (FK to public.users), and UUID to owner_id
+            db_user_id = None
+            db_owner_id = None
+            if isinstance(user_id, int) or (isinstance(user_id, str) and user_id.isdigit()):
+                db_user_id = int(user_id)
+            elif user_id and user_id != "guest":
+                try:
+                    import uuid
+                    uuid.UUID(str(user_id))
+                    db_owner_id = str(user_id)
+                except (ValueError, AttributeError):
+                    db_owner_id = None
+
             data = {
                 "id": analysis_id,
-                "user_id": user_id,
+                "user_id": db_user_id,
+                "owner_id": db_owner_id,
                 "user_name": user_name,
                 "file_name": file_name,
                 "media_type": media_type,
@@ -172,8 +186,13 @@ class DatabaseService:
             db_owner_id = None
             if isinstance(user_id, int) or (isinstance(user_id, str) and user_id.isdigit()):
                 db_user_id = int(user_id)
-            elif user_id:
-                db_owner_id = str(user_id)
+            elif user_id and user_id != "guest":
+                try:
+                    import uuid
+                    uuid.UUID(str(user_id))
+                    db_owner_id = str(user_id)
+                except (ValueError, AttributeError):
+                    db_owner_id = None
 
             data = {
                 "id": analysis_id,

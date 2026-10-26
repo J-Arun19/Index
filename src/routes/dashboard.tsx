@@ -13,7 +13,7 @@ import {
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useAnalysisState, analysisStore, AnalysisVerdict, formatBackendAnalysis } from "@/lib/analysis-store";
+import { useAnalysisState, analysisStore, AnalysisVerdict, formatBackendAnalysis, getCanonicalVerdict, getVerdictTheme } from "@/lib/analysis-store";
 import { cn } from "@/lib/utils";
 import { useAuthState } from "@/lib/auth-store";
 
@@ -73,14 +73,18 @@ function DashboardPage() {
   const firstName = user?.name ? user.name.split(" ")[0] : "Researcher";
 
   const total = history.length;
-  const real = history.filter((h) => h.verdict === "REAL" || h.verdict === "LIKELY_REAL").length;
-  const fake = history.filter((h) => h.verdict === "DEEPFAKE" || h.verdict === "FAKE").length;
-  const uncertain = history.filter((h) => h.verdict === "UNCERTAIN").length;
+  const real = history.filter((h) => getCanonicalVerdict(h).canonicalVerdict === "REAL").length;
+  const fake = history.filter((h) => getCanonicalVerdict(h).canonicalVerdict === "FAKE").length;
+  const uncertain = history.filter((h) => {
+    const cv = getCanonicalVerdict(h).canonicalVerdict;
+    return cv === "UNCERTAIN" || cv === "NOT_SUITABLE";
+  }).length;
+  const certifiedAnalyses = history.filter((h) => typeof h.confidence === "number" && h.confidence !== null);
   const accuracy =
-    total === 0
+    certifiedAnalyses.length === 0
       ? "—"
       : `${Math.round(
-          history.reduce((s, h) => s + h.confidence, 0) / total,
+          certifiedAnalyses.reduce((s, h) => s + (h.confidence as number), 0) / certifiedAnalyses.length,
         )}%`;
 
   const cards = [
@@ -210,53 +214,50 @@ function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
-                {history.map((h) => (
-                  <tr
-                    key={h.id}
-                    className="hover:bg-slate-800/40 transition-colors"
-                  >
-                    <td className="max-w-[240px] truncate px-4 py-2.5 font-medium text-slate-200 font-mono">
-                      {h.fileName}
-                    </td>
-                    <td className="px-4 py-2.5 text-slate-400">
-                      <span className="inline-flex items-center gap-1.5 uppercase text-[10px] tracking-wide">
-                        {h.fileType === "image" ? (
-                          <ImageIcon className="h-3 w-3 text-slate-400" />
-                        ) : (
-                          <Video className="h-3 w-3 text-slate-400" />
-                        )}
-                        {h.fileType}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <span
-                        className={cn(
-                          "inline-flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-semibold border",
-                          h.verdict === "NOT_SUITABLE"
-                            ? "bg-slate-800 text-slate-300 border-slate-700"
-                            : h.verdict === "REAL" || h.verdict === "LIKELY_REAL"
-                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                            : h.verdict === "UNCERTAIN"
-                            ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                            : "bg-rose-500/10 text-rose-400 border-rose-500/20",
-                        )}
-                      >
-                        <span className={cn(
-                          "h-1.5 w-1.5 rounded-full",
-                          h.verdict === "NOT_SUITABLE"
-                            ? "bg-slate-400"
-                            : h.verdict === "REAL" || h.verdict === "LIKELY_REAL"
-                            ? "bg-emerald-400"
-                            : h.verdict === "UNCERTAIN"
-                            ? "bg-amber-400"
-                            : "bg-rose-400"
-                        )} />
-                        {h.verdict === "NOT_SUITABLE" ? "NOT SUITABLE" : h.verdict}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2.5 text-slate-300 font-mono">
-                      {h.verdict === "NOT_SUITABLE" ? "N/A" : `${h.confidence}%`}
-                    </td>
+                {history.map((h) => {
+                  const { canonicalVerdict, provisionalSuggestion, isBinaryFallback } = getCanonicalVerdict(h);
+                  const theme = getVerdictTheme(canonicalVerdict, isBinaryFallback);
+                  const isUncertified = isBinaryFallback || canonicalVerdict === "UNCERTAIN" || canonicalVerdict === "NOT_SUITABLE" || h.confidence === null;
+
+                  return (
+                    <tr
+                      key={h.id}
+                      className="hover:bg-slate-800/40 transition-colors"
+                    >
+                      <td className="max-w-[240px] truncate px-4 py-2.5 font-medium text-slate-200 font-mono">
+                        {h.fileName}
+                      </td>
+                      <td className="px-4 py-2.5 text-slate-400">
+                        <span className="inline-flex items-center gap-1.5 uppercase text-[10px] tracking-wide">
+                          {h.fileType === "image" ? (
+                            <ImageIcon className="h-3 w-3 text-slate-400" />
+                          ) : (
+                            <Video className="h-3 w-3 text-slate-400" />
+                          )}
+                          {h.fileType}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span
+                            className={cn(
+                              "inline-flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-semibold border",
+                              theme.badgeClass
+                            )}
+                          >
+                            <span className={cn("h-1.5 w-1.5 rounded-full", theme.dotClass)} />
+                            {theme.label}
+                          </span>
+                          {provisionalSuggestion && (
+                            <span className="inline-flex items-center rounded bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 text-[9px] font-medium text-amber-300" title="Unverified model suggestion — not an established authenticity verdict">
+                              Unverified: {provisionalSuggestion}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-2.5 text-slate-300 font-mono">
+                        {isUncertified ? "Not certified" : `${h.confidence}%`}
+                      </td>
                     <td className="px-4 py-2.5 text-slate-400">
                       {formatRelative(h.createdAt)}
                     </td>
@@ -276,7 +277,8 @@ function DashboardPage() {
                       </Button>
                     </td>
                   </tr>
-                ))}
+                );
+              })}
               </tbody>
             </table>
           </div>

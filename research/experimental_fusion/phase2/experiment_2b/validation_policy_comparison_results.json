@@ -1,0 +1,3732 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-12T17:43:20Z",
+    "execution_device": "cpu",
+    "cpu_threads": 6,
+    "manifest_path": "research/experimental_fusion/datasets/validation_manifest_v2.json",
+    "manifest_sha256": "baf6f6615bc176341fd08cfa5e6fdc2797ba0e2c501876f2c04d40dcdb94d21a",
+    "model_weights": {
+      "sbi": {
+        "path": "backend/models/experimental/weights/sbi_ffc23.tar",
+        "sha256": "2b05c2ba36ccb9e9f4f9e1aae9acd443ae2e6400ce725f56104fdb175d3c3267"
+      },
+      "xception": {
+        "path": "backend/models/experimental/weights/xception_best.pth",
+        "sha256": "dd61186f9ac8e99aae85982cae338b555dfaeef042f6b699e5a55cae3998ba47"
+      }
+    },
+    "calibration_config": {
+      "path": "backend/models/experimental/fusion_calibration_config.json",
+      "sha256": "982a567e5322285f8437e2d009626d815a7bf5363149371ff36ef45d1bedf5de",
+      "temperatures": {
+        "sbi": 2.7676,
+        "xception": 2.421
+      },
+      "thresholds": {
+        "tau_real": 0.35,
+        "tau_fake": 0.65,
+        "min_confidence": 60.0
+      }
+    },
+    "sample_counts": {
+      "total_videos": 60,
+      "total_images": 60,
+      "video_failures": 0,
+      "image_failures": 0,
+      "image_not_suitable": 0
+    },
+    "runtime_seconds": {
+      "video_inference_total": 350.19,
+      "image_inference_total": 48.74,
+      "total_elapsed": 398.93
+    }
+  },
+  "validation_evaluations": {
+    "videos": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 60,
+        "confusion_matrix": {
+          "real_likely_real_tn": 8,
+          "real_uncertain": 22,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 25,
+          "fake_fake_tp": 5
+        },
+        "coverage": 0.2167,
+        "abstention_rate": 0.7833,
+        "real_abstention_rate": 0.7333,
+        "fake_abstention_rate": 0.8333,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 13,
+        "decided_correct": 13,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 1.0,
+        "raw_accuracy": 0.2167,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 13,
+            "n": 60,
+            "proportion": 0.2167,
+            "ci_lower": 0.1312,
+            "ci_upper": 0.3362,
+            "ci_percent": "[13.12%, 33.62%]"
+          },
+          "abstention_rate": {
+            "k": 47,
+            "n": 60,
+            "proportion": 0.7833,
+            "ci_lower": 0.6638,
+            "ci_upper": 0.8688,
+            "ci_percent": "[66.38%, 86.88%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "decided_accuracy": {
+            "k": 13,
+            "n": 13,
+            "proportion": 1.0,
+            "ci_lower": 0.7719,
+            "ci_upper": 1.0,
+            "ci_percent": "[77.19%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 60,
+        "confusion_matrix": {
+          "real_likely_real_tn": 1,
+          "real_uncertain": 29,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 25,
+          "fake_fake_tp": 5
+        },
+        "coverage": 0.1,
+        "abstention_rate": 0.9,
+        "real_abstention_rate": 0.9667,
+        "fake_abstention_rate": 0.8333,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 6,
+        "decided_correct": 6,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 1.0,
+        "raw_accuracy": 0.1,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 6,
+            "n": 60,
+            "proportion": 0.1,
+            "ci_lower": 0.0466,
+            "ci_upper": 0.2015,
+            "ci_percent": "[4.66%, 20.15%]"
+          },
+          "abstention_rate": {
+            "k": 54,
+            "n": 60,
+            "proportion": 0.9,
+            "ci_lower": 0.7985,
+            "ci_upper": 0.9534,
+            "ci_percent": "[79.85%, 95.34%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "decided_accuracy": {
+            "k": 6,
+            "n": 6,
+            "proportion": 1.0,
+            "ci_lower": 0.6097,
+            "ci_upper": 1.0,
+            "ci_percent": "[60.97%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 60,
+        "confusion_matrix": {
+          "real_likely_real_tn": 8,
+          "real_uncertain": 22,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 17,
+          "fake_fake_tp": 13
+        },
+        "coverage": 0.35,
+        "abstention_rate": 0.65,
+        "real_abstention_rate": 0.7333,
+        "fake_abstention_rate": 0.5667,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 21,
+        "decided_correct": 21,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 1.0,
+        "raw_accuracy": 0.35,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 21,
+            "n": 60,
+            "proportion": 0.35,
+            "ci_lower": 0.2417,
+            "ci_upper": 0.4764,
+            "ci_percent": "[24.17%, 47.64%]"
+          },
+          "abstention_rate": {
+            "k": 39,
+            "n": 60,
+            "proportion": 0.65,
+            "ci_lower": 0.5236,
+            "ci_upper": 0.7583,
+            "ci_percent": "[52.36%, 75.83%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "decided_accuracy": {
+            "k": 21,
+            "n": 21,
+            "proportion": 1.0,
+            "ci_lower": 0.8454,
+            "ci_upper": 1.0,
+            "ci_percent": "[84.54%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 60,
+        "confusion_matrix": {
+          "real_likely_real_tn": 2,
+          "real_uncertain": 28,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 24,
+          "fake_fake_tp": 6
+        },
+        "coverage": 0.1333,
+        "abstention_rate": 0.8667,
+        "real_abstention_rate": 0.9333,
+        "fake_abstention_rate": 0.8,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 8,
+        "decided_correct": 8,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 1.0,
+        "raw_accuracy": 0.1333,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 8,
+            "n": 60,
+            "proportion": 0.1333,
+            "ci_lower": 0.0691,
+            "ci_upper": 0.2417,
+            "ci_percent": "[6.91%, 24.17%]"
+          },
+          "abstention_rate": {
+            "k": 52,
+            "n": 60,
+            "proportion": 0.8667,
+            "ci_lower": 0.7583,
+            "ci_upper": 0.9309,
+            "ci_percent": "[75.83%, 93.09%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "decided_accuracy": {
+            "k": 8,
+            "n": 8,
+            "proportion": 1.0,
+            "ci_lower": 0.6756,
+            "ci_upper": 1.0,
+            "ci_percent": "[67.56%, 100.0%]"
+          }
+        }
+      }
+    },
+    "images": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 60,
+        "confusion_matrix": {
+          "real_likely_real_tn": 2,
+          "real_uncertain": 25,
+          "real_fake_fp": 3,
+          "fake_likely_real_fn": 1,
+          "fake_uncertain": 15,
+          "fake_fake_tp": 14
+        },
+        "coverage": 0.3333,
+        "abstention_rate": 0.6667,
+        "real_abstention_rate": 0.8333,
+        "fake_abstention_rate": 0.5,
+        "false_positive_rate": 0.1,
+        "false_negative_rate": 0.0333,
+        "decided_total": 20,
+        "decided_correct": 16,
+        "decided_accuracy": 0.8,
+        "decided_macro_f1": 0.6875,
+        "raw_accuracy": 0.2667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 20,
+            "n": 60,
+            "proportion": 0.3333,
+            "ci_lower": 0.2273,
+            "ci_upper": 0.4594,
+            "ci_percent": "[22.73%, 45.94%]"
+          },
+          "abstention_rate": {
+            "k": 40,
+            "n": 60,
+            "proportion": 0.6667,
+            "ci_lower": 0.5406,
+            "ci_upper": 0.7727,
+            "ci_percent": "[54.06%, 77.27%]"
+          },
+          "false_positive_rate": {
+            "k": 3,
+            "n": 30,
+            "proportion": 0.1,
+            "ci_lower": 0.0346,
+            "ci_upper": 0.2562,
+            "ci_percent": "[3.46%, 25.62%]"
+          },
+          "false_negative_rate": {
+            "k": 1,
+            "n": 30,
+            "proportion": 0.0333,
+            "ci_lower": 0.0059,
+            "ci_upper": 0.1667,
+            "ci_percent": "[0.59%, 16.67%]"
+          },
+          "decided_accuracy": {
+            "k": 16,
+            "n": 20,
+            "proportion": 0.8,
+            "ci_lower": 0.584,
+            "ci_upper": 0.9193,
+            "ci_percent": "[58.4%, 91.93%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 60,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 27,
+          "real_fake_fp": 3,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 16,
+          "fake_fake_tp": 14
+        },
+        "coverage": 0.2833,
+        "abstention_rate": 0.7167,
+        "real_abstention_rate": 0.9,
+        "fake_abstention_rate": 0.5333,
+        "false_positive_rate": 0.1,
+        "false_negative_rate": 0.0,
+        "decided_total": 17,
+        "decided_correct": 14,
+        "decided_accuracy": 0.8235,
+        "decided_macro_f1": 0.4516,
+        "raw_accuracy": 0.2333,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 17,
+            "n": 60,
+            "proportion": 0.2833,
+            "ci_lower": 0.1851,
+            "ci_upper": 0.4077,
+            "ci_percent": "[18.51%, 40.77%]"
+          },
+          "abstention_rate": {
+            "k": 43,
+            "n": 60,
+            "proportion": 0.7167,
+            "ci_lower": 0.5923,
+            "ci_upper": 0.8149,
+            "ci_percent": "[59.23%, 81.49%]"
+          },
+          "false_positive_rate": {
+            "k": 3,
+            "n": 30,
+            "proportion": 0.1,
+            "ci_lower": 0.0346,
+            "ci_upper": 0.2562,
+            "ci_percent": "[3.46%, 25.62%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "decided_accuracy": {
+            "k": 14,
+            "n": 17,
+            "proportion": 0.8235,
+            "ci_lower": 0.5897,
+            "ci_upper": 0.9381,
+            "ci_percent": "[58.97%, 93.81%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 60,
+        "confusion_matrix": {
+          "real_likely_real_tn": 2,
+          "real_uncertain": 25,
+          "real_fake_fp": 3,
+          "fake_likely_real_fn": 1,
+          "fake_uncertain": 15,
+          "fake_fake_tp": 14
+        },
+        "coverage": 0.3333,
+        "abstention_rate": 0.6667,
+        "real_abstention_rate": 0.8333,
+        "fake_abstention_rate": 0.5,
+        "false_positive_rate": 0.1,
+        "false_negative_rate": 0.0333,
+        "decided_total": 20,
+        "decided_correct": 16,
+        "decided_accuracy": 0.8,
+        "decided_macro_f1": 0.6875,
+        "raw_accuracy": 0.2667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 20,
+            "n": 60,
+            "proportion": 0.3333,
+            "ci_lower": 0.2273,
+            "ci_upper": 0.4594,
+            "ci_percent": "[22.73%, 45.94%]"
+          },
+          "abstention_rate": {
+            "k": 40,
+            "n": 60,
+            "proportion": 0.6667,
+            "ci_lower": 0.5406,
+            "ci_upper": 0.7727,
+            "ci_percent": "[54.06%, 77.27%]"
+          },
+          "false_positive_rate": {
+            "k": 3,
+            "n": 30,
+            "proportion": 0.1,
+            "ci_lower": 0.0346,
+            "ci_upper": 0.2562,
+            "ci_percent": "[3.46%, 25.62%]"
+          },
+          "false_negative_rate": {
+            "k": 1,
+            "n": 30,
+            "proportion": 0.0333,
+            "ci_lower": 0.0059,
+            "ci_upper": 0.1667,
+            "ci_percent": "[0.59%, 16.67%]"
+          },
+          "decided_accuracy": {
+            "k": 16,
+            "n": 20,
+            "proportion": 0.8,
+            "ci_lower": 0.584,
+            "ci_upper": 0.9193,
+            "ci_percent": "[58.4%, 91.93%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 60,
+        "confusion_matrix": {
+          "real_likely_real_tn": 7,
+          "real_uncertain": 20,
+          "real_fake_fp": 3,
+          "fake_likely_real_fn": 1,
+          "fake_uncertain": 13,
+          "fake_fake_tp": 16
+        },
+        "coverage": 0.45,
+        "abstention_rate": 0.55,
+        "real_abstention_rate": 0.6667,
+        "fake_abstention_rate": 0.4333,
+        "false_positive_rate": 0.1,
+        "false_negative_rate": 0.0333,
+        "decided_total": 27,
+        "decided_correct": 23,
+        "decided_accuracy": 0.8519,
+        "decided_macro_f1": 0.8333,
+        "raw_accuracy": 0.3833,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 27,
+            "n": 60,
+            "proportion": 0.45,
+            "ci_lower": 0.3309,
+            "ci_upper": 0.5751,
+            "ci_percent": "[33.09%, 57.51%]"
+          },
+          "abstention_rate": {
+            "k": 33,
+            "n": 60,
+            "proportion": 0.55,
+            "ci_lower": 0.4249,
+            "ci_upper": 0.6691,
+            "ci_percent": "[42.49%, 66.91%]"
+          },
+          "false_positive_rate": {
+            "k": 3,
+            "n": 30,
+            "proportion": 0.1,
+            "ci_lower": 0.0346,
+            "ci_upper": 0.2562,
+            "ci_percent": "[3.46%, 25.62%]"
+          },
+          "false_negative_rate": {
+            "k": 1,
+            "n": 30,
+            "proportion": 0.0333,
+            "ci_lower": 0.0059,
+            "ci_upper": 0.1667,
+            "ci_percent": "[0.59%, 16.67%]"
+          },
+          "decided_accuracy": {
+            "k": 23,
+            "n": 27,
+            "proportion": 0.8519,
+            "ci_lower": 0.6752,
+            "ci_upper": 0.9408,
+            "ci_percent": "[67.52%, 94.08%]"
+          }
+        }
+      }
+    },
+    "combined": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 120,
+        "confusion_matrix": {
+          "real_likely_real_tn": 10,
+          "real_uncertain": 47,
+          "real_fake_fp": 3,
+          "fake_likely_real_fn": 1,
+          "fake_uncertain": 40,
+          "fake_fake_tp": 19
+        },
+        "coverage": 0.275,
+        "abstention_rate": 0.725,
+        "real_abstention_rate": 0.7833,
+        "fake_abstention_rate": 0.6667,
+        "false_positive_rate": 0.05,
+        "false_negative_rate": 0.0167,
+        "decided_total": 33,
+        "decided_correct": 29,
+        "decided_accuracy": 0.8788,
+        "decided_macro_f1": 0.869,
+        "raw_accuracy": 0.2417,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 33,
+            "n": 120,
+            "proportion": 0.275,
+            "ci_lower": 0.203,
+            "ci_upper": 0.3609,
+            "ci_percent": "[20.3%, 36.09%]"
+          },
+          "abstention_rate": {
+            "k": 87,
+            "n": 120,
+            "proportion": 0.725,
+            "ci_lower": 0.6391,
+            "ci_upper": 0.797,
+            "ci_percent": "[63.91%, 79.7%]"
+          },
+          "false_positive_rate": {
+            "k": 3,
+            "n": 60,
+            "proportion": 0.05,
+            "ci_lower": 0.0171,
+            "ci_upper": 0.137,
+            "ci_percent": "[1.71%, 13.7%]"
+          },
+          "false_negative_rate": {
+            "k": 1,
+            "n": 60,
+            "proportion": 0.0167,
+            "ci_lower": 0.0029,
+            "ci_upper": 0.0886,
+            "ci_percent": "[0.29%, 8.86%]"
+          },
+          "decided_accuracy": {
+            "k": 29,
+            "n": 33,
+            "proportion": 0.8788,
+            "ci_lower": 0.7267,
+            "ci_upper": 0.9518,
+            "ci_percent": "[72.67%, 95.18%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 120,
+        "confusion_matrix": {
+          "real_likely_real_tn": 1,
+          "real_uncertain": 56,
+          "real_fake_fp": 3,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 41,
+          "fake_fake_tp": 19
+        },
+        "coverage": 0.1917,
+        "abstention_rate": 0.8083,
+        "real_abstention_rate": 0.9333,
+        "fake_abstention_rate": 0.6833,
+        "false_positive_rate": 0.05,
+        "false_negative_rate": 0.0,
+        "decided_total": 23,
+        "decided_correct": 20,
+        "decided_accuracy": 0.8696,
+        "decided_macro_f1": 0.6634,
+        "raw_accuracy": 0.1667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 23,
+            "n": 120,
+            "proportion": 0.1917,
+            "ci_lower": 0.1313,
+            "ci_upper": 0.2712,
+            "ci_percent": "[13.13%, 27.12%]"
+          },
+          "abstention_rate": {
+            "k": 97,
+            "n": 120,
+            "proportion": 0.8083,
+            "ci_lower": 0.7288,
+            "ci_upper": 0.8687,
+            "ci_percent": "[72.88%, 86.87%]"
+          },
+          "false_positive_rate": {
+            "k": 3,
+            "n": 60,
+            "proportion": 0.05,
+            "ci_lower": 0.0171,
+            "ci_upper": 0.137,
+            "ci_percent": "[1.71%, 13.7%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 60,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0602,
+            "ci_percent": "[0.0%, 6.02%]"
+          },
+          "decided_accuracy": {
+            "k": 20,
+            "n": 23,
+            "proportion": 0.8696,
+            "ci_lower": 0.6787,
+            "ci_upper": 0.9546,
+            "ci_percent": "[67.87%, 95.46%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 120,
+        "confusion_matrix": {
+          "real_likely_real_tn": 10,
+          "real_uncertain": 47,
+          "real_fake_fp": 3,
+          "fake_likely_real_fn": 1,
+          "fake_uncertain": 32,
+          "fake_fake_tp": 27
+        },
+        "coverage": 0.3417,
+        "abstention_rate": 0.6583,
+        "real_abstention_rate": 0.7833,
+        "fake_abstention_rate": 0.5333,
+        "false_positive_rate": 0.05,
+        "false_negative_rate": 0.0167,
+        "decided_total": 41,
+        "decided_correct": 37,
+        "decided_accuracy": 0.9024,
+        "decided_macro_f1": 0.8822,
+        "raw_accuracy": 0.3083,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 41,
+            "n": 120,
+            "proportion": 0.3417,
+            "ci_lower": 0.2629,
+            "ci_upper": 0.4303,
+            "ci_percent": "[26.29%, 43.03%]"
+          },
+          "abstention_rate": {
+            "k": 79,
+            "n": 120,
+            "proportion": 0.6583,
+            "ci_lower": 0.5697,
+            "ci_upper": 0.7371,
+            "ci_percent": "[56.97%, 73.71%]"
+          },
+          "false_positive_rate": {
+            "k": 3,
+            "n": 60,
+            "proportion": 0.05,
+            "ci_lower": 0.0171,
+            "ci_upper": 0.137,
+            "ci_percent": "[1.71%, 13.7%]"
+          },
+          "false_negative_rate": {
+            "k": 1,
+            "n": 60,
+            "proportion": 0.0167,
+            "ci_lower": 0.0029,
+            "ci_upper": 0.0886,
+            "ci_percent": "[0.29%, 8.86%]"
+          },
+          "decided_accuracy": {
+            "k": 37,
+            "n": 41,
+            "proportion": 0.9024,
+            "ci_lower": 0.7745,
+            "ci_upper": 0.9614,
+            "ci_percent": "[77.45%, 96.14%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 120,
+        "confusion_matrix": {
+          "real_likely_real_tn": 9,
+          "real_uncertain": 48,
+          "real_fake_fp": 3,
+          "fake_likely_real_fn": 1,
+          "fake_uncertain": 37,
+          "fake_fake_tp": 22
+        },
+        "coverage": 0.2917,
+        "abstention_rate": 0.7083,
+        "real_abstention_rate": 0.8,
+        "fake_abstention_rate": 0.6167,
+        "false_positive_rate": 0.05,
+        "false_negative_rate": 0.0167,
+        "decided_total": 35,
+        "decided_correct": 31,
+        "decided_accuracy": 0.8857,
+        "decided_macro_f1": 0.8674,
+        "raw_accuracy": 0.2583,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 35,
+            "n": 120,
+            "proportion": 0.2917,
+            "ci_lower": 0.2178,
+            "ci_upper": 0.3784,
+            "ci_percent": "[21.78%, 37.84%]"
+          },
+          "abstention_rate": {
+            "k": 85,
+            "n": 120,
+            "proportion": 0.7083,
+            "ci_lower": 0.6216,
+            "ci_upper": 0.7822,
+            "ci_percent": "[62.16%, 78.22%]"
+          },
+          "false_positive_rate": {
+            "k": 3,
+            "n": 60,
+            "proportion": 0.05,
+            "ci_lower": 0.0171,
+            "ci_upper": 0.137,
+            "ci_percent": "[1.71%, 13.7%]"
+          },
+          "false_negative_rate": {
+            "k": 1,
+            "n": 60,
+            "proportion": 0.0167,
+            "ci_lower": 0.0029,
+            "ci_upper": 0.0886,
+            "ci_percent": "[0.29%, 8.86%]"
+          },
+          "decided_accuracy": {
+            "k": 31,
+            "n": 35,
+            "proportion": 0.8857,
+            "ci_lower": 0.7405,
+            "ci_upper": 0.9546,
+            "ci_percent": "[74.05%, 95.46%]"
+          }
+        }
+      }
+    }
+  },
+  "category_breakdowns": {
+    "Celeb-real": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 30,
+        "confusion_matrix": {
+          "real_likely_real_tn": 2,
+          "real_uncertain": 27,
+          "real_fake_fp": 1,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 0,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.1,
+        "abstention_rate": 0.9,
+        "real_abstention_rate": 0.9,
+        "fake_abstention_rate": 0.0,
+        "false_positive_rate": 0.0333,
+        "false_negative_rate": 0.0,
+        "decided_total": 3,
+        "decided_correct": 2,
+        "decided_accuracy": 0.6667,
+        "decided_macro_f1": 0.4,
+        "raw_accuracy": 0.0667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 3,
+            "n": 30,
+            "proportion": 0.1,
+            "ci_lower": 0.0346,
+            "ci_upper": 0.2562,
+            "ci_percent": "[3.46%, 25.62%]"
+          },
+          "abstention_rate": {
+            "k": 27,
+            "n": 30,
+            "proportion": 0.9,
+            "ci_lower": 0.7438,
+            "ci_upper": 0.9654,
+            "ci_percent": "[74.38%, 96.54%]"
+          },
+          "false_positive_rate": {
+            "k": 1,
+            "n": 30,
+            "proportion": 0.0333,
+            "ci_lower": 0.0059,
+            "ci_upper": 0.1667,
+            "ci_percent": "[0.59%, 16.67%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "decided_accuracy": {
+            "k": 2,
+            "n": 3,
+            "proportion": 0.6667,
+            "ci_lower": 0.2077,
+            "ci_upper": 0.9385,
+            "ci_percent": "[20.77%, 93.85%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 30,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 29,
+          "real_fake_fp": 1,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 0,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.0333,
+        "abstention_rate": 0.9667,
+        "real_abstention_rate": 0.9667,
+        "fake_abstention_rate": 0.0,
+        "false_positive_rate": 0.0333,
+        "false_negative_rate": 0.0,
+        "decided_total": 1,
+        "decided_correct": 0,
+        "decided_accuracy": 0.0,
+        "decided_macro_f1": 0.0,
+        "raw_accuracy": 0.0,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 1,
+            "n": 30,
+            "proportion": 0.0333,
+            "ci_lower": 0.0059,
+            "ci_upper": 0.1667,
+            "ci_percent": "[0.59%, 16.67%]"
+          },
+          "abstention_rate": {
+            "k": 29,
+            "n": 30,
+            "proportion": 0.9667,
+            "ci_lower": 0.8333,
+            "ci_upper": 0.9941,
+            "ci_percent": "[83.33%, 99.41%]"
+          },
+          "false_positive_rate": {
+            "k": 1,
+            "n": 30,
+            "proportion": 0.0333,
+            "ci_lower": 0.0059,
+            "ci_upper": 0.1667,
+            "ci_percent": "[0.59%, 16.67%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "decided_accuracy": {
+            "k": 0,
+            "n": 1,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.7935,
+            "ci_percent": "[0.0%, 79.35%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 30,
+        "confusion_matrix": {
+          "real_likely_real_tn": 2,
+          "real_uncertain": 27,
+          "real_fake_fp": 1,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 0,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.1,
+        "abstention_rate": 0.9,
+        "real_abstention_rate": 0.9,
+        "fake_abstention_rate": 0.0,
+        "false_positive_rate": 0.0333,
+        "false_negative_rate": 0.0,
+        "decided_total": 3,
+        "decided_correct": 2,
+        "decided_accuracy": 0.6667,
+        "decided_macro_f1": 0.4,
+        "raw_accuracy": 0.0667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 3,
+            "n": 30,
+            "proportion": 0.1,
+            "ci_lower": 0.0346,
+            "ci_upper": 0.2562,
+            "ci_percent": "[3.46%, 25.62%]"
+          },
+          "abstention_rate": {
+            "k": 27,
+            "n": 30,
+            "proportion": 0.9,
+            "ci_lower": 0.7438,
+            "ci_upper": 0.9654,
+            "ci_percent": "[74.38%, 96.54%]"
+          },
+          "false_positive_rate": {
+            "k": 1,
+            "n": 30,
+            "proportion": 0.0333,
+            "ci_lower": 0.0059,
+            "ci_upper": 0.1667,
+            "ci_percent": "[0.59%, 16.67%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "decided_accuracy": {
+            "k": 2,
+            "n": 3,
+            "proportion": 0.6667,
+            "ci_lower": 0.2077,
+            "ci_upper": 0.9385,
+            "ci_percent": "[20.77%, 93.85%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 30,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 29,
+          "real_fake_fp": 1,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 0,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.0333,
+        "abstention_rate": 0.9667,
+        "real_abstention_rate": 0.9667,
+        "fake_abstention_rate": 0.0,
+        "false_positive_rate": 0.0333,
+        "false_negative_rate": 0.0,
+        "decided_total": 1,
+        "decided_correct": 0,
+        "decided_accuracy": 0.0,
+        "decided_macro_f1": 0.0,
+        "raw_accuracy": 0.0,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 1,
+            "n": 30,
+            "proportion": 0.0333,
+            "ci_lower": 0.0059,
+            "ci_upper": 0.1667,
+            "ci_percent": "[0.59%, 16.67%]"
+          },
+          "abstention_rate": {
+            "k": 29,
+            "n": 30,
+            "proportion": 0.9667,
+            "ci_lower": 0.8333,
+            "ci_upper": 0.9941,
+            "ci_percent": "[83.33%, 99.41%]"
+          },
+          "false_positive_rate": {
+            "k": 1,
+            "n": 30,
+            "proportion": 0.0333,
+            "ci_lower": 0.0059,
+            "ci_upper": 0.1667,
+            "ci_percent": "[0.59%, 16.67%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "decided_accuracy": {
+            "k": 0,
+            "n": 1,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.7935,
+            "ci_percent": "[0.0%, 79.35%]"
+          }
+        }
+      }
+    },
+    "Celeb-synthesis": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 30,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 18,
+          "fake_fake_tp": 12
+        },
+        "coverage": 0.4,
+        "abstention_rate": 0.6,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.6,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 12,
+        "decided_correct": 12,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.4,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 12,
+            "n": 30,
+            "proportion": 0.4,
+            "ci_lower": 0.2459,
+            "ci_upper": 0.5768,
+            "ci_percent": "[24.59%, 57.68%]"
+          },
+          "abstention_rate": {
+            "k": 18,
+            "n": 30,
+            "proportion": 0.6,
+            "ci_lower": 0.4232,
+            "ci_upper": 0.7541,
+            "ci_percent": "[42.32%, 75.41%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "decided_accuracy": {
+            "k": 12,
+            "n": 12,
+            "proportion": 1.0,
+            "ci_lower": 0.7575,
+            "ci_upper": 1.0,
+            "ci_percent": "[75.75%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 30,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 18,
+          "fake_fake_tp": 12
+        },
+        "coverage": 0.4,
+        "abstention_rate": 0.6,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.6,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 12,
+        "decided_correct": 12,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.4,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 12,
+            "n": 30,
+            "proportion": 0.4,
+            "ci_lower": 0.2459,
+            "ci_upper": 0.5768,
+            "ci_percent": "[24.59%, 57.68%]"
+          },
+          "abstention_rate": {
+            "k": 18,
+            "n": 30,
+            "proportion": 0.6,
+            "ci_lower": 0.4232,
+            "ci_upper": 0.7541,
+            "ci_percent": "[42.32%, 75.41%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "decided_accuracy": {
+            "k": 12,
+            "n": 12,
+            "proportion": 1.0,
+            "ci_lower": 0.7575,
+            "ci_upper": 1.0,
+            "ci_percent": "[75.75%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 30,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 15,
+          "fake_fake_tp": 15
+        },
+        "coverage": 0.5,
+        "abstention_rate": 0.5,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.5,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 15,
+        "decided_correct": 15,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.5,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 15,
+            "n": 30,
+            "proportion": 0.5,
+            "ci_lower": 0.3315,
+            "ci_upper": 0.6685,
+            "ci_percent": "[33.15%, 66.85%]"
+          },
+          "abstention_rate": {
+            "k": 15,
+            "n": 30,
+            "proportion": 0.5,
+            "ci_lower": 0.3315,
+            "ci_upper": 0.6685,
+            "ci_percent": "[33.15%, 66.85%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "decided_accuracy": {
+            "k": 15,
+            "n": 15,
+            "proportion": 1.0,
+            "ci_lower": 0.7961,
+            "ci_upper": 1.0,
+            "ci_percent": "[79.61%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 30,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 15,
+          "fake_fake_tp": 15
+        },
+        "coverage": 0.5,
+        "abstention_rate": 0.5,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.5,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 15,
+        "decided_correct": 15,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.5,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 15,
+            "n": 30,
+            "proportion": 0.5,
+            "ci_lower": 0.3315,
+            "ci_upper": 0.6685,
+            "ci_percent": "[33.15%, 66.85%]"
+          },
+          "abstention_rate": {
+            "k": 15,
+            "n": 30,
+            "proportion": 0.5,
+            "ci_lower": 0.3315,
+            "ci_upper": 0.6685,
+            "ci_percent": "[33.15%, 66.85%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 30,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.1135,
+            "ci_percent": "[0.0%, 11.35%]"
+          },
+          "decided_accuracy": {
+            "k": 15,
+            "n": 15,
+            "proportion": 1.0,
+            "ci_lower": 0.7961,
+            "ci_upper": 1.0,
+            "ci_percent": "[79.61%, 100.0%]"
+          }
+        }
+      }
+    },
+    "Deepfakes": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 4,
+          "fake_fake_tp": 2
+        },
+        "coverage": 0.3333,
+        "abstention_rate": 0.6667,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.6667,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 2,
+        "decided_correct": 2,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.3333,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 2,
+            "n": 6,
+            "proportion": 0.3333,
+            "ci_lower": 0.0968,
+            "ci_upper": 0.7,
+            "ci_percent": "[9.68%, 70.0%]"
+          },
+          "abstention_rate": {
+            "k": 4,
+            "n": 6,
+            "proportion": 0.6667,
+            "ci_lower": 0.3,
+            "ci_upper": 0.9032,
+            "ci_percent": "[30.0%, 90.32%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 2,
+            "n": 2,
+            "proportion": 1.0,
+            "ci_lower": 0.3424,
+            "ci_upper": 1.0,
+            "ci_percent": "[34.24%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 4,
+          "fake_fake_tp": 2
+        },
+        "coverage": 0.3333,
+        "abstention_rate": 0.6667,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.6667,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 2,
+        "decided_correct": 2,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.3333,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 2,
+            "n": 6,
+            "proportion": 0.3333,
+            "ci_lower": 0.0968,
+            "ci_upper": 0.7,
+            "ci_percent": "[9.68%, 70.0%]"
+          },
+          "abstention_rate": {
+            "k": 4,
+            "n": 6,
+            "proportion": 0.6667,
+            "ci_lower": 0.3,
+            "ci_upper": 0.9032,
+            "ci_percent": "[30.0%, 90.32%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 2,
+            "n": 2,
+            "proportion": 1.0,
+            "ci_lower": 0.3424,
+            "ci_upper": 1.0,
+            "ci_percent": "[34.24%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 3,
+          "fake_fake_tp": 3
+        },
+        "coverage": 0.5,
+        "abstention_rate": 0.5,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.5,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 3,
+        "decided_correct": 3,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.5,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 3,
+            "n": 6,
+            "proportion": 0.5,
+            "ci_lower": 0.1876,
+            "ci_upper": 0.8124,
+            "ci_percent": "[18.76%, 81.24%]"
+          },
+          "abstention_rate": {
+            "k": 3,
+            "n": 6,
+            "proportion": 0.5,
+            "ci_lower": 0.1876,
+            "ci_upper": 0.8124,
+            "ci_percent": "[18.76%, 81.24%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 3,
+            "n": 3,
+            "proportion": 1.0,
+            "ci_lower": 0.4385,
+            "ci_upper": 1.0,
+            "ci_percent": "[43.85%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 4,
+          "fake_fake_tp": 2
+        },
+        "coverage": 0.3333,
+        "abstention_rate": 0.6667,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.6667,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 2,
+        "decided_correct": 2,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.3333,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 2,
+            "n": 6,
+            "proportion": 0.3333,
+            "ci_lower": 0.0968,
+            "ci_upper": 0.7,
+            "ci_percent": "[9.68%, 70.0%]"
+          },
+          "abstention_rate": {
+            "k": 4,
+            "n": 6,
+            "proportion": 0.6667,
+            "ci_lower": 0.3,
+            "ci_upper": 0.9032,
+            "ci_percent": "[30.0%, 90.32%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 2,
+            "n": 2,
+            "proportion": 1.0,
+            "ci_lower": 0.3424,
+            "ci_upper": 1.0,
+            "ci_percent": "[34.24%, 100.0%]"
+          }
+        }
+      }
+    },
+    "Face2Face": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 6,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.0,
+        "abstention_rate": 1.0,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 0,
+        "decided_correct": 0,
+        "decided_accuracy": 0.0,
+        "decided_macro_f1": 0.0,
+        "raw_accuracy": 0.0,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "abstention_rate": {
+            "k": 6,
+            "n": 6,
+            "proportion": 1.0,
+            "ci_lower": 0.6097,
+            "ci_upper": 1.0,
+            "ci_percent": "[60.97%, 100.0%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 6,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.0,
+        "abstention_rate": 1.0,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 0,
+        "decided_correct": 0,
+        "decided_accuracy": 0.0,
+        "decided_macro_f1": 0.0,
+        "raw_accuracy": 0.0,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "abstention_rate": {
+            "k": 6,
+            "n": 6,
+            "proportion": 1.0,
+            "ci_lower": 0.6097,
+            "ci_upper": 1.0,
+            "ci_percent": "[60.97%, 100.0%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 4,
+          "fake_fake_tp": 2
+        },
+        "coverage": 0.3333,
+        "abstention_rate": 0.6667,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.6667,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 2,
+        "decided_correct": 2,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.3333,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 2,
+            "n": 6,
+            "proportion": 0.3333,
+            "ci_lower": 0.0968,
+            "ci_upper": 0.7,
+            "ci_percent": "[9.68%, 70.0%]"
+          },
+          "abstention_rate": {
+            "k": 4,
+            "n": 6,
+            "proportion": 0.6667,
+            "ci_lower": 0.3,
+            "ci_upper": 0.9032,
+            "ci_percent": "[30.0%, 90.32%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 2,
+            "n": 2,
+            "proportion": 1.0,
+            "ci_lower": 0.3424,
+            "ci_upper": 1.0,
+            "ci_percent": "[34.24%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 6,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.0,
+        "abstention_rate": 1.0,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 0,
+        "decided_correct": 0,
+        "decided_accuracy": 0.0,
+        "decided_macro_f1": 0.0,
+        "raw_accuracy": 0.0,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "abstention_rate": {
+            "k": 6,
+            "n": 6,
+            "proportion": 1.0,
+            "ci_lower": 0.6097,
+            "ci_upper": 1.0,
+            "ci_percent": "[60.97%, 100.0%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          }
+        }
+      }
+    },
+    "FaceShifter": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 1,
+          "fake_uncertain": 5,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.1667,
+        "abstention_rate": 0.8333,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.8333,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.1667,
+        "decided_total": 1,
+        "decided_correct": 0,
+        "decided_accuracy": 0.0,
+        "decided_macro_f1": 0.0,
+        "raw_accuracy": 0.0,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 1,
+            "n": 6,
+            "proportion": 0.1667,
+            "ci_lower": 0.0301,
+            "ci_upper": 0.5635,
+            "ci_percent": "[3.01%, 56.35%]"
+          },
+          "abstention_rate": {
+            "k": 5,
+            "n": 6,
+            "proportion": 0.8333,
+            "ci_lower": 0.4365,
+            "ci_upper": 0.9699,
+            "ci_percent": "[43.65%, 96.99%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 1,
+            "n": 6,
+            "proportion": 0.1667,
+            "ci_lower": 0.0301,
+            "ci_upper": 0.5635,
+            "ci_percent": "[3.01%, 56.35%]"
+          },
+          "decided_accuracy": {
+            "k": 0,
+            "n": 1,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.7935,
+            "ci_percent": "[0.0%, 79.35%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 6,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.0,
+        "abstention_rate": 1.0,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 0,
+        "decided_correct": 0,
+        "decided_accuracy": 0.0,
+        "decided_macro_f1": 0.0,
+        "raw_accuracy": 0.0,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "abstention_rate": {
+            "k": 6,
+            "n": 6,
+            "proportion": 1.0,
+            "ci_lower": 0.6097,
+            "ci_upper": 1.0,
+            "ci_percent": "[60.97%, 100.0%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 1,
+          "fake_uncertain": 5,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.1667,
+        "abstention_rate": 0.8333,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.8333,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.1667,
+        "decided_total": 1,
+        "decided_correct": 0,
+        "decided_accuracy": 0.0,
+        "decided_macro_f1": 0.0,
+        "raw_accuracy": 0.0,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 1,
+            "n": 6,
+            "proportion": 0.1667,
+            "ci_lower": 0.0301,
+            "ci_upper": 0.5635,
+            "ci_percent": "[3.01%, 56.35%]"
+          },
+          "abstention_rate": {
+            "k": 5,
+            "n": 6,
+            "proportion": 0.8333,
+            "ci_lower": 0.4365,
+            "ci_upper": 0.9699,
+            "ci_percent": "[43.65%, 96.99%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 1,
+            "n": 6,
+            "proportion": 0.1667,
+            "ci_lower": 0.0301,
+            "ci_upper": 0.5635,
+            "ci_percent": "[3.01%, 56.35%]"
+          },
+          "decided_accuracy": {
+            "k": 0,
+            "n": 1,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.7935,
+            "ci_percent": "[0.0%, 79.35%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 1,
+          "fake_uncertain": 5,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.1667,
+        "abstention_rate": 0.8333,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.8333,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.1667,
+        "decided_total": 1,
+        "decided_correct": 0,
+        "decided_accuracy": 0.0,
+        "decided_macro_f1": 0.0,
+        "raw_accuracy": 0.0,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 1,
+            "n": 6,
+            "proportion": 0.1667,
+            "ci_lower": 0.0301,
+            "ci_upper": 0.5635,
+            "ci_percent": "[3.01%, 56.35%]"
+          },
+          "abstention_rate": {
+            "k": 5,
+            "n": 6,
+            "proportion": 0.8333,
+            "ci_lower": 0.4365,
+            "ci_upper": 0.9699,
+            "ci_percent": "[43.65%, 96.99%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 1,
+            "n": 6,
+            "proportion": 0.1667,
+            "ci_lower": 0.0301,
+            "ci_upper": 0.5635,
+            "ci_percent": "[3.01%, 56.35%]"
+          },
+          "decided_accuracy": {
+            "k": 0,
+            "n": 1,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.7935,
+            "ci_percent": "[0.0%, 79.35%]"
+          }
+        }
+      }
+    },
+    "FaceSwap": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 2,
+          "fake_fake_tp": 4
+        },
+        "coverage": 0.6667,
+        "abstention_rate": 0.3333,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.3333,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 4,
+        "decided_correct": 4,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.6667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 4,
+            "n": 6,
+            "proportion": 0.6667,
+            "ci_lower": 0.3,
+            "ci_upper": 0.9032,
+            "ci_percent": "[30.0%, 90.32%]"
+          },
+          "abstention_rate": {
+            "k": 2,
+            "n": 6,
+            "proportion": 0.3333,
+            "ci_lower": 0.0968,
+            "ci_upper": 0.7,
+            "ci_percent": "[9.68%, 70.0%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 4,
+            "n": 4,
+            "proportion": 1.0,
+            "ci_lower": 0.5101,
+            "ci_upper": 1.0,
+            "ci_percent": "[51.01%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 2,
+          "fake_fake_tp": 4
+        },
+        "coverage": 0.6667,
+        "abstention_rate": 0.3333,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.3333,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 4,
+        "decided_correct": 4,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.6667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 4,
+            "n": 6,
+            "proportion": 0.6667,
+            "ci_lower": 0.3,
+            "ci_upper": 0.9032,
+            "ci_percent": "[30.0%, 90.32%]"
+          },
+          "abstention_rate": {
+            "k": 2,
+            "n": 6,
+            "proportion": 0.3333,
+            "ci_lower": 0.0968,
+            "ci_upper": 0.7,
+            "ci_percent": "[9.68%, 70.0%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 4,
+            "n": 4,
+            "proportion": 1.0,
+            "ci_lower": 0.5101,
+            "ci_upper": 1.0,
+            "ci_percent": "[51.01%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 1,
+          "fake_fake_tp": 5
+        },
+        "coverage": 0.8333,
+        "abstention_rate": 0.1667,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.1667,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 5,
+        "decided_correct": 5,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.8333,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 5,
+            "n": 6,
+            "proportion": 0.8333,
+            "ci_lower": 0.4365,
+            "ci_upper": 0.9699,
+            "ci_percent": "[43.65%, 96.99%]"
+          },
+          "abstention_rate": {
+            "k": 1,
+            "n": 6,
+            "proportion": 0.1667,
+            "ci_lower": 0.0301,
+            "ci_upper": 0.5635,
+            "ci_percent": "[3.01%, 56.35%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 5,
+            "n": 5,
+            "proportion": 1.0,
+            "ci_lower": 0.5655,
+            "ci_upper": 1.0,
+            "ci_percent": "[56.55%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 2,
+          "fake_fake_tp": 4
+        },
+        "coverage": 0.6667,
+        "abstention_rate": 0.3333,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.3333,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 4,
+        "decided_correct": 4,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.6667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 4,
+            "n": 6,
+            "proportion": 0.6667,
+            "ci_lower": 0.3,
+            "ci_upper": 0.9032,
+            "ci_percent": "[30.0%, 90.32%]"
+          },
+          "abstention_rate": {
+            "k": 2,
+            "n": 6,
+            "proportion": 0.3333,
+            "ci_lower": 0.0968,
+            "ci_upper": 0.7,
+            "ci_percent": "[9.68%, 70.0%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 4,
+            "n": 4,
+            "proportion": 1.0,
+            "ci_lower": 0.5101,
+            "ci_upper": 1.0,
+            "ci_percent": "[51.01%, 100.0%]"
+          }
+        }
+      }
+    },
+    "NeuralTextures": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 5,
+          "fake_fake_tp": 1
+        },
+        "coverage": 0.1667,
+        "abstention_rate": 0.8333,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.8333,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 1,
+        "decided_correct": 1,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.1667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 1,
+            "n": 6,
+            "proportion": 0.1667,
+            "ci_lower": 0.0301,
+            "ci_upper": 0.5635,
+            "ci_percent": "[3.01%, 56.35%]"
+          },
+          "abstention_rate": {
+            "k": 5,
+            "n": 6,
+            "proportion": 0.8333,
+            "ci_lower": 0.4365,
+            "ci_upper": 0.9699,
+            "ci_percent": "[43.65%, 96.99%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 1,
+            "n": 1,
+            "proportion": 1.0,
+            "ci_lower": 0.2065,
+            "ci_upper": 1.0,
+            "ci_percent": "[20.65%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 5,
+          "fake_fake_tp": 1
+        },
+        "coverage": 0.1667,
+        "abstention_rate": 0.8333,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.8333,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 1,
+        "decided_correct": 1,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.1667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 1,
+            "n": 6,
+            "proportion": 0.1667,
+            "ci_lower": 0.0301,
+            "ci_upper": 0.5635,
+            "ci_percent": "[3.01%, 56.35%]"
+          },
+          "abstention_rate": {
+            "k": 5,
+            "n": 6,
+            "proportion": 0.8333,
+            "ci_lower": 0.4365,
+            "ci_upper": 0.9699,
+            "ci_percent": "[43.65%, 96.99%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 1,
+            "n": 1,
+            "proportion": 1.0,
+            "ci_lower": 0.2065,
+            "ci_upper": 1.0,
+            "ci_percent": "[20.65%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 4,
+          "fake_fake_tp": 2
+        },
+        "coverage": 0.3333,
+        "abstention_rate": 0.6667,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.6667,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 2,
+        "decided_correct": 2,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.3333,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 2,
+            "n": 6,
+            "proportion": 0.3333,
+            "ci_lower": 0.0968,
+            "ci_upper": 0.7,
+            "ci_percent": "[9.68%, 70.0%]"
+          },
+          "abstention_rate": {
+            "k": 4,
+            "n": 6,
+            "proportion": 0.6667,
+            "ci_lower": 0.3,
+            "ci_upper": 0.9032,
+            "ci_percent": "[30.0%, 90.32%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 2,
+            "n": 2,
+            "proportion": 1.0,
+            "ci_lower": 0.3424,
+            "ci_upper": 1.0,
+            "ci_percent": "[34.24%, 100.0%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 6,
+        "confusion_matrix": {
+          "real_likely_real_tn": 0,
+          "real_uncertain": 0,
+          "real_fake_fp": 0,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 5,
+          "fake_fake_tp": 1
+        },
+        "coverage": 0.1667,
+        "abstention_rate": 0.8333,
+        "real_abstention_rate": 0.0,
+        "fake_abstention_rate": 0.8333,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "decided_total": 1,
+        "decided_correct": 1,
+        "decided_accuracy": 1.0,
+        "decided_macro_f1": 0.5,
+        "raw_accuracy": 0.1667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 1,
+            "n": 6,
+            "proportion": 0.1667,
+            "ci_lower": 0.0301,
+            "ci_upper": 0.5635,
+            "ci_percent": "[3.01%, 56.35%]"
+          },
+          "abstention_rate": {
+            "k": 5,
+            "n": 6,
+            "proportion": 0.8333,
+            "ci_lower": 0.4365,
+            "ci_upper": 0.9699,
+            "ci_percent": "[43.65%, 96.99%]"
+          },
+          "false_positive_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 6,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.3903,
+            "ci_percent": "[0.0%, 39.03%]"
+          },
+          "decided_accuracy": {
+            "k": 1,
+            "n": 1,
+            "proportion": 1.0,
+            "ci_lower": 0.2065,
+            "ci_upper": 1.0,
+            "ci_percent": "[20.65%, 100.0%]"
+          }
+        }
+      }
+    },
+    "original": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 30,
+        "confusion_matrix": {
+          "real_likely_real_tn": 8,
+          "real_uncertain": 20,
+          "real_fake_fp": 2,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 0,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.3333,
+        "abstention_rate": 0.6667,
+        "real_abstention_rate": 0.6667,
+        "fake_abstention_rate": 0.0,
+        "false_positive_rate": 0.0667,
+        "false_negative_rate": 0.0,
+        "decided_total": 10,
+        "decided_correct": 8,
+        "decided_accuracy": 0.8,
+        "decided_macro_f1": 0.4444,
+        "raw_accuracy": 0.2667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 10,
+            "n": 30,
+            "proportion": 0.3333,
+            "ci_lower": 0.1923,
+            "ci_upper": 0.5122,
+            "ci_percent": "[19.23%, 51.22%]"
+          },
+          "abstention_rate": {
+            "k": 20,
+            "n": 30,
+            "proportion": 0.6667,
+            "ci_lower": 0.4878,
+            "ci_upper": 0.8077,
+            "ci_percent": "[48.78%, 80.77%]"
+          },
+          "false_positive_rate": {
+            "k": 2,
+            "n": 30,
+            "proportion": 0.0667,
+            "ci_lower": 0.0185,
+            "ci_upper": 0.2132,
+            "ci_percent": "[1.85%, 21.32%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "decided_accuracy": {
+            "k": 8,
+            "n": 10,
+            "proportion": 0.8,
+            "ci_lower": 0.4902,
+            "ci_upper": 0.9433,
+            "ci_percent": "[49.02%, 94.33%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 30,
+        "confusion_matrix": {
+          "real_likely_real_tn": 1,
+          "real_uncertain": 27,
+          "real_fake_fp": 2,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 0,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.1,
+        "abstention_rate": 0.9,
+        "real_abstention_rate": 0.9,
+        "fake_abstention_rate": 0.0,
+        "false_positive_rate": 0.0667,
+        "false_negative_rate": 0.0,
+        "decided_total": 3,
+        "decided_correct": 1,
+        "decided_accuracy": 0.3333,
+        "decided_macro_f1": 0.25,
+        "raw_accuracy": 0.0333,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 3,
+            "n": 30,
+            "proportion": 0.1,
+            "ci_lower": 0.0346,
+            "ci_upper": 0.2562,
+            "ci_percent": "[3.46%, 25.62%]"
+          },
+          "abstention_rate": {
+            "k": 27,
+            "n": 30,
+            "proportion": 0.9,
+            "ci_lower": 0.7438,
+            "ci_upper": 0.9654,
+            "ci_percent": "[74.38%, 96.54%]"
+          },
+          "false_positive_rate": {
+            "k": 2,
+            "n": 30,
+            "proportion": 0.0667,
+            "ci_lower": 0.0185,
+            "ci_upper": 0.2132,
+            "ci_percent": "[1.85%, 21.32%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "decided_accuracy": {
+            "k": 1,
+            "n": 3,
+            "proportion": 0.3333,
+            "ci_lower": 0.0615,
+            "ci_upper": 0.7923,
+            "ci_percent": "[6.15%, 79.23%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 30,
+        "confusion_matrix": {
+          "real_likely_real_tn": 8,
+          "real_uncertain": 20,
+          "real_fake_fp": 2,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 0,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.3333,
+        "abstention_rate": 0.6667,
+        "real_abstention_rate": 0.6667,
+        "fake_abstention_rate": 0.0,
+        "false_positive_rate": 0.0667,
+        "false_negative_rate": 0.0,
+        "decided_total": 10,
+        "decided_correct": 8,
+        "decided_accuracy": 0.8,
+        "decided_macro_f1": 0.4444,
+        "raw_accuracy": 0.2667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 10,
+            "n": 30,
+            "proportion": 0.3333,
+            "ci_lower": 0.1923,
+            "ci_upper": 0.5122,
+            "ci_percent": "[19.23%, 51.22%]"
+          },
+          "abstention_rate": {
+            "k": 20,
+            "n": 30,
+            "proportion": 0.6667,
+            "ci_lower": 0.4878,
+            "ci_upper": 0.8077,
+            "ci_percent": "[48.78%, 80.77%]"
+          },
+          "false_positive_rate": {
+            "k": 2,
+            "n": 30,
+            "proportion": 0.0667,
+            "ci_lower": 0.0185,
+            "ci_upper": 0.2132,
+            "ci_percent": "[1.85%, 21.32%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "decided_accuracy": {
+            "k": 8,
+            "n": 10,
+            "proportion": 0.8,
+            "ci_lower": 0.4902,
+            "ci_upper": 0.9433,
+            "ci_percent": "[49.02%, 94.33%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 30,
+        "confusion_matrix": {
+          "real_likely_real_tn": 9,
+          "real_uncertain": 19,
+          "real_fake_fp": 2,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 0,
+          "fake_fake_tp": 0
+        },
+        "coverage": 0.3667,
+        "abstention_rate": 0.6333,
+        "real_abstention_rate": 0.6333,
+        "fake_abstention_rate": 0.0,
+        "false_positive_rate": 0.0667,
+        "false_negative_rate": 0.0,
+        "decided_total": 11,
+        "decided_correct": 9,
+        "decided_accuracy": 0.8182,
+        "decided_macro_f1": 0.45,
+        "raw_accuracy": 0.3,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 11,
+            "n": 30,
+            "proportion": 0.3667,
+            "ci_lower": 0.2187,
+            "ci_upper": 0.5449,
+            "ci_percent": "[21.87%, 54.49%]"
+          },
+          "abstention_rate": {
+            "k": 19,
+            "n": 30,
+            "proportion": 0.6333,
+            "ci_lower": 0.4551,
+            "ci_upper": 0.7813,
+            "ci_percent": "[45.51%, 78.13%]"
+          },
+          "false_positive_rate": {
+            "k": 2,
+            "n": 30,
+            "proportion": 0.0667,
+            "ci_lower": 0.0185,
+            "ci_upper": 0.2132,
+            "ci_percent": "[1.85%, 21.32%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 0,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "ci_percent": "[0.0%, 0.0%]"
+          },
+          "decided_accuracy": {
+            "k": 9,
+            "n": 11,
+            "proportion": 0.8182,
+            "ci_lower": 0.523,
+            "ci_upper": 0.9486,
+            "ci_percent": "[52.3%, 94.86%]"
+          }
+        }
+      }
+    }
+  },
+  "selection_decision": {
+    "status": "POLICY_SELECTED",
+    "selected_candidate": "Candidate 3 (Directional Temporal Conflict Gating)",
+    "selection_rationale": "Selected 'Candidate 3 (Directional Temporal Conflict Gating)' based strictly on validation Pareto frontier. It satisfies the safety constraint (FPR=5.00%) while optimizing coverage (34.2%) and decided accuracy (90.2%).",
+    "validation_only_guarantee": true,
+    "validation_metrics": {
+      "sample_count": 120,
+      "confusion_matrix": {
+        "real_likely_real_tn": 10,
+        "real_uncertain": 47,
+        "real_fake_fp": 3,
+        "fake_likely_real_fn": 1,
+        "fake_uncertain": 32,
+        "fake_fake_tp": 27
+      },
+      "coverage": 0.3417,
+      "abstention_rate": 0.6583,
+      "real_abstention_rate": 0.7833,
+      "fake_abstention_rate": 0.5333,
+      "false_positive_rate": 0.05,
+      "false_negative_rate": 0.0167,
+      "decided_total": 41,
+      "decided_correct": 37,
+      "decided_accuracy": 0.9024,
+      "decided_macro_f1": 0.8822,
+      "raw_accuracy": 0.3083,
+      "confidence_intervals_95": {
+        "coverage": {
+          "k": 41,
+          "n": 120,
+          "proportion": 0.3417,
+          "ci_lower": 0.2629,
+          "ci_upper": 0.4303,
+          "ci_percent": "[26.29%, 43.03%]"
+        },
+        "abstention_rate": {
+          "k": 79,
+          "n": 120,
+          "proportion": 0.6583,
+          "ci_lower": 0.5697,
+          "ci_upper": 0.7371,
+          "ci_percent": "[56.97%, 73.71%]"
+        },
+        "false_positive_rate": {
+          "k": 3,
+          "n": 60,
+          "proportion": 0.05,
+          "ci_lower": 0.0171,
+          "ci_upper": 0.137,
+          "ci_percent": "[1.71%, 13.7%]"
+        },
+        "false_negative_rate": {
+          "k": 1,
+          "n": 60,
+          "proportion": 0.0167,
+          "ci_lower": 0.0029,
+          "ci_upper": 0.0886,
+          "ci_percent": "[0.29%, 8.86%]"
+        },
+        "decided_accuracy": {
+          "k": 37,
+          "n": 41,
+          "proportion": 0.9024,
+          "ci_lower": 0.7745,
+          "ci_upper": 0.9614,
+          "ci_percent": "[77.45%, 96.14%]"
+        }
+      }
+    }
+  },
+  "exploratory_test_audit": {
+    "test_videos": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 200,
+        "confusion_matrix": {
+          "real_likely_real_tn": 21,
+          "real_uncertain": 78,
+          "real_fake_fp": 1,
+          "fake_likely_real_fn": 4,
+          "fake_uncertain": 70,
+          "fake_fake_tp": 26
+        },
+        "coverage": 0.26,
+        "abstention_rate": 0.74,
+        "real_abstention_rate": 0.78,
+        "fake_abstention_rate": 0.7,
+        "false_positive_rate": 0.01,
+        "false_negative_rate": 0.04,
+        "decided_total": 52,
+        "decided_correct": 47,
+        "decided_accuracy": 0.9038,
+        "decided_macro_f1": 0.9029,
+        "raw_accuracy": 0.235,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 52,
+            "n": 200,
+            "proportion": 0.26,
+            "ci_lower": 0.2041,
+            "ci_upper": 0.3249,
+            "ci_percent": "[20.41%, 32.49%]"
+          },
+          "abstention_rate": {
+            "k": 148,
+            "n": 200,
+            "proportion": 0.74,
+            "ci_lower": 0.6751,
+            "ci_upper": 0.7959,
+            "ci_percent": "[67.51%, 79.59%]"
+          },
+          "false_positive_rate": {
+            "k": 1,
+            "n": 100,
+            "proportion": 0.01,
+            "ci_lower": 0.0018,
+            "ci_upper": 0.0545,
+            "ci_percent": "[0.18%, 5.45%]"
+          },
+          "false_negative_rate": {
+            "k": 4,
+            "n": 100,
+            "proportion": 0.04,
+            "ci_lower": 0.0157,
+            "ci_upper": 0.0984,
+            "ci_percent": "[1.57%, 9.84%]"
+          },
+          "decided_accuracy": {
+            "k": 47,
+            "n": 52,
+            "proportion": 0.9038,
+            "ci_lower": 0.7939,
+            "ci_upper": 0.9582,
+            "ci_percent": "[79.39%, 95.82%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 200,
+        "confusion_matrix": {
+          "real_likely_real_tn": 4,
+          "real_uncertain": 95,
+          "real_fake_fp": 1,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 74,
+          "fake_fake_tp": 26
+        },
+        "coverage": 0.155,
+        "abstention_rate": 0.845,
+        "real_abstention_rate": 0.95,
+        "fake_abstention_rate": 0.74,
+        "false_positive_rate": 0.01,
+        "false_negative_rate": 0.0,
+        "decided_total": 31,
+        "decided_correct": 30,
+        "decided_accuracy": 0.9677,
+        "decided_macro_f1": 0.935,
+        "raw_accuracy": 0.15,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 31,
+            "n": 200,
+            "proportion": 0.155,
+            "ci_lower": 0.1114,
+            "ci_upper": 0.2116,
+            "ci_percent": "[11.14%, 21.16%]"
+          },
+          "abstention_rate": {
+            "k": 169,
+            "n": 200,
+            "proportion": 0.845,
+            "ci_lower": 0.7884,
+            "ci_upper": 0.8886,
+            "ci_percent": "[78.84%, 88.86%]"
+          },
+          "false_positive_rate": {
+            "k": 1,
+            "n": 100,
+            "proportion": 0.01,
+            "ci_lower": 0.0018,
+            "ci_upper": 0.0545,
+            "ci_percent": "[0.18%, 5.45%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 100,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.037,
+            "ci_percent": "[0.0%, 3.7%]"
+          },
+          "decided_accuracy": {
+            "k": 30,
+            "n": 31,
+            "proportion": 0.9677,
+            "ci_lower": 0.8381,
+            "ci_upper": 0.9943,
+            "ci_percent": "[83.81%, 99.43%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 200,
+        "confusion_matrix": {
+          "real_likely_real_tn": 21,
+          "real_uncertain": 78,
+          "real_fake_fp": 1,
+          "fake_likely_real_fn": 4,
+          "fake_uncertain": 45,
+          "fake_fake_tp": 51
+        },
+        "coverage": 0.385,
+        "abstention_rate": 0.615,
+        "real_abstention_rate": 0.78,
+        "fake_abstention_rate": 0.45,
+        "false_positive_rate": 0.01,
+        "false_negative_rate": 0.04,
+        "decided_total": 77,
+        "decided_correct": 72,
+        "decided_accuracy": 0.9351,
+        "decided_macro_f1": 0.9234,
+        "raw_accuracy": 0.36,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 77,
+            "n": 200,
+            "proportion": 0.385,
+            "ci_lower": 0.3203,
+            "ci_upper": 0.454,
+            "ci_percent": "[32.03%, 45.4%]"
+          },
+          "abstention_rate": {
+            "k": 123,
+            "n": 200,
+            "proportion": 0.615,
+            "ci_lower": 0.546,
+            "ci_upper": 0.6797,
+            "ci_percent": "[54.6%, 67.97%]"
+          },
+          "false_positive_rate": {
+            "k": 1,
+            "n": 100,
+            "proportion": 0.01,
+            "ci_lower": 0.0018,
+            "ci_upper": 0.0545,
+            "ci_percent": "[0.18%, 5.45%]"
+          },
+          "false_negative_rate": {
+            "k": 4,
+            "n": 100,
+            "proportion": 0.04,
+            "ci_lower": 0.0157,
+            "ci_upper": 0.0984,
+            "ci_percent": "[1.57%, 9.84%]"
+          },
+          "decided_accuracy": {
+            "k": 72,
+            "n": 77,
+            "proportion": 0.9351,
+            "ci_lower": 0.8568,
+            "ci_upper": 0.9719,
+            "ci_percent": "[85.68%, 97.19%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 200,
+        "confusion_matrix": {
+          "real_likely_real_tn": 8,
+          "real_uncertain": 91,
+          "real_fake_fp": 1,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 69,
+          "fake_fake_tp": 31
+        },
+        "coverage": 0.2,
+        "abstention_rate": 0.8,
+        "real_abstention_rate": 0.91,
+        "fake_abstention_rate": 0.69,
+        "false_positive_rate": 0.01,
+        "false_negative_rate": 0.0,
+        "decided_total": 40,
+        "decided_correct": 39,
+        "decided_accuracy": 0.975,
+        "decided_macro_f1": 0.9627,
+        "raw_accuracy": 0.195,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 40,
+            "n": 200,
+            "proportion": 0.2,
+            "ci_lower": 0.1505,
+            "ci_upper": 0.2609,
+            "ci_percent": "[15.05%, 26.09%]"
+          },
+          "abstention_rate": {
+            "k": 160,
+            "n": 200,
+            "proportion": 0.8,
+            "ci_lower": 0.7391,
+            "ci_upper": 0.8495,
+            "ci_percent": "[73.91%, 84.95%]"
+          },
+          "false_positive_rate": {
+            "k": 1,
+            "n": 100,
+            "proportion": 0.01,
+            "ci_lower": 0.0018,
+            "ci_upper": 0.0545,
+            "ci_percent": "[0.18%, 5.45%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 100,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.037,
+            "ci_percent": "[0.0%, 3.7%]"
+          },
+          "decided_accuracy": {
+            "k": 39,
+            "n": 40,
+            "proportion": 0.975,
+            "ci_lower": 0.8712,
+            "ci_upper": 0.9956,
+            "ci_percent": "[87.12%, 99.56%]"
+          }
+        }
+      }
+    },
+    "test_images": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 202,
+        "confusion_matrix": {
+          "real_likely_real_tn": 16,
+          "real_uncertain": 77,
+          "real_fake_fp": 8,
+          "fake_likely_real_fn": 2,
+          "fake_uncertain": 52,
+          "fake_fake_tp": 47
+        },
+        "coverage": 0.3614,
+        "abstention_rate": 0.6386,
+        "real_abstention_rate": 0.7624,
+        "fake_abstention_rate": 0.5149,
+        "false_positive_rate": 0.0792,
+        "false_negative_rate": 0.0198,
+        "decided_total": 73,
+        "decided_correct": 63,
+        "decided_accuracy": 0.863,
+        "decided_macro_f1": 0.8329,
+        "raw_accuracy": 0.3119,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 73,
+            "n": 202,
+            "proportion": 0.3614,
+            "ci_lower": 0.2983,
+            "ci_upper": 0.4297,
+            "ci_percent": "[29.83%, 42.97%]"
+          },
+          "abstention_rate": {
+            "k": 129,
+            "n": 202,
+            "proportion": 0.6386,
+            "ci_lower": 0.5703,
+            "ci_upper": 0.7017,
+            "ci_percent": "[57.03%, 70.17%]"
+          },
+          "false_positive_rate": {
+            "k": 8,
+            "n": 101,
+            "proportion": 0.0792,
+            "ci_lower": 0.0407,
+            "ci_upper": 0.1486,
+            "ci_percent": "[4.07%, 14.86%]"
+          },
+          "false_negative_rate": {
+            "k": 2,
+            "n": 101,
+            "proportion": 0.0198,
+            "ci_lower": 0.0054,
+            "ci_upper": 0.0693,
+            "ci_percent": "[0.54%, 6.93%]"
+          },
+          "decided_accuracy": {
+            "k": 63,
+            "n": 73,
+            "proportion": 0.863,
+            "ci_lower": 0.7659,
+            "ci_upper": 0.9239,
+            "ci_percent": "[76.59%, 92.39%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 202,
+        "confusion_matrix": {
+          "real_likely_real_tn": 4,
+          "real_uncertain": 89,
+          "real_fake_fp": 8,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 54,
+          "fake_fake_tp": 47
+        },
+        "coverage": 0.2921,
+        "abstention_rate": 0.7079,
+        "real_abstention_rate": 0.8812,
+        "fake_abstention_rate": 0.5347,
+        "false_positive_rate": 0.0792,
+        "false_negative_rate": 0.0,
+        "decided_total": 59,
+        "decided_correct": 51,
+        "decided_accuracy": 0.8644,
+        "decided_macro_f1": 0.7108,
+        "raw_accuracy": 0.2525,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 59,
+            "n": 202,
+            "proportion": 0.2921,
+            "ci_lower": 0.2337,
+            "ci_upper": 0.3582,
+            "ci_percent": "[23.37%, 35.82%]"
+          },
+          "abstention_rate": {
+            "k": 143,
+            "n": 202,
+            "proportion": 0.7079,
+            "ci_lower": 0.6418,
+            "ci_upper": 0.7663,
+            "ci_percent": "[64.18%, 76.63%]"
+          },
+          "false_positive_rate": {
+            "k": 8,
+            "n": 101,
+            "proportion": 0.0792,
+            "ci_lower": 0.0407,
+            "ci_upper": 0.1486,
+            "ci_percent": "[4.07%, 14.86%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 101,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0366,
+            "ci_percent": "[0.0%, 3.66%]"
+          },
+          "decided_accuracy": {
+            "k": 51,
+            "n": 59,
+            "proportion": 0.8644,
+            "ci_lower": 0.7546,
+            "ci_upper": 0.9297,
+            "ci_percent": "[75.46%, 92.97%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 202,
+        "confusion_matrix": {
+          "real_likely_real_tn": 16,
+          "real_uncertain": 77,
+          "real_fake_fp": 8,
+          "fake_likely_real_fn": 2,
+          "fake_uncertain": 52,
+          "fake_fake_tp": 47
+        },
+        "coverage": 0.3614,
+        "abstention_rate": 0.6386,
+        "real_abstention_rate": 0.7624,
+        "fake_abstention_rate": 0.5149,
+        "false_positive_rate": 0.0792,
+        "false_negative_rate": 0.0198,
+        "decided_total": 73,
+        "decided_correct": 63,
+        "decided_accuracy": 0.863,
+        "decided_macro_f1": 0.8329,
+        "raw_accuracy": 0.3119,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 73,
+            "n": 202,
+            "proportion": 0.3614,
+            "ci_lower": 0.2983,
+            "ci_upper": 0.4297,
+            "ci_percent": "[29.83%, 42.97%]"
+          },
+          "abstention_rate": {
+            "k": 129,
+            "n": 202,
+            "proportion": 0.6386,
+            "ci_lower": 0.5703,
+            "ci_upper": 0.7017,
+            "ci_percent": "[57.03%, 70.17%]"
+          },
+          "false_positive_rate": {
+            "k": 8,
+            "n": 101,
+            "proportion": 0.0792,
+            "ci_lower": 0.0407,
+            "ci_upper": 0.1486,
+            "ci_percent": "[4.07%, 14.86%]"
+          },
+          "false_negative_rate": {
+            "k": 2,
+            "n": 101,
+            "proportion": 0.0198,
+            "ci_lower": 0.0054,
+            "ci_upper": 0.0693,
+            "ci_percent": "[0.54%, 6.93%]"
+          },
+          "decided_accuracy": {
+            "k": 63,
+            "n": 73,
+            "proportion": 0.863,
+            "ci_lower": 0.7659,
+            "ci_upper": 0.9239,
+            "ci_percent": "[76.59%, 92.39%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 205,
+        "confusion_matrix": {
+          "real_likely_real_tn": 15,
+          "real_uncertain": 75,
+          "real_fake_fp": 13,
+          "fake_likely_real_fn": 2,
+          "fake_uncertain": 46,
+          "fake_fake_tp": 54
+        },
+        "coverage": 0.4098,
+        "abstention_rate": 0.5902,
+        "real_abstention_rate": 0.7282,
+        "fake_abstention_rate": 0.451,
+        "false_positive_rate": 0.1262,
+        "false_negative_rate": 0.0196,
+        "decided_total": 84,
+        "decided_correct": 69,
+        "decided_accuracy": 0.8214,
+        "decided_macro_f1": 0.7724,
+        "raw_accuracy": 0.3366,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 84,
+            "n": 205,
+            "proportion": 0.4098,
+            "ci_lower": 0.3447,
+            "ci_upper": 0.4781,
+            "ci_percent": "[34.47%, 47.81%]"
+          },
+          "abstention_rate": {
+            "k": 121,
+            "n": 205,
+            "proportion": 0.5902,
+            "ci_lower": 0.5219,
+            "ci_upper": 0.6553,
+            "ci_percent": "[52.19%, 65.53%]"
+          },
+          "false_positive_rate": {
+            "k": 13,
+            "n": 103,
+            "proportion": 0.1262,
+            "ci_lower": 0.0753,
+            "ci_upper": 0.204,
+            "ci_percent": "[7.53%, 20.4%]"
+          },
+          "false_negative_rate": {
+            "k": 2,
+            "n": 102,
+            "proportion": 0.0196,
+            "ci_lower": 0.0054,
+            "ci_upper": 0.0687,
+            "ci_percent": "[0.54%, 6.87%]"
+          },
+          "decided_accuracy": {
+            "k": 69,
+            "n": 84,
+            "proportion": 0.8214,
+            "ci_lower": 0.7261,
+            "ci_upper": 0.8887,
+            "ci_percent": "[72.61%, 88.87%]"
+          }
+        }
+      }
+    },
+    "test_combined": {
+      "Candidate 1 (Baseline Reference)": {
+        "sample_count": 402,
+        "confusion_matrix": {
+          "real_likely_real_tn": 37,
+          "real_uncertain": 155,
+          "real_fake_fp": 9,
+          "fake_likely_real_fn": 6,
+          "fake_uncertain": 122,
+          "fake_fake_tp": 73
+        },
+        "coverage": 0.3109,
+        "abstention_rate": 0.6891,
+        "real_abstention_rate": 0.7711,
+        "fake_abstention_rate": 0.607,
+        "false_positive_rate": 0.0448,
+        "false_negative_rate": 0.0299,
+        "decided_total": 125,
+        "decided_correct": 110,
+        "decided_accuracy": 0.88,
+        "decided_macro_f1": 0.8691,
+        "raw_accuracy": 0.2736,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 125,
+            "n": 402,
+            "proportion": 0.3109,
+            "ci_lower": 0.2677,
+            "ci_upper": 0.3578,
+            "ci_percent": "[26.77%, 35.78%]"
+          },
+          "abstention_rate": {
+            "k": 277,
+            "n": 402,
+            "proportion": 0.6891,
+            "ci_lower": 0.6422,
+            "ci_upper": 0.7323,
+            "ci_percent": "[64.22%, 73.23%]"
+          },
+          "false_positive_rate": {
+            "k": 9,
+            "n": 201,
+            "proportion": 0.0448,
+            "ci_lower": 0.0237,
+            "ci_upper": 0.0829,
+            "ci_percent": "[2.37%, 8.29%]"
+          },
+          "false_negative_rate": {
+            "k": 6,
+            "n": 201,
+            "proportion": 0.0299,
+            "ci_lower": 0.0138,
+            "ci_upper": 0.0636,
+            "ci_percent": "[1.38%, 6.36%]"
+          },
+          "decided_accuracy": {
+            "k": 110,
+            "n": 125,
+            "proportion": 0.88,
+            "ci_lower": 0.8114,
+            "ci_upper": 0.9259,
+            "ci_percent": "[81.14%, 92.59%]"
+          }
+        }
+      },
+      "Candidate 2 (One-Sided REAL Certification)": {
+        "sample_count": 402,
+        "confusion_matrix": {
+          "real_likely_real_tn": 8,
+          "real_uncertain": 184,
+          "real_fake_fp": 9,
+          "fake_likely_real_fn": 0,
+          "fake_uncertain": 128,
+          "fake_fake_tp": 73
+        },
+        "coverage": 0.2239,
+        "abstention_rate": 0.7761,
+        "real_abstention_rate": 0.9154,
+        "fake_abstention_rate": 0.6368,
+        "false_positive_rate": 0.0448,
+        "false_negative_rate": 0.0,
+        "decided_total": 90,
+        "decided_correct": 81,
+        "decided_accuracy": 0.9,
+        "decided_macro_f1": 0.791,
+        "raw_accuracy": 0.2015,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 90,
+            "n": 402,
+            "proportion": 0.2239,
+            "ci_lower": 0.1859,
+            "ci_upper": 0.2671,
+            "ci_percent": "[18.59%, 26.71%]"
+          },
+          "abstention_rate": {
+            "k": 312,
+            "n": 402,
+            "proportion": 0.7761,
+            "ci_lower": 0.7329,
+            "ci_upper": 0.8141,
+            "ci_percent": "[73.29%, 81.41%]"
+          },
+          "false_positive_rate": {
+            "k": 9,
+            "n": 201,
+            "proportion": 0.0448,
+            "ci_lower": 0.0237,
+            "ci_upper": 0.0829,
+            "ci_percent": "[2.37%, 8.29%]"
+          },
+          "false_negative_rate": {
+            "k": 0,
+            "n": 201,
+            "proportion": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0188,
+            "ci_percent": "[0.0%, 1.88%]"
+          },
+          "decided_accuracy": {
+            "k": 81,
+            "n": 90,
+            "proportion": 0.9,
+            "ci_lower": 0.8208,
+            "ci_upper": 0.9465,
+            "ci_percent": "[82.08%, 94.65%]"
+          }
+        }
+      },
+      "Candidate 3 (Directional Temporal Conflict Gating)": {
+        "sample_count": 402,
+        "confusion_matrix": {
+          "real_likely_real_tn": 37,
+          "real_uncertain": 155,
+          "real_fake_fp": 9,
+          "fake_likely_real_fn": 6,
+          "fake_uncertain": 97,
+          "fake_fake_tp": 98
+        },
+        "coverage": 0.3731,
+        "abstention_rate": 0.6269,
+        "real_abstention_rate": 0.7711,
+        "fake_abstention_rate": 0.4826,
+        "false_positive_rate": 0.0448,
+        "false_negative_rate": 0.0299,
+        "decided_total": 150,
+        "decided_correct": 135,
+        "decided_accuracy": 0.9,
+        "decided_macro_f1": 0.8802,
+        "raw_accuracy": 0.3358,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 150,
+            "n": 402,
+            "proportion": 0.3731,
+            "ci_lower": 0.3273,
+            "ci_upper": 0.4214,
+            "ci_percent": "[32.73%, 42.14%]"
+          },
+          "abstention_rate": {
+            "k": 252,
+            "n": 402,
+            "proportion": 0.6269,
+            "ci_lower": 0.5786,
+            "ci_upper": 0.6727,
+            "ci_percent": "[57.86%, 67.27%]"
+          },
+          "false_positive_rate": {
+            "k": 9,
+            "n": 201,
+            "proportion": 0.0448,
+            "ci_lower": 0.0237,
+            "ci_upper": 0.0829,
+            "ci_percent": "[2.37%, 8.29%]"
+          },
+          "false_negative_rate": {
+            "k": 6,
+            "n": 201,
+            "proportion": 0.0299,
+            "ci_lower": 0.0138,
+            "ci_upper": 0.0636,
+            "ci_percent": "[1.38%, 6.36%]"
+          },
+          "decided_accuracy": {
+            "k": 135,
+            "n": 150,
+            "proportion": 0.9,
+            "ci_lower": 0.8416,
+            "ci_upper": 0.9385,
+            "ci_percent": "[84.16%, 93.85%]"
+          }
+        }
+      },
+      "Candidate 4 (Asymmetric Dual-Gate Consensus)": {
+        "sample_count": 405,
+        "confusion_matrix": {
+          "real_likely_real_tn": 23,
+          "real_uncertain": 166,
+          "real_fake_fp": 14,
+          "fake_likely_real_fn": 2,
+          "fake_uncertain": 115,
+          "fake_fake_tp": 85
+        },
+        "coverage": 0.3062,
+        "abstention_rate": 0.6938,
+        "real_abstention_rate": 0.8177,
+        "fake_abstention_rate": 0.5693,
+        "false_positive_rate": 0.069,
+        "false_negative_rate": 0.0099,
+        "decided_total": 124,
+        "decided_correct": 108,
+        "decided_accuracy": 0.871,
+        "decided_macro_f1": 0.828,
+        "raw_accuracy": 0.2667,
+        "confidence_intervals_95": {
+          "coverage": {
+            "k": 124,
+            "n": 405,
+            "proportion": 0.3062,
+            "ci_lower": 0.2633,
+            "ci_upper": 0.3527,
+            "ci_percent": "[26.33%, 35.27%]"
+          },
+          "abstention_rate": {
+            "k": 281,
+            "n": 405,
+            "proportion": 0.6938,
+            "ci_lower": 0.6473,
+            "ci_upper": 0.7367,
+            "ci_percent": "[64.73%, 73.67%]"
+          },
+          "false_positive_rate": {
+            "k": 14,
+            "n": 203,
+            "proportion": 0.069,
+            "ci_lower": 0.0415,
+            "ci_upper": 0.1124,
+            "ci_percent": "[4.15%, 11.24%]"
+          },
+          "false_negative_rate": {
+            "k": 2,
+            "n": 202,
+            "proportion": 0.0099,
+            "ci_lower": 0.0027,
+            "ci_upper": 0.0354,
+            "ci_percent": "[0.27%, 3.54%]"
+          },
+          "decided_accuracy": {
+            "k": 108,
+            "n": 124,
+            "proportion": 0.871,
+            "ci_lower": 0.8006,
+            "ci_upper": 0.919,
+            "ci_percent": "[80.06%, 91.9%]"
+          }
+        }
+      }
+    }
+  }
+}

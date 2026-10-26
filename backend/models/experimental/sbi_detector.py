@@ -5,7 +5,12 @@ import torch
 import torch.nn as nn
 import numpy as np
 from typing import Dict, Any, Optional
-from efficientnet_pytorch import EfficientNet
+try:
+    from efficientnet_pytorch import EfficientNet
+    EFFICIENTNET_AVAILABLE = True
+except ImportError:
+    EfficientNet = None
+    EFFICIENTNET_AVAILABLE = False
 
 from backend.utils.logger import setup_logger
 
@@ -33,6 +38,9 @@ class SBIDetector(nn.Module):
         self.weights_path = weights_path or DEFAULT_SBI_WEIGHTS
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.input_size = 380
+
+        if not EFFICIENTNET_AVAILABLE:
+            raise ImportError("efficientnet_pytorch is required for SBIDetector. Install with `pip install efficientnet_pytorch`.")
 
         self.backbone = EfficientNet.from_name("efficientnet-b4", num_classes=2)
 

@@ -5,6 +5,17 @@ from werkzeug.utils import secure_filename
 from backend.config import Config
 from backend.core.validator import validate_media_file
 
+from backend.utils.security import generate_signed_media_token
+
+_UPLOAD_OWNERS = {}
+
+def get_upload_owner(file_id: str):
+    return _UPLOAD_OWNERS.get(str(file_id))
+
+def set_upload_owner(file_id: str, user_id: str):
+    if file_id and user_id:
+        _UPLOAD_OWNERS[str(file_id)] = str(user_id)
+
 upload_bp = Blueprint('upload', __name__)
 
 @upload_bp.route('/upload', methods=['POST'])
@@ -51,14 +62,35 @@ def upload_file():
         
         # Save file to disk
         file.save(save_path)
+
+        # Record ownership if user context is provided
+        user_id = request.form.get('user_id') or request.headers.get('X-User-ID') or request.args.get('user_id')
+        if not user_id and 'user' in request.form:
+            try:
+                import json
+                u_obj = json.loads(request.form['user'])
+                if isinstance(u_obj, dict):
+                    user_id = u_obj.get('id')
+            except Exception:
+                pass
+
+        if user_id:
+            set_upload_owner(file_id, str(user_id))
+
+        signed_token = generate_signed_media_token(file_id, user_id=user_id)
+        media_url = f"/api/analysis/uploads/{saved_filename}?token={signed_token}"
         
         # Return success JSON response
         return jsonify({
             'status': 'success',
             'id': file_id,
+            'media_id': file_id,
             'media_type': media_type,
             'filename': original_name,
-            'mime_type': detected_mime
+            'saved_filename': saved_filename,
+            'mime_type': detected_mime,
+            'media_url': media_url,
+            'token': signed_token,
         }), 200
         
     except Exception as e:

@@ -1,0 +1,180 @@
+{
+  "verification_metadata": {
+    "verification_date": "2026-10-13T22:25:00+05:30",
+    "model_name": "full_image_resnet18",
+    "evaluator": "SatyaDrishti Diagnostics Suite",
+    "verdict": "REJECT_FOR_PRODUCTION_PERMIT_ISOLATED_SHADOW_ONLY"
+  },
+  "checkpoint_identification": {
+    "checkpoint_relative_path": "backend/models/weights/runs/full_image_I1/model_best.pth",
+    "checkpoint_absolute_path": "D:/Download/satya-vision-guard-main/satya-vision-guard-main/backend/models/weights/runs/full_image_I1/model_best.pth",
+    "file_size_bytes": 44791499,
+    "file_size_mb": 42.72,
+    "sha256_hash": "f9fed25debad260a276a010be5b45d1d7bd20108009d8312acab9544cb4090b7",
+    "full_state_checkpoint_path": "backend/models/weights/runs/full_image_I1/best_checkpoint.pth",
+    "full_state_size_bytes": 111980701,
+    "full_state_sha256": "617d65cf91ccffd440e407f005122a37b4550bccdcaef9e58b07a1e051d5ce77",
+    "architecture": "torchvision.models.resnet18",
+    "num_classes": 2,
+    "trainable_parameters": 11180610,
+    "state_dict_keys_count": 122
+  },
+  "pipeline_verification": {
+    "class_mapping": {
+      "index_0": "REAL",
+      "index_1": "FAKE"
+    },
+    "loss_function": "nn.CrossEntropyLoss()",
+    "preprocessing_pipeline": {
+      "name_clarification": "Named 'full_image_I1' in manifests to distinguish full-dataset training (70,281 frames) from pilot subset (3,000 frames). Preprocessing is NOT uncropped full-image; it uses Haar face detection.",
+      "face_detector": "cv2.CascadeClassifier(haarcascade_frontalface_default.xml)",
+      "crop_policy": "If face detected, crop bounding box with 20% margin. If no face detected, fallback to full image.",
+      "input_dimensions": [224, 224, 3],
+      "color_order": "RGB (converted from OpenCV BGR via cv2.cvtColor(BGR2RGB))",
+      "pixel_scaling": "[0.0, 1.0]",
+      "normalization": {
+        "mean": [0.485, 0.456, 0.406],
+        "std": [0.229, 0.224, 0.225]
+      },
+      "tensor_layout": "(Batch, Channels, Height, Width) -> (1, 3, 224, 224)"
+    }
+  },
+  "training_provenance_and_selection": {
+    "training_script": "scripts/train_image_model.py",
+    "dataset_manifest": "data/manifests/dataset_manifest.csv",
+    "total_dataset_samples": 98154,
+    "split_counts": {
+      "train": 70281,
+      "val": 13937,
+      "test": 13936
+    },
+    "data_sources": [
+      "Celeb-DF v2 (Celeb-real, YouTube-real, Celeb-synthesis)"
+    ],
+    "epochs_trained": 12,
+    "best_epoch": 12,
+    "best_epoch_metrics": {
+      "train_loss": 0.0696,
+      "val_loss": 0.4322,
+      "val_accuracy": 0.7841,
+      "val_macro_f1": 0.7841
+    },
+    "checkpoint_selection_criterion": "Best validation macro-F1 score on val split"
+  },
+  "data_overlap_and_leakage_audit": {
+    "eval_53_still_images": {
+      "total_images": 53,
+      "manifest_path": "scratch/image_eval_manifest.json",
+      "train_split_leakage_count": 16,
+      "train_split_leakage_ratio": 0.3019,
+      "unseen_samples_count": 37,
+      "accuracy_on_leaked_train_samples": 1.000,
+      "accuracy_on_clean_unseen_samples": 0.7027,
+      "findings": "CRITICAL: 16 of 53 evaluation images originated from Celeb-DF fake videos in the exact training split (subjects id0-id38). The model memorized 100% of these leaked samples, falsely inflating the reported accuracy."
+    },
+    "locked_phase2_test_overlap": {
+      "locked_manifest_path": "data/manifests/locked_test_manifest_v2.json",
+      "overlapping_video_sources": 48,
+      "risk_assessment": "HIGH: 48 of 53 still evaluation images are frame-extracts from videos reserved for locked Phase 2 benchmark evaluation."
+    },
+    "canonical_images_provenance": {
+      "images": ["deepy.jpeg", "professional.jpeg", "profile.jpeg", "she.jpeg", "picture.jpeg"],
+      "in_training_set": false,
+      "in_validation_set": false,
+      "in_calibration_set": false,
+      "provenance_status": "Strictly unseen out-of-domain static portraits"
+    }
+  },
+  "metrics_reproduction": {
+    "source_prediction_file": "research/model_diagnostics/inference_predictions.json",
+    "threshold": 0.50,
+    "confusion_matrix": {
+      "true_positives": 25,
+      "true_negatives": 17,
+      "false_positives": 7,
+      "false_negatives": 4,
+      "total_samples": 53,
+      "ground_truth_positives": 29,
+      "ground_truth_negatives": 24
+    },
+    "reproduced_metrics": {
+      "accuracy": 0.7925,
+      "macro_f1": 0.7876,
+      "fake_recall_sensitivity": 0.8621,
+      "real_specificity": 0.7083,
+      "precision": 0.7812,
+      "roc_auc": 0.8922,
+      "false_positive_rate": 0.2917,
+      "false_negative_rate": 0.1379
+    },
+    "metric_match_status": "EXACT_MATCH"
+  },
+  "canonical_evaluation_results": {
+    "samples": [
+      {
+        "filename": "deepy.jpeg",
+        "ground_truth": "FAKE",
+        "raw_fake_prob": 0.2979,
+        "classification": "FALSE_NEGATIVE",
+        "failure_note": "Fails to detect known AI face swap; outputs low fake probability."
+      },
+      {
+        "filename": "professional.jpeg",
+        "ground_truth": "FAKE",
+        "raw_fake_prob": 0.5283,
+        "classification": "TRUE_POSITIVE_MARGINAL",
+        "failure_note": "Borderline detection at threshold 0.50; lacks margin."
+      },
+      {
+        "filename": "profile.jpeg",
+        "ground_truth": "REAL",
+        "raw_fake_prob": 1.0000,
+        "classification": "FALSE_POSITIVE_CATASTROPHIC",
+        "failure_note": "Classifies a genuine human portrait as 100.0% fake."
+      },
+      {
+        "filename": "she.jpeg",
+        "ground_truth": "REAL",
+        "raw_fake_prob": 0.0001,
+        "classification": "TRUE_NEGATIVE",
+        "failure_note": "Clean detection."
+      },
+      {
+        "filename": "picture.jpeg",
+        "ground_truth": "REAL",
+        "raw_fake_prob": 0.0000,
+        "classification": "TRUE_NEGATIVE",
+        "failure_note": "Clean detection."
+      }
+    ],
+    "canonical_accuracy": 0.60,
+    "canonical_false_positive_rate": 0.3333,
+    "canonical_false_negative_rate": 0.5000
+  },
+  "isolated_shadow_inference_implementation": {
+    "implemented": true,
+    "hook_module": "backend/agents/image_agent.py",
+    "hook_method": "ImageAgent._run_shadow_inference",
+    "log_output_path": "backend/logs/shadow_inference.log",
+    "behavior": "Asynchronous observer pattern, torch.no_grad(), non-blocking error handling",
+    "impact_on_production": {
+      "verdict_modified": false,
+      "production_checkpoint_modified": false,
+      "fusion_policy_modified": false,
+      "api_contract_modified": false,
+      "database_schema_modified": false
+    },
+    "smoke_test_status": "PASSED"
+  },
+  "recommendations": {
+    "primary_decision": "REJECT_CANDIDATE_FOR_PRODUCTION",
+    "shadow_testing_permission": "PERMITTED_PASSIVE_ONLY",
+    "rationale": [
+      "The reported 79.25% accuracy is inflated by 30.2% train-split data leakage (100% accuracy on leaked train frames, but only 70.27% on unseen test frames).",
+      "Catastrophic failure on real canonical portrait profile.jpeg (outputs 100.0% fake probability), introducing unacceptable false positives for legitimate users.",
+      "Misses known AI face swap deepy.jpeg (outputs 29.79% fake probability, yielding a False Negative).",
+      "Model domain is restricted to compressed video frames and does not generalize reliably to high-resolution diffusion/GAN static portraits.",
+      "Production deployment would degrade system reliability below the current multi-stage fusion baseline."
+    ]
+  }
+}

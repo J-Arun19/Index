@@ -9,6 +9,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 .venv/
+.venv-verify/
 venv/
 ENV/
 
@@ -64,8 +65,10 @@ backup_ml_phase0/
 backend/uploads/*
 !backend/uploads/.gitkeep
 backend/users.db
+satya_vision.db
 backend/reports/*
 !backend/reports/.gitkeep
+.sf/
 
 # Application Logs & Cache
 logs/

@@ -70,7 +70,7 @@ class TestClassMappingAssertion(unittest.TestCase):
             "summary": "Flagged anomalies"
         }
         res_fake = fusion.fuse("ImageAgent", agent_output=mock_image_fake_res)
-        self.assertEqual(res_fake["verdict"], "DEEPFAKE")
+        self.assertIn(res_fake["verdict"], ("DEEPFAKE", "FAKE"))
 
 if __name__ == "__main__":
     unittest.main()

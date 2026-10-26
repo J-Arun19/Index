@@ -1,5 +1,6 @@
 import os
 import torch
+from typing import Optional
 from dotenv import load_dotenv
 
 # Load environment variables from .env
@@ -71,6 +72,16 @@ class PipelineConfig:
     
     # Device Selection
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+    @classmethod
+    def get_device(cls, preferred: Optional[str] = None) -> torch.device:
+        from backend.utils.device_manager import DeviceManager
+        return DeviceManager.get_device(preferred)
+
+    @classmethod
+    def get_device_str(cls, preferred: Optional[str] = None) -> str:
+        from backend.utils.device_manager import DeviceManager
+        return DeviceManager.get_device_str(preferred)
 
     @classmethod
     def update_config(cls, batch_size: int = None, epochs: int = None, lr: float = None, strategy: str = None):

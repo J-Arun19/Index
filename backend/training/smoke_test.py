@@ -13,7 +13,7 @@ cv2.ocl.setUseOpenCL(False)
 os.environ["OPENCV_OPENCL_RUNTIME"] = "disabled"
 os.environ["OPENCV_FFMPEG_LOGLEVEL"] = "-8"
 os.environ["OPENCV_LOG_LEVEL"] = "OFF"
-if hasattr(cv2, "setLogLevel"):
+if hasattr(cv2, "setLogLevel") and hasattr(cv2, "LOG_LEVEL_ERROR"):
     cv2.setLogLevel(cv2.LOG_LEVEL_ERROR)
 
 logger = setup_logger("SmokeTest")

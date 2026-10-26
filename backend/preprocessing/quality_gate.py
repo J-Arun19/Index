@@ -154,19 +154,7 @@ class ImageQualityGate:
                 f"Image resolution ({w}x{h}) is below the required minimum ({self.MIN_IMAGE_WIDTH}x{self.MIN_IMAGE_HEIGHT})."
             )
 
-        # 3. Check blur via Laplacian variance
-        try:
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if len(img.shape) == 3 else img
-            blur_score = float(cv2.Laplacian(gray, cv2.CV_64F).var())
-            if blur_score < self.BLUR_THRESHOLD:
-                issues.append(
-                    f"Excessive image blur detected (sharpness score {blur_score:.1f} < {self.BLUR_THRESHOLD})."
-                )
-        except Exception as e:
-            blur_score = 0.0
-            issues.append(f"Sharpness evaluation error: {str(e)}")
-
-        # 4. Check face detection
+        # 3. Check face detection
         faces = self.detector.detect_faces(img)
         face_count = len(faces)
         primary_bbox = None
@@ -185,6 +173,34 @@ class ImageQualityGate:
             issues.append(
                 "No detectable human face was found in this image. SatyaDrishti's current image deepfake detector is designed for facial-media authenticity analysis. Upload a clear image containing a visible human face."
             )
+
+        # 4. Check blur via Laplacian variance (accounting for natural background bokeh)
+        try:
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if len(img.shape) == 3 else img
+            full_blur = float(cv2.Laplacian(gray, cv2.CV_64F).var())
+            
+            face_blur = None
+            if face_count > 0 and primary_bbox:
+                fx, fy, fw, fh = primary_bbox
+                fx_c = max(0, fx)
+                fy_c = max(0, fy)
+                fw_c = min(fw, w - fx_c)
+                fh_c = min(fh, h - fy_c)
+                if fw_c > 10 and fh_c > 10:
+                    face_gray = gray[fy_c : fy_c + fh_c, fx_c : fx_c + fw_c]
+                    face_blur = float(cv2.Laplacian(face_gray, cv2.CV_64F).var())
+            
+            # For facial media, sharpness of the facial region determines forensic validity
+            effective_blur = max(full_blur, face_blur) if face_blur is not None else full_blur
+            blur_score = effective_blur
+            
+            if effective_blur < 15.0:
+                issues.append(
+                    f"Excessive image blur detected (sharpness score {effective_blur:.1f} < 15.0)."
+                )
+        except Exception as e:
+            blur_score = 0.0
+            issues.append(f"Sharpness evaluation error: {str(e)}")
 
         is_suitable = len(issues) == 0
         rejection_reason = "; ".join(issues) if issues else None

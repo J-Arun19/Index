@@ -1,0 +1,97 @@
+{
+  "policy_name": "Candidate 3 (Directional Temporal Conflict Gating)",
+  "status": "FROZEN_VALIDATION_ONLY",
+  "date_frozen": "2026-10-12T17:45:32Z",
+  "validation_manifest_sha256": "baf6f6615bc176341fd08cfa5e6fdc2797ba0e2c501876f2c04d40dcdb94d21a",
+  "model_weights": {
+    "sbi": {
+      "path": "backend/models/experimental/weights/sbi_ffc23.tar",
+      "sha256": "2b05c2ba36ccb9e9f4f9e1aae9acd443ae2e6400ce725f56104fdb175d3c3267"
+    },
+    "xception": {
+      "path": "backend/models/experimental/weights/xception_best.pth",
+      "sha256": "dd61186f9ac8e99aae85982cae338b555dfaeef042f6b699e5a55cae3998ba47"
+    }
+  },
+  "calibration_config": {
+    "path": "backend/models/experimental/fusion_calibration_config.json",
+    "sha256": "982a567e5322285f8437e2d009626d815a7bf5363149371ff36ef45d1bedf5de",
+    "temperatures": {
+      "sbi": 2.7676,
+      "xception": 2.421
+    },
+    "thresholds": {
+      "tau_real": 0.35,
+      "tau_fake": 0.65,
+      "min_confidence": 60.0
+    }
+  },
+  "exact_decision_rules": {
+    "candidate_name": "Candidate 3 (Directional Temporal Conflict Gating)",
+    "rules": "Directional temporal gating (fused > 0.50 allows fake decision despite variance > 0.22)"
+  },
+  "validation_performance": {
+    "sample_count": 120,
+    "confusion_matrix": {
+      "real_likely_real_tn": 10,
+      "real_uncertain": 47,
+      "real_fake_fp": 3,
+      "fake_likely_real_fn": 1,
+      "fake_uncertain": 32,
+      "fake_fake_tp": 27
+    },
+    "coverage": 0.3417,
+    "abstention_rate": 0.6583,
+    "real_abstention_rate": 0.7833,
+    "fake_abstention_rate": 0.5333,
+    "false_positive_rate": 0.05,
+    "false_negative_rate": 0.0167,
+    "decided_total": 41,
+    "decided_correct": 37,
+    "decided_accuracy": 0.9024,
+    "decided_macro_f1": 0.8822,
+    "raw_accuracy": 0.3083,
+    "confidence_intervals_95": {
+      "coverage": {
+        "k": 41,
+        "n": 120,
+        "proportion": 0.3417,
+        "ci_lower": 0.2629,
+        "ci_upper": 0.4303,
+        "ci_percent": "[26.29%, 43.03%]"
+      },
+      "abstention_rate": {
+        "k": 79,
+        "n": 120,
+        "proportion": 0.6583,
+        "ci_lower": 0.5697,
+        "ci_upper": 0.7371,
+        "ci_percent": "[56.97%, 73.71%]"
+      },
+      "false_positive_rate": {
+        "k": 3,
+        "n": 60,
+        "proportion": 0.05,
+        "ci_lower": 0.0171,
+        "ci_upper": 0.137,
+        "ci_percent": "[1.71%, 13.7%]"
+      },
+      "false_negative_rate": {
+        "k": 1,
+        "n": 60,
+        "proportion": 0.0167,
+        "ci_lower": 0.0029,
+        "ci_upper": 0.0886,
+        "ci_percent": "[0.29%, 8.86%]"
+      },
+      "decided_accuracy": {
+        "k": 37,
+        "n": 41,
+        "proportion": 0.9024,
+        "ci_lower": 0.7745,
+        "ci_upper": 0.9614,
+        "ci_percent": "[77.45%, 96.14%]"
+      }
+    }
+  }
+}

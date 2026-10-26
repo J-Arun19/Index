@@ -1,19 +1,19 @@
 {
     "method": "temperature_scaling",
     "temperature": 1.885,
-    "tau_real": 0.35,
-    "tau_fake": 0.65,
-    "min_confidence": 60.0,
+    "tau_real": 0.44,
+    "tau_fake": 0.56,
+    "min_confidence": 56.0,
     "metadata": {
         "method": "temperature_scaling",
         "temperature": 1.885,
         "validation_ece_before": 0.6838,
         "validation_ece_after": 0.0824,
-        "tau_real": 0.35,
-        "tau_fake": 0.65,
-        "min_confidence": 60.0,
+        "tau_real": 0.44,
+        "tau_fake": 0.56,
+        "min_confidence": 56.0,
         "fitted_on": "validation_split_only",
-        "notes": "Derived from validation split metrics. Uncalibrated raw probabilities were severely overconfident (ECE=0.6838). Temperature scaling reduces ECE to 0.0824 and defines safe abstention boundaries [0.35, 0.65]."
+        "notes": "Derived from validation split metrics. Calibrated decision thresholds tau_real=0.44 and tau_fake=0.56 define a balanced abstention margin [0.44, 0.56] (raw probability [0.388, 0.612]), ensuring decisions require >=56% calibrated confidence while eliminating excessive dead-zone abstentions."
     },
     "saved_at": "2026-09-16T16:00:00.000000"
 }

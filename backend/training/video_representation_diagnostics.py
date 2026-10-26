@@ -89,77 +89,77 @@ class DiagnosticsPipeline:
                 raise ValueError(f"Failed to open video file: {file_path}")
                 
             total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        duration = 0.0
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        if fps > 0:
-            duration = total_frames / fps
+            duration = 0.0
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            if fps > 0:
+                duration = total_frames / fps
+                
+            file_size = os.path.getsize(file_path)
+            bitrate = (file_size * 8) / max(0.1, duration)
+            width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             
-        file_size = os.path.getsize(file_path)
-        bitrate = (file_size * 8) / max(0.1, duration)
-        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        
-        # Max frames to extract for caching is 10
-        max_frames = 10
-        if total_frames > 0:
-            target_indices = np.linspace(0, total_frames - 1, max_frames, dtype=int).tolist()
-        else:
-            target_indices = [i * 15 for i in range(max_frames)]
+            # Max frames to extract for caching is 10
+            max_frames = 10
+            if total_frames > 0:
+                target_indices = np.linspace(0, total_frames - 1, max_frames, dtype=int).tolist()
+            else:
+                target_indices = [i * 15 for i in range(max_frames)]
+                
+            face_frames = []
+            bg_frames = []
+            detections = []
+            face_detected_count = 0
+            crop_widths = []
+            crop_heights = []
+            crop_aspect_ratios = []
+            brightness_list = []
+            rgb_means = []
+            rgb_stds = []
             
-        face_frames = []
-        bg_frames = []
-        detections = []
-        face_detected_count = 0
-        crop_widths = []
-        crop_heights = []
-        crop_aspect_ratios = []
-        brightness_list = []
-        rgb_means = []
-        rgb_stds = []
-        
-        for idx in target_indices:
-            cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
-            ret, frame = cap.read()
-            if not ret or frame is None:
+            for idx in target_indices:
+                cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
                 ret, frame = cap.read()
                 if not ret or frame is None:
-                    continue
+                    ret, frame = cap.read()
+                    if not ret or frame is None:
+                        continue
+                        
+                faces = self.detector.detect_faces(frame)
+                face_detected = len(faces) > 0
+                
+                if face_detected:
+                    face_detected_count += 1
+                    bbox = faces[0]
+                    detections.append(bbox)
+                    x, y, w, h = bbox
+                    crop_widths.append(w)
+                    crop_heights.append(h)
+                    crop_aspect_ratios.append(w / max(1, h))
                     
-            faces = self.detector.detect_faces(frame)
-            face_detected = len(faces) > 0
-            
-            if face_detected:
-                face_detected_count += 1
-                bbox = faces[0]
-                detections.append(bbox)
-                x, y, w, h = bbox
-                crop_widths.append(w)
-                crop_heights.append(h)
-                crop_aspect_ratios.append(w / max(1, h))
+                    # Crop face
+                    face_crop = self.detector.crop_face(frame, bbox)
+                    
+                    # Mask out face for background shortcut
+                    bg_frame = frame.copy()
+                    bg_frame[y:y+h, x:x+w] = 0
+                else:
+                    face_crop = frame
+                    bg_frame = np.zeros_like(frame)
+                    
+                processed_face = cv2.resize(face_crop, self.target_size)
+                face_rgb = cv2.cvtColor(processed_face, cv2.COLOR_BGR2RGB)
                 
-                # Crop face
-                face_crop = self.detector.crop_face(frame, bbox)
+                processed_bg = cv2.resize(bg_frame, self.target_size)
+                bg_rgb = cv2.cvtColor(processed_bg, cv2.COLOR_BGR2RGB)
                 
-                # Mask out face for background shortcut
-                bg_frame = frame.copy()
-                bg_frame[y:y+h, x:x+w] = 0
-            else:
-                face_crop = frame
-                bg_frame = np.zeros_like(frame)
+                # Artifact stats
+                brightness_list.append(float(np.mean(face_rgb)))
+                rgb_means.append(np.mean(face_rgb, axis=(0, 1)).tolist())
+                rgb_stds.append(np.std(face_rgb, axis=(0, 1)).tolist())
                 
-            processed_face = cv2.resize(face_crop, self.target_size)
-            face_rgb = cv2.cvtColor(processed_face, cv2.COLOR_BGR2RGB)
-            
-            processed_bg = cv2.resize(bg_frame, self.target_size)
-            bg_rgb = cv2.cvtColor(processed_bg, cv2.COLOR_BGR2RGB)
-            
-            # Artifact stats
-            brightness_list.append(float(np.mean(face_rgb)))
-            rgb_means.append(np.mean(face_rgb, axis=(0, 1)).tolist())
-            rgb_stds.append(np.std(face_rgb, axis=(0, 1)).tolist())
-            
-            face_frames.append(face_rgb)
-            bg_frames.append(bg_rgb)
+                face_frames.append(face_rgb)
+                bg_frames.append(bg_rgb)
             
         finally:
             if cap is not None:

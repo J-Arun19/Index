@@ -1,0 +1,359 @@
+{
+  "audit_metadata": {
+    "title": "SatyaDrishti Leakage-Free Final Deepfake Model Evaluation",
+    "audit_date": "2026-10-13T22:45:00+05:30",
+    "protocol": "Strict Inference-Only (No training, no fine-tuning, no threshold alteration, default threshold=0.50)",
+    "evaluator": "SatyaDrishti Diagnostics Suite",
+    "final_recommendation": "DECLARE_NONE_PRODUCTION_READY"
+  },
+  "dataset_exclusion_audit": {
+    "rules": {
+      "rule_1_train_leakage": "Exclude any sample whose source file, subject ID (Celeb-DF 0-38), or sequence pair (FF++ train.json) belongs to the training split.",
+      "rule_2_val_leakage": "Exclude any sample whose source file, subject ID (Celeb-DF 39-48), or sequence pair (FF++ val.json) belongs to the validation split.",
+      "rule_3_frame_independence": "Do not treat frames from the same video as independent test items; evaluate image and video sets separately."
+    },
+    "audit_summary": {
+      "clean_facial_images": 42,
+      "clean_control_images": 2,
+      "excluded_leaked_images": 16,
+      "clean_videos": 22,
+      "excluded_leaked_videos": 18
+    }
+  },
+  "still_image_evaluation_clean_unseen": {
+    "sample_population": {
+      "total_clean_samples": 42,
+      "clean_real_portraits": 19,
+      "clean_fake_portraits": 23,
+      "non_face_safety_controls": 2
+    },
+    "model_metrics": {
+      "production_resnet18": {
+        "confusion_matrix": {
+          "tp": 0,
+          "tn": 19,
+          "fp": 0,
+          "fn": 23,
+          "total": 42
+        },
+        "accuracy": 0.4524,
+        "real_recall_specificity": 1.0,
+        "fake_recall_sensitivity": 0.0,
+        "precision": 0.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 1.0,
+        "macro_f1": 0.3115,
+        "roc_auc": 0.6247,
+        "latency_ms": {
+          "mean": 320.16,
+          "p95": 470.81
+        }
+      },
+      "full_image_resnet18": {
+        "confusion_matrix": {
+          "tp": 18,
+          "tn": 11,
+          "fp": 8,
+          "fn": 5,
+          "total": 42
+        },
+        "accuracy": 0.6905,
+        "real_recall_specificity": 0.5789,
+        "fake_recall_sensitivity": 0.7826,
+        "precision": 0.6923,
+        "false_positive_rate": 0.4211,
+        "false_negative_rate": 0.2174,
+        "macro_f1": 0.6816,
+        "roc_auc": 0.7517,
+        "latency_ms": {
+          "mean": 209.33,
+          "p95": 354.51
+        }
+      },
+      "sbi_effnet_b4": {
+        "confusion_matrix": {
+          "tp": 23,
+          "tn": 2,
+          "fp": 17,
+          "fn": 0,
+          "total": 42
+        },
+        "accuracy": 0.5952,
+        "real_recall_specificity": 0.1053,
+        "fake_recall_sensitivity": 1.0,
+        "precision": 0.575,
+        "false_positive_rate": 0.8947,
+        "false_negative_rate": 0.0,
+        "macro_f1": 0.4603,
+        "roc_auc": 0.6156,
+        "latency_ms": {
+          "mean": 910.5,
+          "p95": 1234.02
+        }
+      },
+      "xception": {
+        "confusion_matrix": {
+          "tp": 21,
+          "tn": 5,
+          "fp": 14,
+          "fn": 2,
+          "total": 42
+        },
+        "accuracy": 0.619,
+        "real_recall_specificity": 0.2632,
+        "fake_recall_sensitivity": 0.913,
+        "precision": 0.6,
+        "false_positive_rate": 0.7368,
+        "false_negative_rate": 0.087,
+        "macro_f1": 0.5544,
+        "roc_auc": 0.881,
+        "latency_ms": {
+          "mean": 527.81,
+          "p95": 992.18
+        }
+      }
+    }
+  },
+  "video_evaluation_clean_unseen": {
+    "sample_population": {
+      "total_clean_videos": 22,
+      "clean_real_videos": 12,
+      "clean_fake_videos": 10
+    },
+    "model_metrics": {
+      "production_resnet18_lstm": {
+        "confusion_matrix": {
+          "tp": 0,
+          "tn": 12,
+          "fp": 0,
+          "fn": 10,
+          "total": 22
+        },
+        "accuracy": 0.5455,
+        "real_recall_specificity": 1.0,
+        "fake_recall_sensitivity": 0.0,
+        "precision": 0.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 1.0,
+        "macro_f1": 0.3529,
+        "roc_auc": 0.5458,
+        "latency_sec": {
+          "mean": 6.31,
+          "p95": 8.58
+        }
+      },
+      "full_image_resnet18": {
+        "confusion_matrix": {
+          "tp": 9,
+          "tn": 9,
+          "fp": 3,
+          "fn": 1,
+          "total": 22
+        },
+        "accuracy": 0.8182,
+        "real_recall_specificity": 0.75,
+        "fake_recall_sensitivity": 0.9,
+        "precision": 0.75,
+        "false_positive_rate": 0.25,
+        "false_negative_rate": 0.1,
+        "macro_f1": 0.8182,
+        "roc_auc": 0.9333,
+        "latency_sec": {
+          "mean": 2.42,
+          "p95": 4.05
+        }
+      },
+      "sbi_effnet_b4": {
+        "confusion_matrix": {
+          "tp": 4,
+          "tn": 12,
+          "fp": 0,
+          "fn": 6,
+          "total": 22
+        },
+        "accuracy": 0.7273,
+        "real_recall_specificity": 1.0,
+        "fake_recall_sensitivity": 0.4,
+        "precision": 1.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.6,
+        "macro_f1": 0.6857,
+        "roc_auc": 0.825,
+        "latency_sec": {
+          "mean": 4.06,
+          "p95": 5.37
+        }
+      },
+      "xception": {
+        "confusion_matrix": {
+          "tp": 10,
+          "tn": 7,
+          "fp": 5,
+          "fn": 0,
+          "total": 22
+        },
+        "accuracy": 0.7727,
+        "real_recall_specificity": 0.5833,
+        "fake_recall_sensitivity": 1.0,
+        "precision": 0.6667,
+        "false_positive_rate": 0.4167,
+        "false_negative_rate": 0.0,
+        "macro_f1": 0.7684,
+        "roc_auc": 0.9833,
+        "latency_sec": {
+          "mean": 3.12,
+          "p95": 6.4
+        }
+      }
+    }
+  },
+  "three_state_decision_and_abstention": {
+    "images": {
+      "total_samples": 44,
+      "facial_samples": 42,
+      "non_face_samples": 2,
+      "non_face_not_suitable_rate": 1.0
+    },
+    "videos": {
+      "total_clean_videos": 22,
+      "production_lstm": {
+        "decided_count": 0,
+        "uncertain_count": 22,
+        "abstention_rate": 1.0
+      },
+      "sbi": {
+        "decided_count": 13,
+        "uncertain_count": 9,
+        "abstention_rate": 0.4091
+      },
+      "xception": {
+        "decided_count": 12,
+        "uncertain_count": 10,
+        "abstention_rate": 0.4545
+      }
+    }
+  },
+  "manipulation_type_breakdown_clean": {
+    "original": {
+      "total": 12,
+      "gt": "REAL",
+      "models": {
+        "production_resnet18_lstm": 12,
+        "full_image_resnet18": 9,
+        "sbi_effnet_b4": 12,
+        "xception": 7
+      },
+      "accuracies": {
+        "production_resnet18_lstm": 1.0,
+        "full_image_resnet18": 0.75,
+        "sbi_effnet_b4": 1.0,
+        "xception": 0.5833
+      }
+    },
+    "Deepfakes": {
+      "total": 3,
+      "gt": "FAKE",
+      "models": {
+        "production_resnet18_lstm": 0,
+        "full_image_resnet18": 3,
+        "sbi_effnet_b4": 2,
+        "xception": 3
+      },
+      "accuracies": {
+        "production_resnet18_lstm": 0.0,
+        "full_image_resnet18": 1.0,
+        "sbi_effnet_b4": 0.6667,
+        "xception": 1.0
+      }
+    },
+    "Face2Face": {
+      "total": 3,
+      "gt": "FAKE",
+      "models": {
+        "production_resnet18_lstm": 0,
+        "full_image_resnet18": 3,
+        "sbi_effnet_b4": 1,
+        "xception": 3
+      },
+      "accuracies": {
+        "production_resnet18_lstm": 0.0,
+        "full_image_resnet18": 1.0,
+        "sbi_effnet_b4": 0.3333,
+        "xception": 1.0
+      }
+    },
+    "FaceSwap": {
+      "total": 2,
+      "gt": "FAKE",
+      "models": {
+        "production_resnet18_lstm": 0,
+        "full_image_resnet18": 2,
+        "sbi_effnet_b4": 1,
+        "xception": 2
+      },
+      "accuracies": {
+        "production_resnet18_lstm": 0.0,
+        "full_image_resnet18": 1.0,
+        "sbi_effnet_b4": 0.5,
+        "xception": 1.0
+      }
+    },
+    "NeuralTextures": {
+      "total": 2,
+      "gt": "FAKE",
+      "models": {
+        "production_resnet18_lstm": 0,
+        "full_image_resnet18": 1,
+        "sbi_effnet_b4": 0,
+        "xception": 2
+      },
+      "accuracies": {
+        "production_resnet18_lstm": 0.0,
+        "full_image_resnet18": 0.5,
+        "sbi_effnet_b4": 0.0,
+        "xception": 1.0
+      }
+    }
+  },
+  "candidate_comparative_summary": {
+    "production_resnet18": {
+      "role": "Active Production Image Model",
+      "clean_image_acc": 0.4524,
+      "clean_image_fake_recall": 0.0,
+      "clean_image_real_specificity": 1.0,
+      "clean_image_fpr": 0.0,
+      "clean_image_fnr": 1.0,
+      "failure_diagnosis": "Completely insensitive to modern deepfakes at threshold 0.50 due to 2-epoch video-frame training. Relies entirely on external forensic heuristic fusion."
+    },
+    "full_image_resnet18": {
+      "role": "12-Epoch Full-Dataset Candidate (runs/full_image_I1)",
+      "clean_image_acc": 0.6905,
+      "clean_image_fake_recall": 0.7826,
+      "clean_image_real_specificity": 0.5789,
+      "clean_image_fpr": 0.4211,
+      "clean_image_fnr": 0.2174,
+      "clean_video_acc": 0.8182,
+      "failure_diagnosis": "Unacceptable 42.1% false-positive rate on authentic portraits (e.g. 100% fake probability on profile.jpeg). Misses deepy.jpeg. Unviable for production."
+    },
+    "sbi_effnet_b4": {
+      "role": "Self-Blended Images Detector (CVPR 2022)",
+      "clean_image_acc": 0.5952,
+      "clean_image_fake_recall": 1.0,
+      "clean_image_real_specificity": 0.1053,
+      "clean_image_fpr": 0.8947,
+      "clean_image_fnr": 0.0,
+      "clean_video_acc": 0.7273,
+      "failure_diagnosis": "Catastrophic 89.5% false-positive rate on static images. Classifies almost all genuine human photos as deepfakes due to heavy domain shift from FF++ blending artifacts."
+    },
+    "xception": {
+      "role": "DeepfakeBench Xception Detector",
+      "clean_image_acc": 0.619,
+      "clean_image_fake_recall": 0.913,
+      "clean_image_real_specificity": 0.2632,
+      "clean_image_fpr": 0.7368,
+      "clean_image_fnr": 0.087,
+      "clean_video_acc": 0.7727,
+      "failure_diagnosis": "Severe 73.7% false-positive rate on static images. High fake sensitivity but unacceptable false accusation rate on genuine human media."
+    }
+  }
+}

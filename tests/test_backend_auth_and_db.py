@@ -11,7 +11,7 @@ from backend.core.database import get_analyses_by_user, save_analysis, init_db
 class TestBackendAuthAndDb(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        init_db()
+        cls.connected = init_db()
 
     def test_uuid_user_history_lookup(self):
         """Verify get_analyses_by_user accepts UUID without ValueError"""
@@ -29,6 +29,8 @@ class TestBackendAuthAndDb(unittest.TestCase):
 
     def test_save_analysis_with_uuid(self):
         """Verify save_analysis routes UUID to owner_id without foreign key error"""
+        if not getattr(self, "connected", False):
+            self.skipTest("Supabase backend not reachable")
         test_analysis_id = "test_analysis_" + uuid.uuid4().hex[:8]
         test_uuid = str(uuid.uuid4())
         success = save_analysis(

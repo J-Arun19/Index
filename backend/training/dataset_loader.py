@@ -37,7 +37,7 @@ from backend.training.dataset_exceptions import (
 cv2.ocl.setUseOpenCL(False)
 if hasattr(cv2, "setNumThreads"):
     cv2.setNumThreads(1)
-if hasattr(cv2, "setLogLevel"):
+if hasattr(cv2, "setLogLevel") and hasattr(cv2, "LOG_LEVEL_ERROR"):
     cv2.setLogLevel(cv2.LOG_LEVEL_ERROR)
 
 logger = setup_logger("DeepfakeDataset")

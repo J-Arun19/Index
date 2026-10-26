@@ -57,6 +57,8 @@ def save_analysis(analysis_id, user_id, user_name, file_name, media_type, predic
     """
     Saves analysis results and associated media/report metadata in Supabase PostgreSQL & Storage.
     """
+    if not _db_initialized:
+        init_db()
     if not _use_supabase:
         logger.error("Supabase unavailable. Analysis save aborted.")
         return False
@@ -109,6 +111,8 @@ def get_analyses_by_user(user_id):
     Fetches analysis history for a user from Supabase PostgreSQL.
     Supports both legacy integer user IDs and Supabase Auth string UUIDs.
     """
+    if not _db_initialized:
+        init_db()
     if not _use_supabase:
         logger.error("Supabase unavailable. History lookup aborted.")
         return []
@@ -123,6 +127,8 @@ def get_analysis_by_id(analysis_id: str) -> Optional[Dict[str, Any]]:
     """
     Retrieves a single analysis run record by its ID.
     """
+    if not _db_initialized:
+        init_db()
     if not _use_supabase:
         logger.error("Supabase unavailable. Analysis lookup aborted.")
         return None
@@ -136,6 +142,8 @@ def get_agent_logs(analysis_id: str) -> List[Dict[str, Any]]:
     """
     Retrieves agent logs for an analysis ID.
     """
+    if not _db_initialized:
+        init_db()
     if not _use_supabase:
         return []
     try:

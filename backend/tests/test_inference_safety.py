@@ -239,7 +239,9 @@ class TestInferenceSafety(unittest.TestCase):
             analysis_id = "test_conflict"
 
         fused = fusion.fuse(MockContext())
-        self.assertEqual(fused["prediction"], DecisionState.UNCERTAIN)
+        self.assertEqual(fused["original_verdict"], DecisionState.UNCERTAIN)
+        self.assertEqual(fused["primary_verdict"], DecisionState.REAL)
+        self.assertTrue(fused["is_binary_fallback"])
         self.assertTrue(fused["disagreement_detected"])
         self.assertIn("evidence conflict", fused["reason"].lower())
 
@@ -359,7 +361,7 @@ class TestInferenceSafety(unittest.TestCase):
         self.assertIn("classified as FAKE", nlp_fake["answer"])
         self.assertIn("Deepfake detected", nlp_fake["answer"])
 
-        # 14.C: Likely Real state inquiry
+        # 14.C: Likely Real state inquiry (normalized to user-facing REAL)
         real_res = {
             "prediction": DecisionState.LIKELY_REAL,
             "confidence": 88.0,
@@ -368,9 +370,25 @@ class TestInferenceSafety(unittest.TestCase):
         }
         nlp_real = generate_nlp_response(real_res, "Is this real or AI generated?")
         self.assertFalse(nlp_real["abstention"])
-        self.assertIn("LIKELY REAL", nlp_real["answer"])
-        # Crucial safety requirement: Must include disclaimer that this does not prove authenticity
+        self.assertEqual(nlp_real["primary_verdict"], "REAL")
+        self.assertIn("REAL", nlp_real["answer"])
+        self.assertNotIn("LIKELY REAL", nlp_real["answer"])
+        self.assertNotIn("LIKELY_REAL", nlp_real["answer"])
         self.assertIn("does not prove authenticity", nlp_real["answer"])
+
+        # 14.D: Explicit certified REAL state inquiry
+        certified_res = {
+            "prediction": DecisionState.REAL,
+            "confidence": 92.0,
+            "fake_probability": 0.05,
+            "evidence": ["Certified authentic facial features"],
+        }
+        nlp_certified = generate_nlp_response(certified_res, "Is this authentic?")
+        self.assertFalse(nlp_certified["abstention"])
+        self.assertIn("REAL", nlp_certified["answer"])
+        self.assertNotIn("LIKELY REAL", nlp_certified["answer"])
+        self.assertNotIn("LIKELY_REAL", nlp_certified["answer"])
+        self.assertIn("does not prove absolute authenticity", nlp_certified["answer"])
 
     # -------------------------------------------------------------------------
     # Test 15: Critical Regression Test: Actual Previously Misclassified Deepfake

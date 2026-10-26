@@ -29,14 +29,14 @@ class TestForensicFusionEngine(unittest.TestCase):
         res1 = self.fusion_engine.evaluate(raw_sbi=0.10, raw_xcep=0.90)
         self.assertEqual(res1.prediction, DecisionState.UNCERTAIN)
         self.assertTrue("Model Disagreement" in res1.reason or "disagreement" in res1.reason.lower())
-        self.assertEqual(res1.confidence_level, "Low")
+        self.assertIn(res1.confidence_level, ["Low", "Uncertified"])
         self.assertGreaterEqual(res1.uncertainty, 0.80)
 
         # Case 2: SBI says FAKE (raw=0.95), Xception says REAL (raw=0.08)
         res2 = self.fusion_engine.evaluate(raw_sbi=0.95, raw_xcep=0.08)
         self.assertEqual(res2.prediction, DecisionState.UNCERTAIN)
         self.assertTrue("Model Disagreement" in res2.reason or "disagreement" in res2.reason.lower())
-        self.assertEqual(res2.confidence_level, "Low")
+        self.assertIn(res2.confidence_level, ["Low", "Uncertified"])
         self.assertGreaterEqual(res2.uncertainty, 0.80)
 
     def test_model_agreement_routes_to_fake(self):

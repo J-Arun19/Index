@@ -1,0 +1,3729 @@
+{
+  "benchmark_metadata": {
+    "timestamp": "2026-10-17T23:28:36.073058",
+    "device": "cuda",
+    "python_version": "3.13.12 (tags/v3.13.12:1cbe481, Feb  3 2026, 18:22:25) [MSC v.1944 64 bit (AMD64)]",
+    "total_runtime_seconds": 1085.47,
+    "image_runtime_seconds": 1001.42,
+    "video_runtime_seconds": 84.05,
+    "seed": 42
+  },
+  "image_benchmark": {
+    "total_samples": 55,
+    "real_samples": 27,
+    "fake_samples": 28,
+    "models": {
+      "production_resnet18": {
+        "confusion_matrix": {
+          "TP": 1,
+          "TN": 27,
+          "FP": 0,
+          "FN": 27
+        },
+        "decisions": {
+          "decided": 55,
+          "uncertain": 0,
+          "not_suitable": 0,
+          "total_samples": 55
+        },
+        "metrics": {
+          "accuracy_pct": 50.91,
+          "precision": 1.0,
+          "recall_tpr": 0.0357,
+          "specificity_tnr": 1.0,
+          "false_positive_rate": 0.0,
+          "false_negative_rate": 0.9643,
+          "f1_score": 0.0689,
+          "abstention_rate_pct": 0.0,
+          "mean_latency_sec": 0.0431,
+          "median_latency_sec": 0.0152
+        }
+      },
+      "forensic_suite": {
+        "confusion_matrix": {
+          "TP": 10,
+          "TN": 19,
+          "FP": 8,
+          "FN": 18
+        },
+        "decisions": {
+          "decided": 55,
+          "uncertain": 0,
+          "not_suitable": 0,
+          "total_samples": 55
+        },
+        "metrics": {
+          "accuracy_pct": 52.73,
+          "precision": 0.5556,
+          "recall_tpr": 0.3571,
+          "specificity_tnr": 0.7037,
+          "false_positive_rate": 0.2963,
+          "false_negative_rate": 0.6429,
+          "f1_score": 0.4348,
+          "abstention_rate_pct": 0.0,
+          "mean_latency_sec": 0.0977,
+          "median_latency_sec": 0.0741
+        }
+      },
+      "xception": {
+        "confusion_matrix": {
+          "TP": 0,
+          "TN": 0,
+          "FP": 0,
+          "FN": 0
+        },
+        "decisions": {
+          "decided": 0,
+          "uncertain": 55,
+          "not_suitable": 0,
+          "total_samples": 55
+        },
+        "metrics": {
+          "accuracy_pct": 0.0,
+          "precision": 0.0,
+          "recall_tpr": 0.0,
+          "specificity_tnr": 0.0,
+          "false_positive_rate": 0.0,
+          "false_negative_rate": 0.0,
+          "f1_score": 0.0,
+          "abstention_rate_pct": 100.0,
+          "mean_latency_sec": 0.0,
+          "median_latency_sec": 0.0
+        }
+      },
+      "multimodal_evidence_fusion": {
+        "confusion_matrix": {
+          "TP": 0,
+          "TN": 2,
+          "FP": 0,
+          "FN": 3
+        },
+        "decisions": {
+          "decided": 5,
+          "uncertain": 50,
+          "not_suitable": 0,
+          "total_samples": 55
+        },
+        "metrics": {
+          "accuracy_pct": 40.0,
+          "precision": 0.0,
+          "recall_tpr": 0.0,
+          "specificity_tnr": 1.0,
+          "false_positive_rate": 0.0,
+          "false_negative_rate": 1.0,
+          "f1_score": 0.0,
+          "abstention_rate_pct": 90.91,
+          "mean_latency_sec": 18.2074,
+          "median_latency_sec": 13.7109
+        }
+      }
+    },
+    "crossover_analysis": {
+      "resnet_false_negatives_count": 27,
+      "fn_caught_by_forensics": 10,
+      "fn_caught_by_xception": 0,
+      "xception_false_positives_count": 0,
+      "fusion_suppressed_fp_to_uncertain": 0
+    },
+    "sample_ledger": [
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\NeuralTextures\\019_018_frame30.png",
+        "filename": "019_018_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Fused probability (0.52) lies in ambiguous boundary margin [0.35, 0.65].",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0232,
+            "prediction": "REAL",
+            "latency_sec": 1.4021,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.3174,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0503,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 11.9824
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9977,
+            "latency_sec": 0.8084
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5209,
+          "confidence": 52.09,
+          "uncertainty": 0.9583,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 14.4689,
+        "sample_id": 1,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\Deepfakes\\018_019_frame30.png",
+        "filename": "018_019_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.2413,
+            "prediction": "REAL",
+            "latency_sec": 0.0332,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.5333,
+            "anomaly_count": 2,
+            "anomalies": [
+              "Compression ELA: ELA compression: Global error mean 0.5 (std 0.9), face/background discrepancy 0.67. Significant localized compression inconsistency flagged.",
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 198.6, border discontinuity 2.00. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.0585,
+            "error": "TP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "Selective face texture smoothing inconsistent with background sensor noise.",
+              "[Google Gemini] motion blur across the face due to video frame capture",
+              "[Google Gemini] slight interlacing or low-resolution scaling artifacts consistent with standard broadcast capture"
+            ],
+            "latency_sec": 8.2267
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9819,
+            "latency_sec": 0.2774
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.7232,
+          "confidence": 52.31999999999999,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 8.6157,
+        "sample_id": 2,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\998\\998_0007.png",
+        "filename": "998_0007.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1021,
+            "prediction": "REAL",
+            "latency_sec": 0.0738,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.4229,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 1140.4, border discontinuity 0.55. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "REAL",
+            "latency_sec": 0.1624,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 22.0114
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.3565,
+            "latency_sec": 0.6471
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.1695,
+          "confidence": 63.05,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 22.9315,
+        "sample_id": 3,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\Deepfakes\\006_002_frame30.png",
+        "filename": "006_002_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "REAL",
+        "canonical_decision": "REAL",
+        "reason": "Certified authentic media with verifiable natural features across all detectors.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1938,
+            "prediction": "REAL",
+            "latency_sec": 0.053,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.3034,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.309,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "LOCAL_ONLY",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 80.2175
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.3179,
+            "latency_sec": 0.6395
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.2401,
+          "confidence": 75.99,
+          "uncertainty": 0.4802,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "FN"
+        },
+        "total_latency_sec": 81.2951,
+        "sample_id": 4,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\024_073_f0.png",
+        "filename": "024_073_f0.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1907,
+            "prediction": "REAL",
+            "latency_sec": 0.0284,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.4667,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 104.9, border discontinuity 1.02. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.0321,
+            "error": "TP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] Atypical ocular morphology",
+              "[Google Gemini] Heavy chroma subsampling",
+              "[Google Gemini] Soft mustache-to-skin transitions"
+            ],
+            "latency_sec": 53.4491
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9898,
+            "latency_sec": 0.6794
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.6805,
+          "confidence": 50.0,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 54.2049,
+        "sample_id": 5,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\908\\908_0009.png",
+        "filename": "908_0009.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1235,
+            "prediction": "REAL",
+            "latency_sec": 0.017,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.5382,
+            "anomaly_count": 2,
+            "anomalies": [
+              "Compression ELA: ELA compression: Global error mean 0.8 (std 1.0), face/background discrepancy 0.75. Significant localized compression inconsistency flagged.",
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 243.6, border discontinuity 0.76. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.0923,
+            "error": "FP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 5.9527
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9778,
+            "latency_sec": 0.2618
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.6013,
+          "confidence": 50.0,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 6.348,
+        "sample_id": 6,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\031_163_f0.png",
+        "filename": "031_163_f0.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Fused probability (0.63) lies in ambiguous boundary margin [0.35, 0.65].",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1334,
+            "prediction": "REAL",
+            "latency_sec": 0.0125,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.1367,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.1742,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 15.9213
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9975,
+            "latency_sec": 0.6643
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.6309,
+          "confidence": 63.09,
+          "uncertainty": 0.7382,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 16.8256,
+        "sample_id": 7,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\FaceSwap\\004_982_frame30.png",
+        "filename": "004_982_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0887,
+            "prediction": "REAL",
+            "latency_sec": 0.0153,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.4667,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 100.1, border discontinuity 1.13. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.205,
+            "error": "TP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 25.4209
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9915,
+            "latency_sec": 0.6638
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5802,
+          "confidence": 50.0,
+          "uncertainty": 0.8396,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 26.3715,
+        "sample_id": 8,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\859\\859_0006.png",
+        "filename": "859_0006.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1014,
+            "prediction": "REAL",
+            "latency_sec": 0.0134,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0687,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] heavy analog-to-digital broadcast compression artifacts",
+              "[Google Gemini] low overall image resolution leading to soft facial features"
+            ],
+            "latency_sec": 15.9195
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9672,
+            "latency_sec": 0.6635
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5686,
+          "confidence": 50.0,
+          "uncertainty": 0.8628,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 16.6979,
+        "sample_id": 9,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\055_147_f0.png",
+        "filename": "055_147_f0.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Fused probability (0.61) lies in ambiguous boundary margin [0.35, 0.65].",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1145,
+            "prediction": "REAL",
+            "latency_sec": 0.0133,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.061,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 17.4476
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9932,
+            "latency_sec": 0.6623
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.6077,
+          "confidence": 60.77,
+          "uncertainty": 0.7845,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 18.2282,
+        "sample_id": 10,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\NeuralTextures\\008_990_frame30.png",
+        "filename": "008_990_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "REAL",
+        "canonical_decision": "REAL",
+        "reason": "Certified authentic media with verifiable natural features across all detectors.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1077,
+            "prediction": "REAL",
+            "latency_sec": 0.0165,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0703,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 45.5979
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.7004,
+            "latency_sec": 0.6628
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.3081,
+          "confidence": 69.19,
+          "uncertainty": 0.6162,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "FN"
+        },
+        "total_latency_sec": 46.3885,
+        "sample_id": 11,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\950\\950_0007.png",
+        "filename": "950_0007.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Fused probability (0.61) lies in ambiguous boundary margin [0.35, 0.65].",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.11,
+            "prediction": "REAL",
+            "latency_sec": 0.0145,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.2908,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0741,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 19.4029
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9977,
+            "latency_sec": 0.6656
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.6077,
+          "confidence": 60.77,
+          "uncertainty": 0.7846,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 20.189,
+        "sample_id": 12,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\872\\872_0014.png",
+        "filename": "872_0014.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0644,
+            "prediction": "REAL",
+            "latency_sec": 0.0173,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.3626,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 215.2, border discontinuity 0.49. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "REAL",
+            "latency_sec": 0.0599,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 20.5631
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.0983,
+            "latency_sec": 0.6648
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.0807,
+          "confidence": 71.93,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 21.3367,
+        "sample_id": 13,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\918\\918_0003.png",
+        "filename": "918_0003.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Fused probability (0.50) lies in ambiguous boundary margin [0.35, 0.65].",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.021,
+            "prediction": "REAL",
+            "latency_sec": 0.0163,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.3165,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.1756,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 10.8255
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.982,
+            "latency_sec": 0.7633
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.503,
+          "confidence": 50.3,
+          "uncertainty": 0.994,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 11.8294,
+        "sample_id": 14,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\Face2Face\\007_132_frame30.png",
+        "filename": "007_132_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0992,
+            "prediction": "REAL",
+            "latency_sec": 0.016,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.06,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "Selective face texture smoothing inconsistent with background sensor noise."
+            ],
+            "latency_sec": 49.786
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.2248,
+            "latency_sec": 0.6644
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.1503,
+          "confidence": 64.97,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 50.5674,
+        "sample_id": 15,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\Celeb_synthesis\\id0_id17_0001_frame30.png",
+        "filename": "id0_id17_0001_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Insufficient evidence to reliably certify authenticity or detect tampering.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.4368,
+            "prediction": "REAL",
+            "latency_sec": 0.0139,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.3772,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.092,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 10.7313
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9421,
+            "latency_sec": 0.7642
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.8789,
+          "confidence": 87.89,
+          "uncertainty": 0.2422,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 11.63,
+        "sample_id": 16,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\001_870_f0.png",
+        "filename": "001_870_f0.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0319,
+            "prediction": "REAL",
+            "latency_sec": 0.0161,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.4751,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 259.3, border discontinuity 0.68. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.2144,
+            "error": "TP"
+          },
+          "gemini_vision": {
+            "assessment": "FAKE",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] Visible face-swap mask edges",
+              "[Google Gemini] Severe facial blurring",
+              "[Google Gemini] Asymmetric eye rendering",
+              "[Google Gemini] Skin texture mismatch"
+            ],
+            "latency_sec": 70.1601
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9405,
+            "latency_sec": 0.6636
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.4724,
+          "confidence": 50.0,
+          "uncertainty": 0.9449,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 71.1193,
+        "sample_id": 17,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\954\\954_0013.png",
+        "filename": "954_0013.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1036,
+            "prediction": "REAL",
+            "latency_sec": 0.0137,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.4139,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Compression ELA: ELA compression: Global error mean 0.9 (std 1.1), face/background discrepancy 0.53. Significant localized compression inconsistency flagged."
+            ],
+            "prediction": "REAL",
+            "latency_sec": 0.0625,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 7.4422
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.0695,
+            "latency_sec": 0.2694
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.0858,
+          "confidence": 71.42,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 7.819,
+        "sample_id": 18,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\987\\987_0021.png",
+        "filename": "987_0021.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.3064,
+            "prediction": "REAL",
+            "latency_sec": 0.0135,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.3736,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 207.4, border discontinuity 0.50. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "REAL",
+            "latency_sec": 0.0497,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 8.313
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9992,
+            "latency_sec": 0.2131
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.8056,
+          "confidence": 60.56,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 8.6224,
+        "sample_id": 19,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\026_012_f0.png",
+        "filename": "026_012_f0.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0327,
+            "prediction": "REAL",
+            "latency_sec": 0.0126,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.3595,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 48.9, border discontinuity 0.49. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "REAL",
+            "latency_sec": 0.0533,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "FAKE",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] motion blur specifically localized to the face region while background remains static",
+              "[Google Gemini] unnatural smoothing and lack of pore structure on facial skin",
+              "[Google Gemini] eyes exhibit indistinct irises and lack consistent corneal specular reflections",
+              "[Google Gemini] blending artifacts along the jawline and neck transition"
+            ],
+            "latency_sec": 8.3935
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9953,
+            "latency_sec": 0.261
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.528,
+          "confidence": 50.0,
+          "uncertainty": 0.9441,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 8.7483,
+        "sample_id": 20,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\877\\877_0017.png",
+        "filename": "877_0017.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1572,
+            "prediction": "REAL",
+            "latency_sec": 0.0462,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.4136,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Compression ELA: ELA compression: Global error mean 1.4 (std 2.0), face/background discrepancy 0.52. Significant localized compression inconsistency flagged."
+            ],
+            "prediction": "REAL",
+            "latency_sec": 0.0428,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 6.5953
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.8996,
+            "latency_sec": 0.1731
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5568,
+          "confidence": 50.0,
+          "uncertainty": 0.8864,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 6.8804,
+        "sample_id": 21,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\Celeb_synthesis\\id0_id20_0001_frame30.png",
+        "filename": "id0_id20_0001_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Insufficient evidence to reliably certify authenticity or detect tampering.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.3273,
+            "prediction": "REAL",
+            "latency_sec": 0.0208,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.3695,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0974,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 9.6099
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.8347,
+            "latency_sec": 0.2461
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.662,
+          "confidence": 66.2,
+          "uncertainty": 0.676,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 10.0081,
+        "sample_id": 22,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\899\\899_0011.png",
+        "filename": "899_0011.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1565,
+            "prediction": "REAL",
+            "latency_sec": 0.0165,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.4667,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 65.3, border discontinuity 2.86. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.0681,
+            "error": "FP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 7.8331
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9656,
+            "latency_sec": 0.2624
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.6221,
+          "confidence": 50.0,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 8.2128,
+        "sample_id": 23,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\875\\875_0006.png",
+        "filename": "875_0006.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.2556,
+            "prediction": "REAL",
+            "latency_sec": 0.0129,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.4756,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Compression ELA: ELA compression: Global error mean 1.0 (std 1.1), face/background discrepancy 0.70. Significant localized compression inconsistency flagged."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.0384,
+            "error": "FP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 7.1391
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.7907,
+            "latency_sec": 0.209
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5463,
+          "confidence": 50.0,
+          "uncertainty": 0.9074,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 7.4241,
+        "sample_id": 24,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\039_058_f0.png",
+        "filename": "039_058_f0.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1108,
+            "prediction": "REAL",
+            "latency_sec": 0.0155,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.4667,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 548.8, border discontinuity 4.00. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.079,
+            "error": "TP"
+          },
+          "gemini_vision": {
+            "assessment": "FAKE",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "Selective face texture smoothing inconsistent with background sensor noise.",
+              "[Google Gemini] Severe blurring and smudging across the entire facial region",
+              "[Google Gemini] Complete lack of facial features such as defined eyes, nose, and mouth",
+              "[Google Gemini] Unnatural smoothing of skin texture contrasting with the sharp background buildings",
+              "[Google Gemini] Inconsistent resolution between the body/suit and the distorted facial area"
+            ],
+            "latency_sec": 9.1797
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9605,
+            "latency_sec": 0.2961
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5713,
+          "confidence": 50.0,
+          "uncertainty": 0.8574,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 9.6013,
+        "sample_id": 25,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\FaceSwap\\010_005_frame30.png",
+        "filename": "010_005_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Fused probability (0.54) lies in ambiguous boundary margin [0.35, 0.65].",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0453,
+            "prediction": "REAL",
+            "latency_sec": 0.0154,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.3117,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0573,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 12.0859
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9965,
+            "latency_sec": 0.7701
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5418,
+          "confidence": 54.18,
+          "uncertainty": 0.9165,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 12.9659,
+        "sample_id": 26,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\982\\982_0019.png",
+        "filename": "982_0019.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.2086,
+            "prediction": "REAL",
+            "latency_sec": 0.0161,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.1077,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "Selective face texture smoothing inconsistent with background sensor noise."
+            ],
+            "latency_sec": 9.082
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9776,
+            "latency_sec": 0.19
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.6862,
+          "confidence": 50.0,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 9.4266,
+        "sample_id": 27,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\978\\978_0023.png",
+        "filename": "978_0023.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Fused probability (0.49) lies in ambiguous boundary margin [0.35, 0.65].",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0523,
+            "prediction": "REAL",
+            "latency_sec": 0.0118,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0425,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 8.3589
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9424,
+            "latency_sec": 0.176
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.4947,
+          "confidence": 50.53,
+          "uncertainty": 0.9894,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 8.6163,
+        "sample_id": 28,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\Celeb_synthesis\\id0_id17_0006_frame30.png",
+        "filename": "id0_id17_0006_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.2487,
+            "prediction": "REAL",
+            "latency_sec": 0.012,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.4667,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 163.2, border discontinuity 0.88. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.0979,
+            "error": "TP"
+          },
+          "gemini_vision": {
+            "assessment": "FAKE",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] Unnatural smoothing and lack of pore-level skin texture detail on the face compared to lighting context",
+              "[Google Gemini] Subtle color and lighting mismatch between the facial region and the neck/ears",
+              "[Google Gemini] Slight border blending artifacts along the jawline",
+              "[Google Gemini] Generative blurring visible in hair strands and hairline transitions"
+            ],
+            "latency_sec": 12.7903
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.5228,
+            "latency_sec": 0.7719
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.2942,
+          "confidence": 50.58,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 13.7109,
+        "sample_id": 29,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\Celeb_synthesis\\id0_id16_0007_frame30.png",
+        "filename": "id0_id16_0007_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to image quality issues: Excessive image blur detected (sharpness score 11.2 < 25.0).",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.4469,
+            "prediction": "REAL",
+            "latency_sec": 0.0139,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.32,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.1065,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 8.167
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9981,
+            "latency_sec": 0.2913
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.945,
+          "confidence": 94.5,
+          "uncertainty": 0.1101,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 8.6148,
+        "sample_id": 30,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\FaceShifter\\011_805_frame30.png",
+        "filename": "011_805_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to image quality issues: Excessive image blur detected (sharpness score 24.5 < 25.0).",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0419,
+            "prediction": "REAL",
+            "latency_sec": 0.0136,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.6743,
+            "anomaly_count": 2,
+            "anomalies": [
+              "Compression ELA: ELA compression: Global error mean 0.5 (std 0.8), face/background discrepancy 0.51. Significant localized compression inconsistency flagged.",
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 24.5, border discontinuity 0.73. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.174,
+            "error": "TP"
+          },
+          "gemini_vision": {
+            "assessment": "FAKE",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] obvious face-swap warping and blending boundaries around the jawline and mouth",
+              "[Google Gemini] unnatural skin texture mismatch between the transplanted facial region and the neck",
+              "[Google Gemini] distorted dental and perioral geometry characteristic of low-quality deepfake injection",
+              "[Google Gemini] lighting inconsistencies and shadow mismatch across the facial mask and background"
+            ],
+            "latency_sec": 13.5695
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.0997,
+            "latency_sec": 0.7676
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.0689,
+          "confidence": 93.11,
+          "uncertainty": 0.1377,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 14.5751,
+        "sample_id": 31,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\904\\904_0008.png",
+        "filename": "904_0008.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0859,
+            "prediction": "REAL",
+            "latency_sec": 0.0165,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.4149,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Compression ELA: ELA compression: Global error mean 0.8 (std 1.2), face/background discrepancy 0.46. Significant localized compression inconsistency flagged."
+            ],
+            "prediction": "REAL",
+            "latency_sec": 0.0856,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 6.3224
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9194,
+            "latency_sec": 0.1778
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5053,
+          "confidence": 50.0,
+          "uncertainty": 0.9894,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 6.626,
+        "sample_id": 32,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\023_923_f0.png",
+        "filename": "023_923_f0.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1041,
+            "prediction": "REAL",
+            "latency_sec": 0.013,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0557,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "FAKE",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] Unnatural face-swap blending seams around the jawline and neck",
+              "[Google Gemini] Severe lighting mismatch between the brightly lit, smooth face and the dark, grainy background",
+              "[Google Gemini] Warped facial geometry and asymmetry around the eyes and forehead",
+              "[Google Gemini] Inconsistent skin texture smoothing isolated entirely to the face region"
+            ],
+            "latency_sec": 10.8786
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.1688,
+            "latency_sec": 0.772
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.1336,
+          "confidence": 66.64,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 11.7565,
+        "sample_id": 33,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\020_344_f0.png",
+        "filename": "020_344_f0.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.176,
+            "prediction": "REAL",
+            "latency_sec": 0.0166,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.4447,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 209.4, border discontinuity 0.58. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "REAL",
+            "latency_sec": 0.2015,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "INCONCLUSIVE",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "Selective face texture smoothing inconsistent with background sensor noise.",
+              "[Google Gemini] intentional facial blurring or redaction applied to the eyes and central face area",
+              "[Google Gemini] low resolution and heavy compression obscuring fine anatomical details"
+            ],
+            "latency_sec": 17.9942
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9966,
+            "latency_sec": 0.6634
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.6726,
+          "confidence": 50.0,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 18.932,
+        "sample_id": 34,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\Deepfakes\\001_870_frame30.png",
+        "filename": "001_870_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0386,
+            "prediction": "REAL",
+            "latency_sec": 0.0171,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.4729,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 279.1, border discontinuity 1.38. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.1954,
+            "error": "TP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 25.3205
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.96,
+            "latency_sec": 0.6632
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.4986,
+          "confidence": 50.0,
+          "uncertainty": 0.9972,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 26.2556,
+        "sample_id": 35,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\860\\860_0008.png",
+        "filename": "860_0008.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1865,
+            "prediction": "REAL",
+            "latency_sec": 0.0151,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.1558,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0794,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "FAKE",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] Unnatural facial skin smoothing typical of deepfake generation",
+              "[Google Gemini] Inconsistent lighting on the face compared to the background environment",
+              "[Google Gemini] Slight border artifacts and blending seams around the jawline and neck",
+              "[Google Gemini] Artificial gloss and texture on the hair boundaries"
+            ],
+            "latency_sec": 13.2038
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.0153,
+            "latency_sec": 0.7672
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.0825,
+          "confidence": 71.75,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 14.0913,
+        "sample_id": 36,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\978\\978_0022.png",
+        "filename": "978_0022.png",
+        "ground_truth": "REAL",
+        "final_verdict": "REAL",
+        "canonical_decision": "REAL",
+        "reason": "Certified authentic media with verifiable natural features across all detectors.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0448,
+            "prediction": "REAL",
+            "latency_sec": 0.0149,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0474,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 7.7482
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.709,
+            "latency_sec": 0.1866
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.2538,
+          "confidence": 74.62,
+          "uncertainty": 0.5076,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "TN"
+        },
+        "total_latency_sec": 8.0281,
+        "sample_id": 37,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\Deepfakes\\007_132_frame30.png",
+        "filename": "007_132_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "REAL",
+        "canonical_decision": "REAL",
+        "reason": "Certified authentic media with verifiable natural features across all detectors.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0899,
+            "prediction": "REAL",
+            "latency_sec": 0.0111,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.3473,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0441,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 14.26
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.0445,
+            "latency_sec": 0.7723
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.066,
+          "confidence": 93.4,
+          "uncertainty": 0.1321,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "FN"
+        },
+        "total_latency_sec": 15.124,
+        "sample_id": 38,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\988\\988_0003.png",
+        "filename": "988_0003.png",
+        "ground_truth": "REAL",
+        "final_verdict": "REAL",
+        "canonical_decision": "REAL",
+        "reason": "Certified authentic media with verifiable natural features across all detectors.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1726,
+            "prediction": "REAL",
+            "latency_sec": 0.0148,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0561,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 12.7424
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.5014,
+            "latency_sec": 0.7647
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.2161,
+          "confidence": 78.39,
+          "uncertainty": 0.4322,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "TN"
+        },
+        "total_latency_sec": 13.6104,
+        "sample_id": 39,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\FaceSwap\\008_990_frame30.png",
+        "filename": "008_990_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0584,
+            "prediction": "REAL",
+            "latency_sec": 0.0133,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0598,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] heavy compression artifacts consistent with broadcast capture and low-resolution video recording",
+              "[Google Gemini] slight motion blur on hands and facial features"
+            ],
+            "latency_sec": 15.8041
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9995,
+            "latency_sec": 0.6637
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5579,
+          "confidence": 50.0,
+          "uncertainty": 0.8843,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 16.5735,
+        "sample_id": 40,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\040_997_f0.png",
+        "filename": "040_997_f0.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0793,
+            "prediction": "REAL",
+            "latency_sec": 0.0182,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.1153,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.1882,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "FAKE",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] Unnatural facial proportions and smooth skin texture inconsistent with real-world photography",
+              "[Google Gemini] Computer-generated or synthesized background elements with geometric inconsistencies",
+              "[Google Gemini] Unnatural lighting and shading on the face and body compared to the studio environment",
+              "[Google Gemini] Synthetic CGI appearance of the entire scene indicating virtual creation rather than live capture"
+            ],
+            "latency_sec": 17.2038
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.4363,
+            "latency_sec": 0.6733
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.1262,
+          "confidence": 67.38,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 18.1521,
+        "sample_id": 41,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\969\\969_0001.png",
+        "filename": "969_0001.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Fused probability (0.49) lies in ambiguous boundary margin [0.35, 0.65].",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.022,
+            "prediction": "REAL",
+            "latency_sec": 0.0161,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0717,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 10.3648
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9677,
+            "latency_sec": 0.7705
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.4897,
+          "confidence": 51.03,
+          "uncertainty": 0.9794,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 11.2573,
+        "sample_id": 42,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\905\\905_0003.png",
+        "filename": "905_0003.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Fused probability (0.53) lies in ambiguous boundary margin [0.35, 0.65].",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0302,
+            "prediction": "REAL",
+            "latency_sec": 0.0137,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.1314,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 18.1795
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9977,
+            "latency_sec": 0.6624
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5279,
+          "confidence": 52.79,
+          "uncertainty": 0.9442,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 19.0382,
+        "sample_id": 43,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\883\\883_0003.png",
+        "filename": "883_0003.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0578,
+            "prediction": "REAL",
+            "latency_sec": 0.0165,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.3744,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Compression ELA: ELA compression: Global error mean 1.0 (std 1.1), face/background discrepancy 0.47. Significant localized compression inconsistency flagged."
+            ],
+            "prediction": "REAL",
+            "latency_sec": 0.1465,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 26.7734
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.1431,
+            "latency_sec": 0.674
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.0959,
+          "confidence": 70.41,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 27.6681,
+        "sample_id": 44,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\FaceShifter\\007_132_frame30.png",
+        "filename": "007_132_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0857,
+            "prediction": "REAL",
+            "latency_sec": 0.0145,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.4675,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 936.2, border discontinuity 0.82. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.0689,
+            "error": "TP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "Selective face texture smoothing inconsistent with background sensor noise."
+            ],
+            "latency_sec": 19.6548
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.8058,
+            "latency_sec": 0.6641
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.3915,
+          "confidence": 50.0,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 20.4401,
+        "sample_id": 45,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\906\\906_0002.png",
+        "filename": "906_0002.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1484,
+            "prediction": "REAL",
+            "latency_sec": 0.0146,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.4865,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 336.6, border discontinuity 0.88. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.0757,
+            "error": "FP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 19.8226
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.4488,
+            "latency_sec": 0.663
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.1865,
+          "confidence": 61.349999999999994,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 20.6003,
+        "sample_id": 46,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\989\\989_0031.png",
+        "filename": "989_0031.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0606,
+            "prediction": "REAL",
+            "latency_sec": 0.0167,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.4667,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 541.4, border discontinuity 0.67. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.0802,
+            "error": "FP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 11.9091
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.0146,
+            "latency_sec": 0.7692
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.0364,
+          "confidence": 76.36,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 12.8093,
+        "sample_id": 47,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\873\\873_0022.png",
+        "filename": "873_0022.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.2406,
+            "prediction": "REAL",
+            "latency_sec": 0.015,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.4805,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 1287.7, border discontinuity 6.00. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.0414,
+            "error": "FP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 12.26
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9946,
+            "latency_sec": 0.7685
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.7352,
+          "confidence": 53.519999999999996,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 13.113,
+        "sample_id": 48,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\Celeb_synthesis\\id0_id20_0002_frame30.png",
+        "filename": "id0_id20_0002_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Insufficient evidence to reliably certify authenticity or detect tampering.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.5428,
+            "prediction": "FAKE",
+            "latency_sec": 0.0152,
+            "error": "TP"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.1255,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "FAKE",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] Unnatural face-swapping boundaries and warping around the jawline and chin",
+              "[Google Gemini] Inconsistent skin texture smoothing on the face compared to the natural neck texture",
+              "[Google Gemini] Anatomical distortion and asymmetry around the eyes and brow ridge",
+              "[Google Gemini] Lighting and shadow inconsistencies between the swapped facial region and the ambient environment"
+            ],
+            "latency_sec": 17.273
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.959,
+            "latency_sec": 0.663
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.9181,
+          "confidence": 91.81,
+          "uncertainty": 0.1638,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 18.118,
+        "sample_id": 49,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\859\\859_0000.png",
+        "filename": "859_0000.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Insufficient evidence to reliably certify authenticity or detect tampering.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1651,
+            "prediction": "REAL",
+            "latency_sec": 0.014,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.1,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.059,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 12.7532
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9975,
+            "latency_sec": 0.7932
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.6626,
+          "confidence": 66.26,
+          "uncertainty": 0.6748,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 13.6524,
+        "sample_id": 50,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\911\\911_0000.png",
+        "filename": "911_0000.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Insufficient evidence to reliably certify authenticity or detect tampering.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.2854,
+            "prediction": "REAL",
+            "latency_sec": 0.0142,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.1972,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.0491,
+            "error": "TN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 8.6308
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.9369,
+            "latency_sec": 0.2809
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.7223,
+          "confidence": 72.23,
+          "uncertainty": 0.5554,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 9.0074,
+        "sample_id": 51,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\011_805_f0.png",
+        "filename": "011_805_f0.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.2239,
+            "prediction": "REAL",
+            "latency_sec": 0.0133,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.6396,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 26.1, border discontinuity 0.74. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.1992,
+            "error": "TP"
+          },
+          "gemini_vision": {
+            "assessment": "FAKE",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] Severe blurring and smudging across the facial region characteristic of a low-quality face-swap or digital morphing",
+              "[Google Gemini] Noticeable color and lighting mismatch between the pasted face and the neck/ears",
+              "[Google Gemini] Distorted and unnatural mouth/lip geometry lacking realistic anatomical features",
+              "[Google Gemini] Unnatural smoothing of skin texture that completely obscures pores and fine details on the face while the background remains sharp"
+            ],
+            "latency_sec": 15.1274
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.4056,
+            "latency_sec": 0.6902
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.2702,
+          "confidence": 52.980000000000004,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 16.0828,
+        "sample_id": 52,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\861\\861_0000.png",
+        "filename": "861_0000.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.2619,
+            "prediction": "REAL",
+            "latency_sec": 0.0137,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.4667,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Compression ELA: ELA compression: Global error mean 1.0 (std 1.3), face/background discrepancy 0.73. Significant localized compression inconsistency flagged."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.0993,
+            "error": "FP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [
+              "[Google Gemini] motion blur on hand gesturing",
+              "[Google Gemini] slight compression artifacts typical of television broadcast feed"
+            ],
+            "latency_sec": 9.0764
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.0359,
+            "latency_sec": 0.1864
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.1125,
+          "confidence": 68.75,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 9.4146,
+        "sample_id": 53,
+        "source": "FF++_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\extracted_frames\\fake\\Celeb_synthesis\\id0_id20_0000_frame30.png",
+        "filename": "id0_id20_0000_frame30.png",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to image quality issues: Excessive image blur detected (sharpness score 23.5 < 25.0).",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.1339,
+            "prediction": "REAL",
+            "latency_sec": 0.0191,
+            "error": "FN"
+          },
+          "forensics": {
+            "composite_score": 0.3453,
+            "anomaly_count": 0,
+            "anomalies": [],
+            "prediction": "REAL",
+            "latency_sec": 0.1056,
+            "error": "FN"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 10.8165
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.0963,
+            "latency_sec": 0.765
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.1142,
+          "confidence": 88.58,
+          "uncertainty": 0.2284,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 11.7422,
+        "sample_id": 54,
+        "source": "Diverse_fake_frames"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Faceforensic++\\extracted_frames\\real\\949\\949_0020.png",
+        "filename": "949_0020.png",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Abstained due to contradictory evidence: Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies.",
+        "per_model": {
+          "resnet18": {
+            "raw_fake_prob": 0.0654,
+            "prediction": "REAL",
+            "latency_sec": 0.0183,
+            "error": "TN"
+          },
+          "forensics": {
+            "composite_score": 0.4667,
+            "anomaly_count": 1,
+            "anomalies": [
+              "Boundary Continuity: Edge & Texture: Global Laplacian variance 662.7, border discontinuity 0.63. Boundary transition mismatch detected around facial contour."
+            ],
+            "prediction": "FAKE",
+            "latency_sec": 0.0672,
+            "error": "FP"
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "synthetic_score": 0.5,
+            "anomalies": [],
+            "latency_sec": 14.1325
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN",
+            "latency_sec": 0.0,
+            "error": null
+          },
+          "vit_base": {
+            "raw_fake_prob": 0.1327,
+            "latency_sec": 0.7842
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.0962,
+          "confidence": 70.38,
+          "uncertainty": 0.8,
+          "disagreement_detected": true,
+          "contradictions": [
+            "Contradiction: Neural classifier predicts authentic features, but physical/spectral forensics detected anomalies."
+          ],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 15.0394,
+        "sample_id": 55,
+        "source": "FF++_real"
+      }
+    ]
+  },
+  "video_benchmark": {
+    "total_samples": 12,
+    "real_samples": 6,
+    "fake_samples": 6,
+    "models": {
+      "production_video_lstm": {
+        "confusion_matrix": {
+          "TP": 6,
+          "TN": 0,
+          "FP": 6,
+          "FN": 0
+        },
+        "decisions": {
+          "decided": 12,
+          "uncertain": 0,
+          "not_suitable": 0,
+          "total_samples": 12
+        },
+        "metrics": {
+          "accuracy_pct": 50.0,
+          "precision": 0.5,
+          "recall_tpr": 1.0,
+          "specificity_tnr": 0.0,
+          "false_positive_rate": 1.0,
+          "false_negative_rate": 0.0,
+          "f1_score": 0.6667,
+          "abstention_rate_pct": 0.0,
+          "mean_latency_sec": 0.121,
+          "median_latency_sec": 0.1141
+        }
+      },
+      "multimodal_evidence_fusion": {
+        "confusion_matrix": {
+          "TP": 0,
+          "TN": 1,
+          "FP": 0,
+          "FN": 0
+        },
+        "decisions": {
+          "decided": 1,
+          "uncertain": 11,
+          "not_suitable": 0,
+          "total_samples": 12
+        },
+        "metrics": {
+          "accuracy_pct": 100.0,
+          "precision": 0.0,
+          "recall_tpr": 0.0,
+          "specificity_tnr": 1.0,
+          "false_positive_rate": 0.0,
+          "false_negative_rate": 0.0,
+          "f1_score": 0.0,
+          "abstention_rate_pct": 91.67,
+          "mean_latency_sec": 7.0,
+          "median_latency_sec": 6.1726
+        }
+      }
+    },
+    "sample_ledger": [
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\FaceForensics++_C23\\original\\628.mp4",
+        "filename": "628.mp4",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Video probability (0.37) lies in the ambiguous decision margin [0.35, 0.65].",
+        "per_model": {
+          "video_lstm": {
+            "raw_fake_prob": 0.7641,
+            "prediction": "FAKE",
+            "latency_sec": 0.1397,
+            "error": "FP"
+          },
+          "frame_resnet": {
+            "mean_frame_fake_prob": 0.0994,
+            "temporal_variance": 0.0291
+          },
+          "forensics": {
+            "mean_forensic_score": 0.1001
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "anomalies": [],
+            "latency_sec": 5.1298
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN"
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.3654,
+          "confidence": 63.46,
+          "uncertainty": 0.7308,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 6.141,
+        "sample_id": 1,
+        "source": "FF++_C23_original"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Celeb DF\\Celeb-real\\id58_0001.mp4",
+        "filename": "id58_0001.mp4",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Video probability (0.39) lies in the ambiguous decision margin [0.35, 0.65].",
+        "per_model": {
+          "video_lstm": {
+            "raw_fake_prob": 0.8407,
+            "prediction": "FAKE",
+            "latency_sec": 0.082,
+            "error": "FP"
+          },
+          "frame_resnet": {
+            "mean_frame_fake_prob": 0.0357,
+            "temporal_variance": 0.013
+          },
+          "forensics": {
+            "mean_forensic_score": 0.2003
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "anomalies": [],
+            "latency_sec": 4.9044
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN"
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.3906,
+          "confidence": 60.94,
+          "uncertainty": 0.7812,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 5.6196,
+        "sample_id": 2,
+        "source": "CelebDF_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Celeb DF\\Celeb-real\\id13_0013.mp4",
+        "filename": "id13_0013.mp4",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Video probability (0.44) lies in the ambiguous decision margin [0.35, 0.65].",
+        "per_model": {
+          "video_lstm": {
+            "raw_fake_prob": 0.885,
+            "prediction": "FAKE",
+            "latency_sec": 0.0913,
+            "error": "FP"
+          },
+          "frame_resnet": {
+            "mean_frame_fake_prob": 0.108,
+            "temporal_variance": 0.0788
+          },
+          "forensics": {
+            "mean_forensic_score": 0.1993
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "anomalies": [],
+            "latency_sec": 4.5043
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN"
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.437,
+          "confidence": 56.3,
+          "uncertainty": 0.8741,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 5.2277,
+        "sample_id": 3,
+        "source": "CelebDF_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Celeb DF\\Celeb-real\\id7_0003.mp4",
+        "filename": "id7_0003.mp4",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Video probability (0.41) lies in the ambiguous decision margin [0.35, 0.65].",
+        "per_model": {
+          "video_lstm": {
+            "raw_fake_prob": 0.793,
+            "prediction": "FAKE",
+            "latency_sec": 0.149,
+            "error": "FP"
+          },
+          "frame_resnet": {
+            "mean_frame_fake_prob": 0.0828,
+            "temporal_variance": 0.0343
+          },
+          "forensics": {
+            "mean_forensic_score": 0.2867
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "anomalies": [],
+            "latency_sec": 8.4279
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN"
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.4077,
+          "confidence": 59.23,
+          "uncertainty": 0.8153,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 9.3515,
+        "sample_id": 4,
+        "source": "CelebDF_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Celeb DF\\Celeb-synthesis\\id9_id1_0000.mp4",
+        "filename": "id9_id1_0000.mp4",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Video probability (0.55) lies in the ambiguous decision margin [0.35, 0.65].",
+        "per_model": {
+          "video_lstm": {
+            "raw_fake_prob": 0.8763,
+            "prediction": "FAKE",
+            "latency_sec": 0.1165,
+            "error": "TP"
+          },
+          "frame_resnet": {
+            "mean_frame_fake_prob": 0.392,
+            "temporal_variance": 0.0715
+          },
+          "forensics": {
+            "mean_forensic_score": 0.2088
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "anomalies": [],
+            "latency_sec": 5.3656
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN"
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5491,
+          "confidence": 54.91,
+          "uncertainty": 0.9018,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 6.2041,
+        "sample_id": 5,
+        "source": "CelebDF_fake"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\FaceForensics++_C23\\Deepfakes\\428_466.mp4",
+        "filename": "428_466.mp4",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Video probability (0.44) lies in the ambiguous decision margin [0.35, 0.65].",
+        "per_model": {
+          "video_lstm": {
+            "raw_fake_prob": 0.8469,
+            "prediction": "FAKE",
+            "latency_sec": 0.1653,
+            "error": "TP"
+          },
+          "frame_resnet": {
+            "mean_frame_fake_prob": 0.2022,
+            "temporal_variance": 0.0516
+          },
+          "forensics": {
+            "mean_forensic_score": 0.1023
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "anomalies": [],
+            "latency_sec": 5.7205
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN"
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.4401,
+          "confidence": 55.99,
+          "uncertainty": 0.8802,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 8.4849,
+        "sample_id": 6,
+        "source": "FF++_C23_Deepfakes"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Celeb DF\\Celeb-synthesis\\id21_id37_0006.mp4",
+        "filename": "id21_id37_0006.mp4",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Video probability (0.52) lies in the ambiguous decision margin [0.35, 0.65].",
+        "per_model": {
+          "video_lstm": {
+            "raw_fake_prob": 0.8277,
+            "prediction": "FAKE",
+            "latency_sec": 0.106,
+            "error": "TP"
+          },
+          "frame_resnet": {
+            "mean_frame_fake_prob": 0.3665,
+            "temporal_variance": 0.0899
+          },
+          "forensics": {
+            "mean_forensic_score": 0.2329
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "anomalies": [],
+            "latency_sec": 4.3659
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN"
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5243,
+          "confidence": 52.43,
+          "uncertainty": 0.9515,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 5.1109,
+        "sample_id": 7,
+        "source": "CelebDF_fake"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\FaceForensics++_C23\\original\\419.mp4",
+        "filename": "419.mp4",
+        "ground_truth": "REAL",
+        "final_verdict": "REAL",
+        "canonical_decision": "REAL",
+        "reason": "Certified authentic video with verifiable natural temporal and spatial features.",
+        "per_model": {
+          "video_lstm": {
+            "raw_fake_prob": 0.7395,
+            "prediction": "FAKE",
+            "latency_sec": 0.1898,
+            "error": "FP"
+          },
+          "frame_resnet": {
+            "mean_frame_fake_prob": 0.0685,
+            "temporal_variance": 0.0406
+          },
+          "forensics": {
+            "mean_forensic_score": 0.1338
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "anomalies": [],
+            "latency_sec": 5.6729
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN"
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.35,
+          "confidence": 65.0,
+          "uncertainty": 0.7,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "TN"
+        },
+        "total_latency_sec": 8.0575,
+        "sample_id": 8,
+        "source": "FF++_C23_original"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Celeb DF\\Celeb-synthesis\\id27_id28_0002.mp4",
+        "filename": "id27_id28_0002.mp4",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Video probability (0.52) lies in the ambiguous decision margin [0.35, 0.65].",
+        "per_model": {
+          "video_lstm": {
+            "raw_fake_prob": 0.8447,
+            "prediction": "FAKE",
+            "latency_sec": 0.0484,
+            "error": "TP"
+          },
+          "frame_resnet": {
+            "mean_frame_fake_prob": 0.3093,
+            "temporal_variance": 0.1008
+          },
+          "forensics": {
+            "mean_forensic_score": 0.2966
+          },
+          "gemini_vision": {
+            "assessment": "FAKE",
+            "anomalies": [
+              "[Google Gemini] unnatural facial blending around the jawline and chin",
+              "[Google Gemini] mismatch in lighting consistency between the face and background",
+              "[Google Gemini] noticeable smoothing artifacts on facial skin characteristic of face-swap operations",
+              "[Google Gemini] anatomical warping around the mouth and eyes indicative of generative manipulation"
+            ],
+            "latency_sec": 4.1424
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN"
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5209,
+          "confidence": 52.09,
+          "uncertainty": 0.9582,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 4.6666,
+        "sample_id": 9,
+        "source": "CelebDF_fake"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Celeb DF\\Celeb-synthesis\\id20_id25_0005.mp4",
+        "filename": "id20_id25_0005.mp4",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Video probability (0.51) lies in the ambiguous decision margin [0.35, 0.65].",
+        "per_model": {
+          "video_lstm": {
+            "raw_fake_prob": 0.9153,
+            "prediction": "FAKE",
+            "latency_sec": 0.1116,
+            "error": "TP"
+          },
+          "frame_resnet": {
+            "mean_frame_fake_prob": 0.2265,
+            "temporal_variance": 0.0685
+          },
+          "forensics": {
+            "mean_forensic_score": 0.2804
+          },
+          "gemini_vision": {
+            "assessment": "FAKE",
+            "anomalies": [
+              "[Google Gemini] Unnatural smoothing and lack of fine skin texture typical of deepfake face-swapping",
+              "[Google Gemini] Inconsistent lighting and shadow mapping between the facial region and the surrounding neck/ears",
+              "[Google Gemini] Blurry blending artifacts around the jawline and hairline boundaries",
+              "[Google Gemini] Abnormal softening of eye details and inconsistent corneal specular highlights"
+            ],
+            "latency_sec": 6.5768
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN"
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.5128,
+          "confidence": 51.28,
+          "uncertainty": 0.9744,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 7.3218,
+        "sample_id": 10,
+        "source": "CelebDF_fake"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\Celeb DF\\Celeb-real\\id31_0009.mp4",
+        "filename": "id31_0009.mp4",
+        "ground_truth": "REAL",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Video probability (0.47) lies in the ambiguous decision margin [0.35, 0.65].",
+        "per_model": {
+          "video_lstm": {
+            "raw_fake_prob": 0.8715,
+            "prediction": "FAKE",
+            "latency_sec": 0.0471,
+            "error": "FP"
+          },
+          "frame_resnet": {
+            "mean_frame_fake_prob": 0.1536,
+            "temporal_variance": 0.0746
+          },
+          "forensics": {
+            "mean_forensic_score": 0.2943
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "anomalies": [],
+            "latency_sec": 5.2922
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN"
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.4689,
+          "confidence": 53.11,
+          "uncertainty": 0.9379,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 5.8153,
+        "sample_id": 11,
+        "source": "CelebDF_real"
+      },
+      {
+        "sample_path": "D:\\Download\\SatyaDrishti_Datasets\\FaceForensics++_C23\\Deepfakes\\394_373.mp4",
+        "filename": "394_373.mp4",
+        "ground_truth": "FAKE",
+        "final_verdict": "UNCERTAIN",
+        "canonical_decision": "UNCERTAIN",
+        "reason": "Video probability (0.49) lies in the ambiguous decision margin [0.35, 0.65].",
+        "per_model": {
+          "video_lstm": {
+            "raw_fake_prob": 0.8292,
+            "prediction": "FAKE",
+            "latency_sec": 0.2056,
+            "error": "TP"
+          },
+          "frame_resnet": {
+            "mean_frame_fake_prob": 0.2622,
+            "temporal_variance": 0.0639
+          },
+          "forensics": {
+            "mean_forensic_score": 0.2767
+          },
+          "gemini_vision": {
+            "assessment": "REAL",
+            "anomalies": [
+              "[Google Gemini] Motion blur across the facial region due to movement during capture",
+              "[Google Gemini] Uneven lighting resulting in partial shadowing on the left side of the face"
+            ],
+            "latency_sec": 9.4215
+          },
+          "xception": {
+            "raw_fake_prob": null,
+            "prediction": "UNCERTAIN"
+          }
+        },
+        "fusion": {
+          "fused_probability": 0.4919,
+          "confidence": 50.81,
+          "uncertainty": 0.9837,
+          "disagreement_detected": false,
+          "contradictions": [],
+          "error": "ABSTAINED_UNCERTAIN"
+        },
+        "total_latency_sec": 11.9993,
+        "sample_id": 12,
+        "source": "FF++_C23_Deepfakes"
+      }
+    ]
+  }
+}

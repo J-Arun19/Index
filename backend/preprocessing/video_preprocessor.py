@@ -13,7 +13,7 @@ cv2.ocl.setUseOpenCL(False)
 os.environ["OPENCV_OPENCL_RUNTIME"] = "disabled"
 os.environ["OPENCV_FFMPEG_LOGLEVEL"] = "-8"
 os.environ["OPENCV_LOG_LEVEL"] = "OFF"
-if hasattr(cv2, "setLogLevel"):
+if hasattr(cv2, "setLogLevel") and hasattr(cv2, "LOG_LEVEL_ERROR"):
     cv2.setLogLevel(cv2.LOG_LEVEL_ERROR)
 
 logger = setup_logger("VideoPreprocessor")
@@ -94,10 +94,10 @@ class VideoPreprocessor:
                 faces = self.detector.detect_faces(frame)
                 if faces:
                     last_face_box = faces[0]
-                    processed_frame = self.detector.crop_face(frame, faces[0])
+                    processed_frame = self.detector.crop_face(frame, faces[0], margin_pct=0.08)
                 elif last_face_box is not None:
                     # Reuse last known face bounding box from same video
-                    processed_frame = self.detector.crop_face(frame, last_face_box)
+                    processed_frame = self.detector.crop_face(frame, last_face_box, margin_pct=0.08)
                 else:
                     processed_frame = frame
 

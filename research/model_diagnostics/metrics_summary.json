@@ -1,0 +1,1238 @@
+{
+  "canonical_smoke_test": {
+    "production_resnet18": {
+      "sample_count": 5,
+      "real_count": 3,
+      "fake_count": 2,
+      "confusion_matrix": {
+        "tn": 3,
+        "fp": 0,
+        "fn": 2,
+        "tp": 0
+      },
+      "accuracy": 0.6,
+      "precision": 0.0,
+      "recall": 0.0,
+      "specificity": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 1.0,
+      "macro_f1": 0.375,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "latency": {
+        "mean_ms": 333.58,
+        "p95_ms": 492.81
+      },
+      "per_category": {
+        "in_the_wild_real": {
+          "count": 2,
+          "real_count": 2,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.0582
+        },
+        "degraded_lowlight_real": {
+          "count": 1,
+          "real_count": 1,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.0475
+        },
+        "in_the_wild_face_swap": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.1025
+        },
+        "ai_generated_synthetic_face": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.0846
+        }
+      }
+    },
+    "sbi_effnet_b4": {
+      "sample_count": 5,
+      "real_count": 3,
+      "fake_count": 2,
+      "confusion_matrix": {
+        "tn": 0,
+        "fp": 3,
+        "fn": 0,
+        "tp": 2
+      },
+      "accuracy": 0.4,
+      "precision": 0.4,
+      "recall": 1.0,
+      "specificity": 0.0,
+      "false_positive_rate": 1.0,
+      "false_negative_rate": 0.0,
+      "macro_f1": 0.2857,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "latency": {
+        "mean_ms": 900.21,
+        "p95_ms": 1164.19
+      },
+      "per_category": {
+        "in_the_wild_real": {
+          "count": 2,
+          "real_count": 2,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.9391
+        },
+        "degraded_lowlight_real": {
+          "count": 1,
+          "real_count": 1,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 1.0
+        },
+        "in_the_wild_face_swap": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        },
+        "ai_generated_synthetic_face": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        }
+      }
+    },
+    "xception": {
+      "sample_count": 5,
+      "real_count": 3,
+      "fake_count": 2,
+      "confusion_matrix": {
+        "tn": 0,
+        "fp": 3,
+        "fn": 1,
+        "tp": 1
+      },
+      "accuracy": 0.2,
+      "precision": 0.25,
+      "recall": 0.5,
+      "specificity": 0.0,
+      "false_positive_rate": 1.0,
+      "false_negative_rate": 0.5,
+      "macro_f1": 0.1667,
+      "roc_auc": 0.5,
+      "pr_auc": 0.6625,
+      "latency": {
+        "mean_ms": 512.16,
+        "p95_ms": 672.47
+      },
+      "per_category": {
+        "in_the_wild_real": {
+          "count": 2,
+          "real_count": 2,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.6859
+        },
+        "degraded_lowlight_real": {
+          "count": 1,
+          "real_count": 1,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.8361
+        },
+        "in_the_wild_face_swap": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.8564
+        },
+        "ai_generated_synthetic_face": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.4511
+        }
+      }
+    },
+    "vit_base": {
+      "sample_count": 5,
+      "real_count": 3,
+      "fake_count": 2,
+      "confusion_matrix": {
+        "tn": 0,
+        "fp": 3,
+        "fn": 0,
+        "tp": 2
+      },
+      "accuracy": 0.4,
+      "precision": 0.4,
+      "recall": 1.0,
+      "specificity": 0.0,
+      "false_positive_rate": 1.0,
+      "false_negative_rate": 0.0,
+      "macro_f1": 0.2857,
+      "roc_auc": 0.3333,
+      "pr_auc": 0.2917,
+      "latency": {
+        "mean_ms": 642.9,
+        "p95_ms": 1089.79
+      },
+      "per_category": {
+        "in_the_wild_real": {
+          "count": 2,
+          "real_count": 2,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.9882
+        },
+        "degraded_lowlight_real": {
+          "count": 1,
+          "real_count": 1,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.9953
+        },
+        "in_the_wild_face_swap": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.99
+        },
+        "ai_generated_synthetic_face": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9922
+        }
+      }
+    },
+    "full_image_resnet18": {
+      "sample_count": 5,
+      "real_count": 3,
+      "fake_count": 2,
+      "confusion_matrix": {
+        "tn": 2,
+        "fp": 1,
+        "fn": 1,
+        "tp": 1
+      },
+      "accuracy": 0.6,
+      "precision": 0.5,
+      "recall": 0.5,
+      "specificity": 0.6667,
+      "false_positive_rate": 0.3333,
+      "false_negative_rate": 0.5,
+      "macro_f1": 0.5833,
+      "roc_auc": 0.6667,
+      "pr_auc": 0.4167,
+      "latency": {
+        "mean_ms": 185.55,
+        "p95_ms": 318.6
+      },
+      "per_category": {
+        "in_the_wild_real": {
+          "count": 2,
+          "real_count": 2,
+          "fake_count": 0,
+          "accuracy": 0.5,
+          "mean_fake_prob": 0.5004
+        },
+        "degraded_lowlight_real": {
+          "count": 1,
+          "real_count": 1,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.2359
+        },
+        "in_the_wild_face_swap": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.2979
+        },
+        "ai_generated_synthetic_face": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9975
+        }
+      }
+    }
+  },
+  "validation_set": {
+    "production_resnet18": {
+      "sample_count": 60,
+      "real_count": 30,
+      "fake_count": 30,
+      "confusion_matrix": {
+        "tn": 30,
+        "fp": 0,
+        "fn": 30,
+        "tp": 0
+      },
+      "accuracy": 0.5,
+      "precision": 0.0,
+      "recall": 0.0,
+      "specificity": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 1.0,
+      "macro_f1": 0.3333,
+      "roc_auc": 0.5056,
+      "pr_auc": 0.5481,
+      "latency": {
+        "mean_ms": 266.33,
+        "p95_ms": 432.14
+      },
+      "per_category": {
+        "Celeb-real": {
+          "count": 15,
+          "real_count": 15,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.2652
+        },
+        "original": {
+          "count": 15,
+          "real_count": 15,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.133
+        },
+        "Celeb-synthesis": {
+          "count": 15,
+          "real_count": 0,
+          "fake_count": 15,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.3051
+        },
+        "Deepfakes": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.1241
+        },
+        "Face2Face": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.0562
+        },
+        "FaceSwap": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.0759
+        },
+        "NeuralTextures": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.1105
+        },
+        "FaceShifter": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.1058
+        }
+      }
+    },
+    "sbi_effnet_b4": {
+      "sample_count": 60,
+      "real_count": 30,
+      "fake_count": 30,
+      "confusion_matrix": {
+        "tn": 5,
+        "fp": 25,
+        "fn": 1,
+        "tp": 29
+      },
+      "accuracy": 0.5667,
+      "precision": 0.537,
+      "recall": 0.9667,
+      "specificity": 0.1667,
+      "false_positive_rate": 0.8333,
+      "false_negative_rate": 0.0333,
+      "macro_f1": 0.4841,
+      "roc_auc": 0.5444,
+      "pr_auc": 0.698,
+      "latency": {
+        "mean_ms": 890.98,
+        "p95_ms": 1291.66
+      },
+      "per_category": {
+        "Celeb-real": {
+          "count": 15,
+          "real_count": 15,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 1.0
+        },
+        "original": {
+          "count": 15,
+          "real_count": 15,
+          "fake_count": 0,
+          "accuracy": 0.3333,
+          "mean_fake_prob": 0.7031
+        },
+        "Celeb-synthesis": {
+          "count": 15,
+          "real_count": 0,
+          "fake_count": 15,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9999
+        },
+        "Deepfakes": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        },
+        "Face2Face": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 0.6667,
+          "mean_fake_prob": 0.7791
+        },
+        "FaceSwap": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        },
+        "NeuralTextures": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.8937
+        },
+        "FaceShifter": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        }
+      }
+    },
+    "xception": {
+      "sample_count": 60,
+      "real_count": 30,
+      "fake_count": 30,
+      "confusion_matrix": {
+        "tn": 13,
+        "fp": 17,
+        "fn": 3,
+        "tp": 27
+      },
+      "accuracy": 0.6667,
+      "precision": 0.6136,
+      "recall": 0.9,
+      "specificity": 0.4333,
+      "false_positive_rate": 0.5667,
+      "false_negative_rate": 0.1,
+      "macro_f1": 0.6475,
+      "roc_auc": 0.81,
+      "pr_auc": 0.8349,
+      "latency": {
+        "mean_ms": 540.07,
+        "p95_ms": 889.12
+      },
+      "per_category": {
+        "Celeb-real": {
+          "count": 15,
+          "real_count": 15,
+          "fake_count": 0,
+          "accuracy": 0.2667,
+          "mean_fake_prob": 0.6295
+        },
+        "original": {
+          "count": 15,
+          "real_count": 15,
+          "fake_count": 0,
+          "accuracy": 0.6,
+          "mean_fake_prob": 0.4734
+        },
+        "Celeb-synthesis": {
+          "count": 15,
+          "real_count": 0,
+          "fake_count": 15,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.83
+        },
+        "Deepfakes": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 0.6667,
+          "mean_fake_prob": 0.8196
+        },
+        "Face2Face": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.981
+        },
+        "FaceSwap": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9929
+        },
+        "NeuralTextures": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9282
+        },
+        "FaceShifter": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 0.3333,
+          "mean_fake_prob": 0.3294
+        }
+      }
+    },
+    "vit_base": {
+      "sample_count": 60,
+      "real_count": 30,
+      "fake_count": 30,
+      "confusion_matrix": {
+        "tn": 6,
+        "fp": 24,
+        "fn": 4,
+        "tp": 26
+      },
+      "accuracy": 0.5333,
+      "precision": 0.52,
+      "recall": 0.8667,
+      "specificity": 0.2,
+      "false_positive_rate": 0.8,
+      "false_negative_rate": 0.1333,
+      "macro_f1": 0.475,
+      "roc_auc": 0.5111,
+      "pr_auc": 0.5014,
+      "latency": {
+        "mean_ms": 615.84,
+        "p95_ms": 1168.57
+      },
+      "per_category": {
+        "Celeb-real": {
+          "count": 15,
+          "real_count": 15,
+          "fake_count": 0,
+          "accuracy": 0.1333,
+          "mean_fake_prob": 0.8207
+        },
+        "original": {
+          "count": 15,
+          "real_count": 15,
+          "fake_count": 0,
+          "accuracy": 0.2667,
+          "mean_fake_prob": 0.7794
+        },
+        "Celeb-synthesis": {
+          "count": 15,
+          "real_count": 0,
+          "fake_count": 15,
+          "accuracy": 0.9333,
+          "mean_fake_prob": 0.886
+        },
+        "Deepfakes": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 0.6667,
+          "mean_fake_prob": 0.6699
+        },
+        "Face2Face": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 0.6667,
+          "mean_fake_prob": 0.7474
+        },
+        "FaceSwap": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9985
+        },
+        "NeuralTextures": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 0.6667,
+          "mean_fake_prob": 0.8234
+        },
+        "FaceShifter": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9692
+        }
+      }
+    },
+    "full_image_resnet18": {
+      "sample_count": 60,
+      "real_count": 30,
+      "fake_count": 30,
+      "confusion_matrix": {
+        "tn": 26,
+        "fp": 4,
+        "fn": 1,
+        "tp": 29
+      },
+      "accuracy": 0.9167,
+      "precision": 0.8788,
+      "recall": 0.9667,
+      "specificity": 0.8667,
+      "false_positive_rate": 0.1333,
+      "false_negative_rate": 0.0333,
+      "macro_f1": 0.9165,
+      "roc_auc": 0.9467,
+      "pr_auc": 0.9448,
+      "latency": {
+        "mean_ms": 150.39,
+        "p95_ms": 469.88
+      },
+      "per_category": {
+        "Celeb-real": {
+          "count": 15,
+          "real_count": 15,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.0506
+        },
+        "original": {
+          "count": 15,
+          "real_count": 15,
+          "fake_count": 0,
+          "accuracy": 0.7333,
+          "mean_fake_prob": 0.3129
+        },
+        "Celeb-synthesis": {
+          "count": 15,
+          "real_count": 0,
+          "fake_count": 15,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9903
+        },
+        "Deepfakes": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.8739
+        },
+        "Face2Face": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9904
+        },
+        "FaceSwap": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9994
+        },
+        "NeuralTextures": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.8412
+        },
+        "FaceShifter": {
+          "count": 3,
+          "real_count": 0,
+          "fake_count": 3,
+          "accuracy": 0.6667,
+          "mean_fake_prob": 0.6743
+        }
+      }
+    }
+  },
+  "still_image_eval_set": {
+    "production_resnet18": {
+      "sample_count": 53,
+      "real_count": 24,
+      "fake_count": 29,
+      "confusion_matrix": {
+        "tn": 24,
+        "fp": 0,
+        "fn": 29,
+        "tp": 0
+      },
+      "accuracy": 0.4528,
+      "precision": 0.0,
+      "recall": 0.0,
+      "specificity": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 1.0,
+      "macro_f1": 0.3117,
+      "roc_auc": 0.5848,
+      "pr_auc": 0.6038,
+      "latency": {
+        "mean_ms": 300.39,
+        "p95_ms": 455.07
+      },
+      "per_category": {
+        "genuine_portrait_celeb": {
+          "count": 5,
+          "real_count": 5,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.2235
+        },
+        "genuine_portrait_youtube": {
+          "count": 5,
+          "real_count": 5,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.1437
+        },
+        "genuine_portrait_ff": {
+          "count": 10,
+          "real_count": 10,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.092
+        },
+        "in_the_wild_real_portrait": {
+          "count": 3,
+          "real_count": 3,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.062
+        },
+        "face_swap_celebsynth": {
+          "count": 8,
+          "real_count": 0,
+          "fake_count": 8,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.2542
+        },
+        "face_swap_ff_deepfakes": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.0935
+        },
+        "face_swap_ff_faceswap": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.0665
+        },
+        "reenactment_ff_face2face": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.149
+        },
+        "reenactment_ff_neuraltextures": {
+          "count": 4,
+          "real_count": 0,
+          "fake_count": 4,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.0922
+        },
+        "in_the_wild_face_swap": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.1025
+        },
+        "ai_generated_synthetic_face": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.0846
+        },
+        "degraded_lowlight_real": {
+          "count": 1,
+          "real_count": 1,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.0475
+        }
+      }
+    },
+    "sbi_effnet_b4": {
+      "sample_count": 53,
+      "real_count": 24,
+      "fake_count": 29,
+      "confusion_matrix": {
+        "tn": 2,
+        "fp": 22,
+        "fn": 0,
+        "tp": 29
+      },
+      "accuracy": 0.5849,
+      "precision": 0.5686,
+      "recall": 1.0,
+      "specificity": 0.0833,
+      "false_positive_rate": 0.9167,
+      "false_negative_rate": 0.0,
+      "macro_f1": 0.4394,
+      "roc_auc": 0.625,
+      "pr_auc": 0.7888,
+      "latency": {
+        "mean_ms": 905.28,
+        "p95_ms": 1415.49
+      },
+      "per_category": {
+        "genuine_portrait_celeb": {
+          "count": 5,
+          "real_count": 5,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 1.0
+        },
+        "genuine_portrait_youtube": {
+          "count": 5,
+          "real_count": 5,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.9841
+        },
+        "genuine_portrait_ff": {
+          "count": 10,
+          "real_count": 10,
+          "fake_count": 0,
+          "accuracy": 0.2,
+          "mean_fake_prob": 0.85
+        },
+        "in_the_wild_real_portrait": {
+          "count": 3,
+          "real_count": 3,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.9594
+        },
+        "face_swap_celebsynth": {
+          "count": 8,
+          "real_count": 0,
+          "fake_count": 8,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        },
+        "face_swap_ff_deepfakes": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        },
+        "face_swap_ff_faceswap": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        },
+        "reenactment_ff_face2face": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        },
+        "reenactment_ff_neuraltextures": {
+          "count": 4,
+          "real_count": 0,
+          "fake_count": 4,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        },
+        "in_the_wild_face_swap": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        },
+        "ai_generated_synthetic_face": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        },
+        "degraded_lowlight_real": {
+          "count": 1,
+          "real_count": 1,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 1.0
+        }
+      }
+    },
+    "xception": {
+      "sample_count": 53,
+      "real_count": 24,
+      "fake_count": 29,
+      "confusion_matrix": {
+        "tn": 7,
+        "fp": 17,
+        "fn": 1,
+        "tp": 28
+      },
+      "accuracy": 0.6604,
+      "precision": 0.6222,
+      "recall": 0.9655,
+      "specificity": 0.2917,
+      "false_positive_rate": 0.7083,
+      "false_negative_rate": 0.0345,
+      "macro_f1": 0.5971,
+      "roc_auc": 0.8836,
+      "pr_auc": 0.9152,
+      "latency": {
+        "mean_ms": 507.32,
+        "p95_ms": 915.93
+      },
+      "per_category": {
+        "genuine_portrait_celeb": {
+          "count": 5,
+          "real_count": 5,
+          "fake_count": 0,
+          "accuracy": 0.4,
+          "mean_fake_prob": 0.5795
+        },
+        "genuine_portrait_youtube": {
+          "count": 5,
+          "real_count": 5,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.7053
+        },
+        "genuine_portrait_ff": {
+          "count": 10,
+          "real_count": 10,
+          "fake_count": 0,
+          "accuracy": 0.5,
+          "mean_fake_prob": 0.3838
+        },
+        "in_the_wild_real_portrait": {
+          "count": 3,
+          "real_count": 3,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.7394
+        },
+        "face_swap_celebsynth": {
+          "count": 8,
+          "real_count": 0,
+          "fake_count": 8,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.7956
+        },
+        "face_swap_ff_deepfakes": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9326
+        },
+        "face_swap_ff_faceswap": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9802
+        },
+        "reenactment_ff_face2face": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.8815
+        },
+        "reenactment_ff_neuraltextures": {
+          "count": 4,
+          "real_count": 0,
+          "fake_count": 4,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.8738
+        },
+        "in_the_wild_face_swap": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.8564
+        },
+        "ai_generated_synthetic_face": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.4511
+        },
+        "degraded_lowlight_real": {
+          "count": 1,
+          "real_count": 1,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.8361
+        }
+      }
+    },
+    "vit_base": {
+      "sample_count": 53,
+      "real_count": 24,
+      "fake_count": 29,
+      "confusion_matrix": {
+        "tn": 5,
+        "fp": 19,
+        "fn": 3,
+        "tp": 26
+      },
+      "accuracy": 0.5849,
+      "precision": 0.5778,
+      "recall": 0.8966,
+      "specificity": 0.2083,
+      "false_positive_rate": 0.7917,
+      "false_negative_rate": 0.1034,
+      "macro_f1": 0.5076,
+      "roc_auc": 0.5438,
+      "pr_auc": 0.5398,
+      "latency": {
+        "mean_ms": 643.57,
+        "p95_ms": 1113.74
+      },
+      "per_category": {
+        "genuine_portrait_celeb": {
+          "count": 5,
+          "real_count": 5,
+          "fake_count": 0,
+          "accuracy": 0.6,
+          "mean_fake_prob": 0.5472
+        },
+        "genuine_portrait_youtube": {
+          "count": 5,
+          "real_count": 5,
+          "fake_count": 0,
+          "accuracy": 0.4,
+          "mean_fake_prob": 0.6232
+        },
+        "genuine_portrait_ff": {
+          "count": 10,
+          "real_count": 10,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.9076
+        },
+        "in_the_wild_real_portrait": {
+          "count": 3,
+          "real_count": 3,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.985
+        },
+        "face_swap_celebsynth": {
+          "count": 8,
+          "real_count": 0,
+          "fake_count": 8,
+          "accuracy": 0.75,
+          "mean_fake_prob": 0.8118
+        },
+        "face_swap_ff_deepfakes": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 0.8,
+          "mean_fake_prob": 0.7501
+        },
+        "face_swap_ff_faceswap": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9934
+        },
+        "reenactment_ff_face2face": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9474
+        },
+        "reenactment_ff_neuraltextures": {
+          "count": 4,
+          "real_count": 0,
+          "fake_count": 4,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.8811
+        },
+        "in_the_wild_face_swap": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.99
+        },
+        "ai_generated_synthetic_face": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9922
+        },
+        "degraded_lowlight_real": {
+          "count": 1,
+          "real_count": 1,
+          "fake_count": 0,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.9953
+        }
+      }
+    },
+    "full_image_resnet18": {
+      "sample_count": 53,
+      "real_count": 24,
+      "fake_count": 29,
+      "confusion_matrix": {
+        "tn": 17,
+        "fp": 7,
+        "fn": 4,
+        "tp": 25
+      },
+      "accuracy": 0.7925,
+      "precision": 0.7812,
+      "recall": 0.8621,
+      "specificity": 0.7083,
+      "false_positive_rate": 0.2917,
+      "false_negative_rate": 0.1379,
+      "macro_f1": 0.7876,
+      "roc_auc": 0.8922,
+      "pr_auc": 0.9065,
+      "latency": {
+        "mean_ms": 193.66,
+        "p95_ms": 357.6
+      },
+      "per_category": {
+        "genuine_portrait_celeb": {
+          "count": 5,
+          "real_count": 5,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.0871
+        },
+        "genuine_portrait_youtube": {
+          "count": 5,
+          "real_count": 5,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.0025
+        },
+        "genuine_portrait_ff": {
+          "count": 10,
+          "real_count": 10,
+          "fake_count": 0,
+          "accuracy": 0.5,
+          "mean_fake_prob": 0.4692
+        },
+        "in_the_wild_real_portrait": {
+          "count": 3,
+          "real_count": 3,
+          "fake_count": 0,
+          "accuracy": 0.3333,
+          "mean_fake_prob": 0.6669
+        },
+        "face_swap_celebsynth": {
+          "count": 8,
+          "real_count": 0,
+          "fake_count": 8,
+          "accuracy": 1.0,
+          "mean_fake_prob": 1.0
+        },
+        "face_swap_ff_deepfakes": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 0.6,
+          "mean_fake_prob": 0.7398
+        },
+        "face_swap_ff_faceswap": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9999
+        },
+        "reenactment_ff_face2face": {
+          "count": 5,
+          "real_count": 0,
+          "fake_count": 5,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9558
+        },
+        "reenactment_ff_neuraltextures": {
+          "count": 4,
+          "real_count": 0,
+          "fake_count": 4,
+          "accuracy": 0.75,
+          "mean_fake_prob": 0.707
+        },
+        "in_the_wild_face_swap": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 0.0,
+          "mean_fake_prob": 0.2979
+        },
+        "ai_generated_synthetic_face": {
+          "count": 1,
+          "real_count": 0,
+          "fake_count": 1,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.9975
+        },
+        "degraded_lowlight_real": {
+          "count": 1,
+          "real_count": 1,
+          "fake_count": 0,
+          "accuracy": 1.0,
+          "mean_fake_prob": 0.2359
+        }
+      }
+    }
+  }
+}

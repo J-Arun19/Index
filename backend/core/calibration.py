@@ -25,10 +25,10 @@ class TemperatureScalingCalibrator:
 
     def __init__(
         self,
-        temperature: float = 1.65,
-        tau_real: float = 0.35,
-        tau_fake: float = 0.65,
-        min_confidence: float = 0.60,
+        temperature: float = 1.885,
+        tau_real: float = 0.44,
+        tau_fake: float = 0.56,
+        min_confidence: float = 0.56,
         config_path: str = DEFAULT_CALIBRATION_PATH,
     ):
         self.temperature = float(temperature)

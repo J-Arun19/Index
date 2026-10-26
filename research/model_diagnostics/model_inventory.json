@@ -1,0 +1,255 @@
+{
+  "inventory_metadata": {
+    "generated_at": "2026-10-13T16:34:00+05:30",
+    "project_root": "D:\\Download\\satya-vision-guard-main\\satya-vision-guard-main",
+    "audit_type": "inference_only_no_training",
+    "total_models_evaluated": 8
+  },
+  "models": [
+    {
+      "model_id": "production_resnet18",
+      "name": "Production ResNet-18 Image Classifier",
+      "architecture": "ResNet-18 (Torchvision backbone with Linear(512, 2) classification head)",
+      "checkpoint_path": "backend/models/weights/image_model.pth",
+      "checkpoint_size_bytes": 44795497,
+      "sha256": "cc411dafbc845e1fb65197487a87fe409bc0c7ff1520c8e4e83b4aceb4fa8aeb",
+      "loads_successfully": true,
+      "architecture_matched": true,
+      "parameter_count": 11177538,
+      "state_dict_tensor_count": 122,
+      "media_support": "still_images",
+      "input_resolution": [224, 224],
+      "color_format": "RGB",
+      "normalization": {
+        "mean": [0.485, 0.456, 0.406],
+        "std": [0.229, 0.224, 0.225],
+        "pixel_scaling": "1/255.0",
+        "value_range": "[-2.1179, +2.5089]"
+      },
+      "face_cropping_policy": "Haar cascade crop to primary face; falls back to full image if no face detected",
+      "class_mapping": {
+        "0": "REAL",
+        "1": "FAKE"
+      },
+      "original_training_dataset": "FaceForensics++ (C23 compression) + Celeb-DF v2 (video-extracted frames; 96.2% FF++ video frames, 0 static diffusion/GAN portraits)",
+      "training_history": {
+        "epochs_trained": 2,
+        "batch_size": 128,
+        "learning_rate": 0.0001,
+        "strategy": "both",
+        "pretrained": true,
+        "run_id": "image_both_20260815_233645",
+        "promoted_at": "2026-08-15T23:44:59.526069",
+        "is_baseline": false
+      },
+      "historical_metrics": {
+        "train_loss": 0.31856955,
+        "train_accuracy": 62.5,
+        "val_loss": 1.88588832,
+        "accuracy": 75.8,
+        "precision": 0.869272,
+        "recall": 0.816456,
+        "f1_score": 0.842037,
+        "macro_f1": 0.662471,
+        "roc_auc": 0.729837,
+        "ece": 0.683803,
+        "optimized_threshold": 0.04,
+        "confusion_matrix_val": [[113, 97], [145, 645]]
+      },
+      "license": "Academic Non-Commercial Research License (FaceForensics++ / Celeb-DF); BSD 3-Clause (Torchvision)",
+      "production_role": "Active Production Image Model"
+    },
+    {
+      "model_id": "production_video_model",
+      "name": "Production Spatio-Temporal Video Classifier",
+      "architecture": "ResNet-18 spatial backbone + 2-layer Bidirectional LSTM temporal head",
+      "checkpoint_path": "backend/models/weights/video_model.pth",
+      "checkpoint_size_bytes": 47942857,
+      "sha256": "a1c069bf6889b8306c398c306843f134e244187cbd8f86d66a7540d1b3e8db81",
+      "loads_successfully": true,
+      "architecture_matched": true,
+      "parameter_count": 11974722,
+      "state_dict_tensor_count": 126,
+      "media_support": "video_only",
+      "input_resolution": [224, 224],
+      "frame_sequence_length": 10,
+      "color_format": "RGB",
+      "normalization": {
+        "mean": [0.485, 0.456, 0.406],
+        "std": [0.229, 0.224, 0.225]
+      },
+      "face_cropping_policy": "Sequential facial tracking across sampled 10 frames",
+      "class_mapping": {
+        "0": "REAL",
+        "1": "FAKE"
+      },
+      "original_training_dataset": "FaceForensics++ C23 Video Sequences",
+      "training_history": {
+        "strategy": "standard",
+        "promoted_at": "2026-08-16T21:13:28.626071",
+        "optimized_threshold": 0.84
+      },
+      "historical_metrics": {
+        "val_loss": 0.4378,
+        "accuracy": 66.0,
+        "macro_f1": 0.5582,
+        "roc_auc": 0.5722,
+        "ece": 0.0166
+      },
+      "license": "Academic Non-Commercial Research License",
+      "production_role": "Active Production Video Model"
+    },
+    {
+      "model_id": "sbi_effnet_b4",
+      "name": "Self-Blended Images (SBI) EfficientNet-B4 Detector",
+      "architecture": "EfficientNet-B4 (Shiohara & Yamasaki, CVPR 2022)",
+      "checkpoint_path": "backend/models/experimental/weights/sbi_ffc23.tar",
+      "checkpoint_size_bytes": 141295616,
+      "sha256": "2b05c2ba36ccb9e9f4f9e1aae9acd443ae2e6400ce725f56104fdb175d3c3267",
+      "loads_successfully": true,
+      "architecture_matched": true,
+      "parameter_count": 17551714,
+      "media_support": "still_images_and_video_frames",
+      "input_resolution": [380, 380],
+      "color_format": "RGB",
+      "normalization": {
+        "mean": [0.485, 0.456, 0.406],
+        "std": [0.229, 0.224, 0.225],
+        "pixel_scaling": "1/255.0"
+      },
+      "face_cropping_policy": "Boundary-preserving facial crop with official 25% margin ratio (w/4, h/4)",
+      "class_mapping": {
+        "0": "REAL",
+        "1": "FAKE"
+      },
+      "original_training_dataset": "FaceForensics++ C23 synthesized with Self-Blended Images (SBI) pseudo-forgeries",
+      "historical_metrics": {
+        "cvpr2022_reported_ff_auc": 0.996,
+        "cvpr2022_cross_dataset_celebdf_auc": 0.957,
+        "workspace_still_image_acc": 0.6792,
+        "workspace_still_image_f1": 0.7119
+      },
+      "license": "Non-Commercial Academic Research License (Yamasaki Lab, University of Tokyo)",
+      "production_role": "Isolated Experimental Candidate"
+    },
+    {
+      "model_id": "xception_deepfakebench",
+      "name": "DeepfakeBench Xception Detector",
+      "architecture": "XceptionNet (DeepfakeBench release v1.0.1; Rossler et al.)",
+      "checkpoint_path": "backend/models/experimental/weights/xception_best.pth",
+      "checkpoint_size_bytes": 87768565,
+      "sha256": "dd61186f9ac8e99aae85982cae338b555dfaeef042f6b699e5a55cae3998ba47",
+      "loads_successfully": true,
+      "architecture_matched": true,
+      "parameter_count": 20815170,
+      "state_dict_tensor_count": 283,
+      "media_support": "still_images_and_video_frames",
+      "input_resolution": [256, 256],
+      "color_format": "RGB",
+      "normalization": {
+        "range": "[-1.0, 1.0]",
+        "transformation": "(RGB / 127.5) - 1.0"
+      },
+      "face_cropping_policy": "Tight face crop",
+      "class_mapping": {
+        "0": "REAL",
+        "1": "FAKE"
+      },
+      "original_training_dataset": "FaceForensics++ C23 (Deepfakes, Face2Face, FaceSwap, NeuralTextures)",
+      "license": "MIT / Academic Research Non-Commercial License",
+      "production_role": "Isolated Experimental Candidate"
+    },
+    {
+      "model_id": "vit_base_huggingface",
+      "name": "Vision Transformer (ViT) Deepfake Detector",
+      "architecture": "ViT-Base-Patch16-224 (Fine-tuned google/vit-base-patch16-224-in21k)",
+      "checkpoint_path": "C:\\Users\\HP\\.cache\\huggingface\\hub\\models--dima806--deepfake_vs_real_image_detection",
+      "checkpoint_size_bytes": 343248640,
+      "sha256": "LOCAL_HF_CACHE_DIR",
+      "loads_successfully": true,
+      "architecture_matched": true,
+      "parameter_count": 85800194,
+      "media_support": "still_images",
+      "input_resolution": [224, 224],
+      "color_format": "RGB",
+      "normalization": "Hugging Face AutoImageProcessor (ImageNet mean & std)",
+      "face_cropping_policy": "Full image or face crop supported via AutoImageProcessor",
+      "class_mapping": {
+        "0": "REAL",
+        "1": "FAKE"
+      },
+      "original_training_dataset": "Kaggle Real and Fake Face Detection dataset",
+      "license": "Apache 2.0 (Google ViT base) / Open Research",
+      "production_role": "Isolated Experimental Candidate"
+    },
+    {
+      "model_id": "wang2020_resnet50",
+      "name": "Wang et al. CNN Artifact ResNet-50",
+      "architecture": "ResNet-50 (1 scalar sigmoid output logit)",
+      "checkpoint_path": "scratch/models/blur_jpg_prob0.5.pth",
+      "checkpoint_size_bytes": 282441984,
+      "sha256": "3533f3e58a3b82215f21197f2faf4e99b911ec42a4a6e2d7823e04d5f3fd245a",
+      "loads_successfully": true,
+      "architecture_matched": true,
+      "parameter_count": 23510081,
+      "media_support": "still_images",
+      "input_resolution": [224, 224],
+      "color_format": "RGB",
+      "normalization": {
+        "mean": [0.485, 0.456, 0.406],
+        "std": [0.229, 0.224, 0.225]
+      },
+      "face_cropping_policy": "Face crop / center crop",
+      "class_mapping": {
+        "output": "Sigmoid output scalar: probability of synthetic/generated image"
+      },
+      "original_training_dataset": "ProGAN (100k generated images) with Gaussian Blur and JPEG compression augmentations",
+      "license": "Academic Research Non-Commercial License (UC Berkeley / Adobe Research)",
+      "production_role": "Offline Diagnostic Reference Only"
+    },
+    {
+      "model_id": "full_image_resnet18",
+      "name": "Full Image I1 ResNet-18 Run Checkpoint",
+      "architecture": "ResNet-18",
+      "checkpoint_path": "backend/models/weights/runs/full_image_I1/model_best.pth",
+      "checkpoint_size_bytes": 44795497,
+      "sha256": "f9fed25debad260a276a010be5b45d1d7bd20108009d8312acab9544cb4090b7",
+      "loads_successfully": true,
+      "architecture_matched": true,
+      "parameter_count": 11177538,
+      "media_support": "still_images",
+      "input_resolution": [224, 224],
+      "color_format": "RGB",
+      "normalization": "ImageNet mean/std",
+      "class_mapping": {
+        "0": "REAL",
+        "1": "FAKE"
+      },
+      "original_training_dataset": "Full-frame image representations (Phase 3 ablation run)",
+      "license": "FaceForensics++ Non-Commercial License",
+      "production_role": "Historical Ablation Checkpoint"
+    },
+    {
+      "model_id": "cval_backup_resnet18",
+      "name": "Controlled Validation Backup ResNet-18",
+      "architecture": "ResNet-18",
+      "checkpoint_path": "backend/backup_ml_controlled_validation/weights/image_model.pth",
+      "checkpoint_size_bytes": 44795497,
+      "sha256": "a4688649a6be5aa053de413f8713ebc999829e8cc6e100e3075f0df2bf33de24",
+      "loads_successfully": true,
+      "architecture_matched": true,
+      "parameter_count": 11177538,
+      "media_support": "still_images",
+      "input_resolution": [224, 224],
+      "color_format": "RGB",
+      "normalization": "ImageNet mean/std",
+      "class_mapping": {
+        "0": "REAL",
+        "1": "FAKE"
+      },
+      "original_training_dataset": "Controlled validation pilot subset",
+      "license": "FaceForensics++ Non-Commercial License",
+      "production_role": "Pre-Diagnostic Backup Checkpoint"
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "manifest_metadata": {
+    "title": "SatyaDrishti Model Diagnostics Run Manifest",
+    "timestamp": "2026-10-13T16:37:00+05:30",
+    "environment": {
+      "os": "Windows 11",
+      "python_version": "3.12.9",
+      "pytorch_version": "2.5.1+cu124",
+      "device": "CPU",
+      "workspace_root": "D:\\Download\\satya-vision-guard-main\\satya-vision-guard-main"
+    },
+    "protocol": "Strict Inference-Only Diagnostic Evaluation (Zero Retraining, Zero Fine-Tuning, Zero Threshold Alteration)"
+  },
+  "evaluated_models": [
+    {
+      "model_id": "production_resnet18",
+      "name": "Production ResNet-18",
+      "checkpoint_path": "backend/models/weights/image_model.pth",
+      "sha256": "cc411dafbc845e1fb65197487a87fe409bc0c7ff1520c8e4e83b4aceb4fa8aeb",
+      "architecture": "ResNet18",
+      "input_resolution": "224x224",
+      "mean_latency_ms": 28.5,
+      "status": "EVALUATED"
+    },
+    {
+      "model_id": "sbi_effnet_b4",
+      "name": "Self-Blended Images (SBI) EfficientNet-B4",
+      "checkpoint_path": "backend/models/experimental/weights/sbi_ffc23.tar",
+      "sha256": "2b05c2ba36ccb9e9f4f9e1aae9acd443ae2e6400ce725f56104fdb175d3c3267",
+      "architecture": "EfficientNet-B4",
+      "input_resolution": "380x380 (25% margin boundary crop)",
+      "mean_latency_ms": 245.2,
+      "status": "EVALUATED"
+    },
+    {
+      "model_id": "xception",
+      "name": "DeepfakeBench Xception",
+      "checkpoint_path": "backend/models/experimental/weights/xception_best.pth",
+      "sha256": "dd61186f9ac8e99aae85982cae338b555dfaeef042f6b699e5a55cae3998ba47",
+      "architecture": "Xception",
+      "input_resolution": "256x256 ([-1, 1] range)",
+      "mean_latency_ms": 115.8,
+      "status": "EVALUATED"
+    },
+    {
+      "model_id": "vit_base",
+      "name": "Google Vision Transformer (ViT-Base)",
+      "checkpoint_path": "C:\\Users\\HP\\.cache\\huggingface\\hub\\models--dima806--deepfake_vs_real_image_detection",
+      "sha256": "LOCAL_HF_CACHE",
+      "architecture": "ViT-Base-Patch16-224",
+      "input_resolution": "224x224",
+      "mean_latency_ms": 840.4,
+      "status": "EVALUATED"
+    },
+    {
+      "model_id": "full_image_resnet18",
+      "name": "Full Image I1 ResNet-18",
+      "checkpoint_path": "backend/models/weights/runs/full_image_I1/model_best.pth",
+      "sha256": "f9fed25debad260a276a010be5b45d1d7bd20108009d8312acab9544cb4090b7",
+      "architecture": "ResNet18",
+      "input_resolution": "224x224",
+      "mean_latency_ms": 29.1,
+      "status": "EVALUATED"
+    },
+    {
+      "model_id": "wang_resnet50",
+      "name": "Wang et al. ProGAN ResNet-50",
+      "checkpoint_path": "scratch/models/blur_jpg_prob0.5.pth",
+      "sha256": "3533f3e58a3b82215f21197f2faf4e99b911ec42a4a6e2d7823e04d5f3fd245a",
+      "architecture": "ResNet50",
+      "input_resolution": "224x224",
+      "status": "SMOKE_TESTED"
+    }
+  ],
+  "canonical_evaluation_inputs": [
+    {
+      "filename": "profile.jpeg",
+      "path": "D:\\Download\\profile.jpeg",
+      "sha256": "f8f5c6b2d9e19d0c44b39cb2546a5cbb893cfae933a8a2299db4d5cc1138877d",
+      "size_bytes": 179788,
+      "ground_truth": "REAL",
+      "category": "genuine_portrait_in_wild"
+    },
+    {
+      "filename": "she.jpeg",
+      "path": "D:\\Download\\she.jpeg",
+      "sha256": "73b270ed9164c9bf1857da75abf3a42c2fab9328e452773dc114b947c208b912",
+      "size_bytes": 18560,
+      "ground_truth": "REAL",
+      "category": "genuine_portrait_lowlight_blur"
+    },
+    {
+      "filename": "picture.jpeg",
+      "path": "D:\\Download\\picture.jpeg",
+      "sha256": "5984382947beffc199ea58345e807f697a3ad335d9c7ececb50b0b40eedafa74",
+      "size_bytes": 132844,
+      "ground_truth": "REAL",
+      "category": "genuine_portrait_in_wild"
+    },
+    {
+      "filename": "deepy.jpeg",
+      "path": "D:\\Download\\deepy.jpeg",
+      "sha256": "a3486db8d9a665d6d34ad351358487a6918e88887045e773e4ac301c311d7020",
+      "size_bytes": 20553,
+      "ground_truth": "FAKE",
+      "category": "face_swap_in_wild"
+    },
+    {
+      "filename": "professional.jpeg",
+      "path": "D:\\Download\\professional.jpeg",
+      "sha256": "355c6eefd8fda75bd459b3312d7615d9a5eba0f7c68b53ab0452ec3333bd5779",
+      "size_bytes": 84595,
+      "ground_truth": "FAKE",
+      "category": "ai_generated_synthetic_portrait"
+    }
+  ],
+  "sample_counts": {
+    "canonical_smoke_test": 5,
+    "validation_set_frames": 60,
+    "still_image_eval_set": 53,
+    "non_face_safety_cases": 2
+  },
+  "runtime_summary": {
+    "device": "Intel CPU (Single-threaded PyTorch)",
+    "errors_encountered": 0
+  }
+}

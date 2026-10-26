@@ -41,11 +41,11 @@ class Orchestrator:
                 return os.path.join(Config.UPLOAD_FOLDER, filename)
         return None
 
-    def run_orchestration(self, file_id, media_type=None, user=None):
+    def run_orchestration(self, file_id, media_type=None, user=None, selected_providers=None):
         """
         Keeps backward compatibility with previous interface, but routes to the rich context workflow.
         """
-        context = AnalysisContext(analysis_id=file_id, user=user, media_type=media_type)
+        context = AnalysisContext(analysis_id=file_id, user=user, media_type=media_type, selected_providers=selected_providers)
         final_context = self.run_orchestration_context(context)
         return final_context.to_dict()
 
@@ -141,10 +141,16 @@ class Orchestrator:
         agent_res = None
         try:
             if media_type == 'image':
-                agent_res = self.image_agent.analyze(file_path)
+                if context.selected_providers is not None:
+                    agent_res = self.image_agent.analyze(file_path, selected_providers=context.selected_providers)
+                else:
+                    agent_res = self.image_agent.analyze(file_path)
                 context.image_agent_result = agent_res
             elif media_type == 'video':
-                agent_res = self.video_agent.analyze(file_path)
+                if context.selected_providers is not None:
+                    agent_res = self.video_agent.analyze(file_path, selected_providers=context.selected_providers)
+                else:
+                    agent_res = self.video_agent.analyze(file_path)
                 context.video_agent_result = agent_res
             else:
                 raise ValueError(f"Unsupported media type: {context.media_type}")
@@ -152,28 +158,11 @@ class Orchestrator:
             context.active_agents.append(agent_name)
         except Exception as e:
             logger.error(f"Primary Agent {agent_name} failed: {e}")
-            context.add_log(agent_name, "Failed (Recovered)", start, time.time())
+            context.add_log(agent_name, "Failed", start, time.time())
             context.failures.append({"agent": agent_name, "error": str(e)})
-            # Fallback output
-            agent_res = {
-                "verdict": "REAL",
-                "confidence_score": 50,
-                "features": {},
-                "summary": f"Primary specialist analysis failed: {str(e)}",
-                "processing_time": 0.0,
-                "metadata": {
-                    "filename": context.uploaded_file,
-                    "format": "PNG" if media_type == "image" else "MP4"
-                }
-            }
-            if media_type == 'image':
-                context.image_agent_result = agent_res
-            else:
-                context.video_agent_result = agent_res
-            status = "Success"
+            raise RuntimeError(f"Primary specialist analysis failed: {str(e)}") from e
         
-        if status == "Success":
-            context.add_log(agent_name, status, start, time.time())
+        context.add_log(agent_name, status, start, time.time())
 
         # 4. Metadata Agent
         start = time.time()
@@ -224,7 +213,8 @@ class Orchestrator:
             context.add_log("Confidence Evaluation Agent", status, start, time.time())
 
         # 6. DECISION NODE - Check if ArtifactConsistencyAgent is needed
-        primary_confidence = float(agent_res.get("confidence_score", 50)) / 100.0
+        primary_conf_val = agent_res.get("confidence_score")
+        primary_confidence = (float(primary_conf_val) / 100.0) if primary_conf_val is not None else 0.50
         primary_verdict = agent_res.get("verdict", "REAL")
         metadata_anomalies = metadata_res.get("anomalies_detected", False)
         
@@ -264,8 +254,8 @@ class Orchestrator:
                 context.failures.append({"agent": "ArtifactConsistencyAgent", "error": str(e)})
                 artifact_res = {
                     "status": "Failed",
-                    "anomaly_score": 0.50,
-                    "verdict": "REAL",
+                    "anomaly_score": None,
+                    "verdict": "UNKNOWN",
                     "detected_artifacts": [],
                     "summary": "Artifact analysis failed (recovered)."
                 }
@@ -299,18 +289,20 @@ class Orchestrator:
                 explanation_features["artifact_anomaly"] = context.artifact_agent_result.get("verdict") == "DEEPFAKE"
                 explanation_features["anomaly_score"] = context.artifact_agent_result.get("anomaly_score", 0.0)
 
+            canonical_v = fusion_res.get("canonical_verdict") or fusion_res.get("verdict") or fusion_res.get("primary_verdict")
             explanation_res = self.explanation_agent.explain(
-                verdict=fusion_res.get("verdict"),
-                confidence_level=conf_res.get("level"),
+                verdict=canonical_v,
+                confidence_level=fusion_res.get("confidence_level", conf_res.get("level")),
                 media_type=media_type,
                 features=explanation_features,
                 evidence=fusion_res.get("evidence", []),
                 reason=fusion_res.get("reason"),
+                user_facing_statement=fusion_res.get("user_facing_statement"),
             )
             context.explanation = explanation_res
             
-            # Enrich fusion explanation to include rich details in the UI
-            fusion_res["confidence_level"] = conf_res.get("level")
+            # Enrich fusion explanation to ensure single source of truth
+            fusion_res["confidence_level"] = fusion_res.get("confidence_level", conf_res.get("level"))
             fusion_res["evidence"] = explanation_res.get("evidence", [])
             fusion_res["recommendation"] = explanation_res.get("recommendation", "N/A")
             fusion_res["user_facing_statement"] = explanation_res.get("user_facing_statement")
@@ -335,13 +327,14 @@ class Orchestrator:
         else:
             context.add_log("PDF Report Generator", status, start, time.time())
 
-        # 8. Save Analysis History
+        # 8. Save Analysis History (Consistent with Primary Verdict Single Source of Truth)
         start = time.time()
         try:
             user_id = context.user.get("id") if context.user else None
             user_name = context.user.get("name") if context.user else "Guest"
-            verdict = fusion_res.get("verdict")
-            confidence = float(fusion_res.get("confidence", 0))
+            saved_verdict = canonical_v
+            conf_val = fusion_res.get("confidence")
+            confidence = float(conf_val) if conf_val is not None else 0.0
             
             save_analysis(
                 analysis_id=context.analysis_id,
@@ -349,7 +342,7 @@ class Orchestrator:
                 user_name=user_name,
                 file_name=context.uploaded_file,
                 media_type=context.media_type,
-                prediction=verdict,
+                prediction=saved_verdict,
                 confidence=confidence,
                 report_path=context.report_path
             )

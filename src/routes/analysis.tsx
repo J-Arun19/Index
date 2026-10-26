@@ -20,7 +20,7 @@ import {
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { analysisStore, type AnalysisResult, type AnalysisVerdict } from "@/lib/analysis-store";
+import { analysisStore, type AnalysisResult, type AnalysisVerdict, getCanonicalVerdict } from "@/lib/analysis-store";
 import { useAuthState } from "@/lib/auth-store";
 import { toast } from "sonner";
 
@@ -167,6 +167,10 @@ function AnalysisPage() {
       // 1. Upload to Flask backend
       const formData = new FormData();
       formData.append("file", file);
+      if (user?.id) {
+        formData.append("user_id", String(user.id));
+        formData.append("user", JSON.stringify({ id: user.id, name: user.name, email: user.email }));
+      }
 
       const uploadResponse = await fetch(`${API_URL}/api/upload`, {
         method: "POST",
@@ -210,18 +214,48 @@ function AnalysisPage() {
       }
       await new Promise((r) => setTimeout(r, 300));
 
-      const rawVerdict = fusionResult.prediction || fusionResult.verdict;
-      const isNotSuitable = rawVerdict === "NOT_SUITABLE";
+      const { canonicalVerdict, provisionalSuggestion, isBinaryFallback, reliabilityWarning } = getCanonicalVerdict(fusionResult);
+      const isNotSuitable = canonicalVerdict === "NOT_SUITABLE";
+      const isUncertain = canonicalVerdict === "UNCERTAIN";
+      const isUncertified = isBinaryFallback || isUncertain || isNotSuitable;
+      const rawConf = typeof fusionResult.confidence === "number" ? fusionResult.confidence : null;
+      const confidence = isUncertified ? null : (rawConf !== null ? Math.round(rawConf) : null);
+
+      let confidenceLevel = fusionResult.confidence_level;
+      if (isNotSuitable) {
+        confidenceLevel = "Not Performed";
+      } else if (isBinaryFallback) {
+        confidenceLevel = "Provisional";
+      } else if (isUncertain) {
+        confidenceLevel = "Uncertified";
+      } else if (confidence !== null) {
+        confidenceLevel = confidence >= 80 ? "High" : confidence >= 60 ? "Medium" : "Low";
+      }
+
+      const effectiveMediaUrl = uploadData.media_url
+        ? (uploadData.media_url.startsWith("http") ? uploadData.media_url : `${API_URL}${uploadData.media_url.startsWith("/") ? "" : "/"}${uploadData.media_url}`)
+        : uploadData.saved_filename
+        ? `${API_URL}/api/analysis/uploads/${uploadData.saved_filename}?token=${uploadData.token || ""}&file_id=${backendId}`
+        : `${API_URL}/api/analysis/uploads/${backendId}_${file.name}?file_id=${backendId}`;
 
       const result: AnalysisResult = {
         id: backendId,
         fileName: file.name,
+        saved_filename: uploadData.saved_filename || `${backendId}_${file.name}`,
+        token: uploadData.token,
         fileType: backendMediaType,
-        mediaUrl: uploadData.filename ? `${API_URL}/api/analysis/uploads/${uploadData.filename}` : previewUrl!,
-        verdict: rawVerdict as AnalysisVerdict,
-        prediction: rawVerdict,
-        confidence: isNotSuitable ? 0 : (fusionResult.confidence ?? 0),
-        confidenceLevel: fusionResult.confidence_level || (isNotSuitable ? "Not Performed" : "Low"),
+        mediaUrl: effectiveMediaUrl,
+        verdict: canonicalVerdict,
+        prediction: canonicalVerdict,
+        canonicalVerdict: canonicalVerdict,
+        primaryVerdict: canonicalVerdict,
+        provisionalSuggestion: provisionalSuggestion,
+        originalVerdict: fusionResult.original_verdict || fusionResult.originalVerdict || (isUncertain ? "UNCERTAIN" : canonicalVerdict),
+        isBinaryFallback: isBinaryFallback,
+        isEstimate: isBinaryFallback || isUncertain,
+        reliabilityWarning: reliabilityWarning || fusionResult.reliability_warning,
+        confidence: confidence,
+        confidenceLevel: confidenceLevel || "Uncertified",
         fakeProbability: isNotSuitable ? undefined : fusionResult.fake_probability,
         realProbability: isNotSuitable ? undefined : fusionResult.real_probability,
         rawModelScore: isNotSuitable ? undefined : fusionResult.raw_model_score,
@@ -231,6 +265,10 @@ function AnalysisPage() {
         explanation: fusionResult.explanation,
         analysisStatus: fusionResult.analysis_status || (isNotSuitable ? "Not performed" : "Completed"),
         faceDetected: fusionResult.face_detected !== undefined ? fusionResult.face_detected : !isNotSuitable,
+        faceBbox: fusionResult.face_bbox || null,
+        evidenceCards: fusionResult.evidence_cards || [],
+        qualityGate: fusionResult.quality_gate,
+        features: fusionResult.features,
         mediaCategory: fusionResult.media_category || (isNotSuitable ? "Document / Non-face image" : "Facial Media"),
         agents: fusionResult.agents,
         createdAt: Date.now(),
@@ -238,6 +276,10 @@ function AnalysisPage() {
         recommendation: fusionResult.recommendation,
         timeline: fusionResult.timeline || [],
         reportUrl: fusionResult.report_url ? `${API_URL}${fusionResult.report_url}` : undefined,
+        visualAnalysis: fusionResult.visual_analysis,
+        evidenceBreakdown: fusionResult.evidence_breakdown,
+        approxCostUsd: fusionResult.approx_cost_usd ?? 0.0,
+        providersRan: fusionResult.providers_ran || [],
         naturalLanguageAnswer: analyzeData.natural_language_answer,
       };
       

@@ -355,7 +355,7 @@ class TestMediaRoutingAndOrchestrator(unittest.TestCase):
         res_fake = fusion.fuse(ctx_fake)
         self.assertEqual(res_fake["verdict"], "FAKE")
 
-        # Context with clear likely real indicators
+        # Context with likely real indicators (normalized to user-facing REAL)
         ctx_real = AnalysisContext(analysis_id="decision_real", media_type="image")
         ctx_real.image_agent_result = {
             "verdict": "LIKELY_REAL",
@@ -366,7 +366,24 @@ class TestMediaRoutingAndOrchestrator(unittest.TestCase):
         }
         ctx_real.confidence_result = {"level": "High"}
         res_real = fusion.fuse(ctx_real)
-        self.assertEqual(res_real["verdict"], "LIKELY_REAL")
+        self.assertEqual(res_real["verdict"], "REAL")
+        self.assertEqual(res_real["primary_verdict"], "REAL")
+        self.assertEqual(res_real["original_verdict"], "LIKELY_REAL")
+
+        # Context with explicit certified REAL indicators
+        ctx_certified = AnalysisContext(analysis_id="decision_certified", media_type="image")
+        ctx_certified.image_agent_result = {
+            "verdict": "REAL",
+            "confidence_score": 96.0,
+            "raw_model_score": 0.04,
+            "uncertainty": 0.04,
+            "features": {}
+        }
+        ctx_certified.confidence_result = {"level": "High"}
+        res_certified = fusion.fuse(ctx_certified)
+        self.assertEqual(res_certified["verdict"], "REAL")
+        self.assertEqual(res_certified["primary_verdict"], "REAL")
+        self.assertEqual(res_certified["original_verdict"], "REAL")
 
 if __name__ == '__main__':
     unittest.main()
