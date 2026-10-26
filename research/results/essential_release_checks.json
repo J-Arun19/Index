@@ -1,0 +1,32 @@
+{
+  "flask_app_startup": true,
+  "models_loaded": {
+    "image_resnet18": true,
+    "image_xception": true,
+    "image_vit": true,
+    "video_model": true
+  },
+  "genuine_image_inference": {
+    "sample": "real_celeb_portrait_01.jpg",
+    "verdict": "REAL",
+    "fake_probability": 0.2858,
+    "evidence_count": 6,
+    "cards_count": 7,
+    "recommendation": "No strong evidence of manipulation was detected across evaluated detectors. Note..."
+  },
+  "deepfake_image_inference": {
+    "sample": "fake_celeb_synth_00.jpg",
+    "verdict": "FAKE",
+    "fake_probability": 0.5286,
+    "evidence_count": 6,
+    "cards_count": 7,
+    "recommendation": "Deepfake manipulation flagged. Secondary forensic inspection or source provenanc..."
+  },
+  "video_inference": {
+    "sample": "ff_deepfake_sample_01.mp4",
+    "verdict": "UNCERTAIN",
+    "fake_probability": 0.3517
+  },
+  "consistency_check": true,
+  "errors": []
+}

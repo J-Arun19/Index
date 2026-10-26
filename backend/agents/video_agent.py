@@ -190,10 +190,17 @@ class VideoAgent:
             sample_indices = np.linspace(0, total_frames - 1, num_samples, dtype=int).tolist()
 
             for idx in sample_indices:
-                cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
-                ret, frame = cap.read()
-                if ret and frame is not None and frame.size > 0:
-                    frames.append(frame)
+                try:
+                    cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+                    ret, frame = cap.read()
+                    if ret and frame is not None and getattr(frame, "size", 0) > 0:
+                        h, w = frame.shape[:2]
+                        if max(h, w) > 640:
+                            scale = 640.0 / max(h, w)
+                            frame = cv2.resize(frame, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_AREA)
+                        frames.append(frame)
+                except Exception as read_err:
+                    logger.warning(f"Failed to read/decode frame at index {idx}: {read_err}")
         finally:
             if cap is not None:
                 try:
@@ -250,21 +257,25 @@ class VideoAgent:
         for idx, frame in enumerate(frames):
             frame_sample_idx = sample_indices[idx]
             frame_ts = frame_sample_idx / max(1.0, fps)
-            q_res = self.quality_gate.evaluate(frame, require_face=False)
-            if not q_res.is_suitable:
-                quality_issues.extend(q_res.issues)
+            try:
+                q_res = self.quality_gate.evaluate(frame, require_face=False)
+                if not q_res.is_suitable:
+                    quality_issues.extend(q_res.issues)
 
-            faces = self.preprocessor.detector.detect_faces(frame)
-            if faces:
-                usable_faces += len(faces)
+                faces = self.preprocessor.detector.detect_faces(frame)
+                if faces:
+                    usable_faces += len(faces)
 
-            # Update temporal face tracker across sequence
-            tracked_step = temporal_analyzer.update_frame(
-                frame=frame,
-                frame_idx=frame_sample_idx,
-                timestamp=frame_ts,
-                detected_faces=faces,
-            )
+                # Update temporal face tracker across sequence
+                tracked_step = temporal_analyzer.update_frame(
+                    frame=frame,
+                    frame_idx=frame_sample_idx,
+                    timestamp=frame_ts,
+                    detected_faces=faces,
+                )
+            except Exception as frame_err:
+                logger.warning(f"Error evaluating frame {frame_sample_idx}: {frame_err}")
+                continue
 
             # Infer spatial classification for each tracked face box
             for item in tracked_step:

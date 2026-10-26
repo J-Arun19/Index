@@ -90,6 +90,12 @@ class VideoPreprocessor:
                             frame_tensors.append(last_valid_frame_tensor.clone())
                         continue
 
+                # Downscale high-resolution frames before face cropping to prevent memory pressure
+                h, w = frame.shape[:2]
+                if max(h, w) > 640:
+                    scale = 640.0 / max(h, w)
+                    frame = cv2.resize(frame, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_AREA)
+
                 # Face detection with temporal consistency fallback
                 faces = self.detector.detect_faces(frame)
                 if faces:
