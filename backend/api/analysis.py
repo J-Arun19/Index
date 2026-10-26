@@ -218,7 +218,10 @@ def get_analysis_details(analysis_id):
     if is_not_suitable:
         conf = None
         conf_level = 'Not Performed'
-    elif is_fallback or is_uncertain:
+    elif is_fallback:
+        conf = float(conf_val) if conf_val is not None else (round(max(fake_prob, 1.0 - fake_prob) * 100.0, 2) if fake_prob is not None else 65.0)
+        conf_level = 'Low'
+    elif is_uncertain:
         conf = None
         conf_level = 'Uncertified'
     else:

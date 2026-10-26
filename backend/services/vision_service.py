@@ -741,13 +741,19 @@ class VisionAnalysisService:
         self,
         local_result: Dict[str, Any],
         provider_results: Dict[str, Any],
-        providers_attempted: List[str],
-        providers_succeeded: List[str],
-        providers_failed: List[Dict[str, str]],
-        total_cost_usd: float,
-        media_examined: str,
+        providers_attempted: Optional[List[str]] = None,
+        providers_succeeded: Optional[List[str]] = None,
+        providers_failed: Optional[List[Dict[str, str]]] = None,
+        total_cost_usd: float = 0.0,
+        media_examined: str = "image",
     ) -> Dict[str, Any]:
         """Fuses multiple provider outputs into a canonical visual analysis object."""
+        providers_attempted = providers_attempted if providers_attempted is not None else list(provider_results.keys())
+        providers_succeeded = providers_succeeded if providers_succeeded is not None else [
+            p for p, r in provider_results.items() if r.get("success")
+        ]
+        providers_failed = providers_failed or []
+
         external_assessments: List[str] = []
         all_anomalies: List[str] = []
         all_limitations: List[str] = []
@@ -792,33 +798,61 @@ class VisionAnalysisService:
                 ext_scores.append(score_val)
                 synthetic_scores.append(score_val)
 
-        # Consensus determination
-        external_count = len(external_assessments)
-        fake_votes = external_assessments.count("FAKE")
-        real_votes = external_assessments.count("REAL")
+        # Consensus determination across all eligible reporting providers (external + local)
+        reporting_providers = []
+        for pid, pres in provider_results.items():
+            if pres.get("success"):
+                ass = str(pres.get("assessment", "INCONCLUSIVE")).upper().strip()
+                if ass in ("REAL", "FAKE"):
+                    reporting_providers.append({
+                        "id": pid,
+                        "name": pres.get("name", pid),
+                        "assessment": ass,
+                        "score": pres.get("visual_synthetic_score"),
+                        "is_external": pres.get("is_external_ai", pid != "local_forensic"),
+                    })
 
-        if external_count == 0:
-            consensus_assessment = "LOCAL_ONLY"
-            consensus_reason = "No external AI vision providers configured. Evaluation performed via local forensic baseline."
+        fake_providers = [p for p in reporting_providers if p["assessment"] == "FAKE"]
+        real_providers = [p for p in reporting_providers if p["assessment"] == "REAL"]
+        fake_votes = len(fake_providers)
+        real_votes = len(real_providers)
+        total_eligible = len(reporting_providers)
+
+        if total_eligible == 0:
+            consensus_assessment = "LOCAL_ONLY" if not providers_attempted else "INCONCLUSIVE"
+            consensus_reason = "No eligible vision providers returned a conclusive REAL or FAKE assessment."
+            avg_synthetic_score = float(np.mean(synthetic_scores)) if synthetic_scores else 0.50
+        elif fake_votes > 0 and real_votes > 0:
+            consensus_assessment = "DISAGREEMENT"
+            fake_names = ", ".join(p['name'] for p in fake_providers)
+            real_names = ", ".join(p['name'] for p in real_providers)
+            consensus_reason = (
+                f"Provider disagreement detected: {fake_names} assessed FAKE, whereas {real_names} assessed REAL "
+                f"({fake_votes} FAKE vs {real_votes} REAL across {total_eligible} eligible providers)."
+            )
+            all_anomalies.append(f"Provider Disagreement: Conflicting assessments between vision providers ({fake_names}: FAKE vs {real_names}: REAL).")
             avg_synthetic_score = float(np.mean(synthetic_scores)) if synthetic_scores else 0.50
         elif fake_votes > 0 and real_votes == 0:
             consensus_assessment = "FAKE"
-            consensus_reason = f"External AI vision consensus confirms synthetic manipulation ({fake_votes}/{external_count} providers)."
+            if total_eligible >= 2:
+                consensus_reason = f"Multi-provider vision consensus confirms synthetic manipulation ({fake_votes}/{total_eligible} eligible providers agree)."
+            else:
+                p_name = fake_providers[0]['name']
+                consensus_reason = f"{p_name} indicates synthetic manipulation (single active provider; 1/1)."
             avg_synthetic_score = float(np.mean(ext_scores)) if ext_scores else 0.75
         elif real_votes > 0 and fake_votes == 0:
             consensus_assessment = "REAL"
-            consensus_reason = f"External AI vision consensus confirms authentic natural imagery ({real_votes}/{external_count} providers)."
+            if total_eligible >= 2:
+                consensus_reason = f"Multi-provider vision consensus confirms authentic natural imagery ({real_votes}/{total_eligible} eligible providers agree)."
+            else:
+                p_name = real_providers[0]['name']
+                consensus_reason = f"{p_name} indicates authentic natural imagery (single active provider; 1/1)."
             # Filter out local heuristic anomalies and benign mobile filter notes when confirmed authentic by AI
             all_anomalies = [
                 a for a in all_anomalies 
                 if ("beauty filter" not in a.lower() and "mobile" not in a.lower() and "selective face texture" not in a.lower() and "unnatural boundary" not in a.lower())
             ]
             avg_synthetic_score = float(np.mean(ext_scores)) if ext_scores else 0.15
-        elif fake_votes > 0 and real_votes > 0:
-            consensus_assessment = "DISAGREEMENT"
-            consensus_reason = f"Provider disagreement detected ({fake_votes} FAKE vs {real_votes} REAL). External models conflict."
-            all_anomalies.append("Provider Disagreement: Multi-provider analysis showed conflicting assessments between AI vision models.")
-            avg_synthetic_score = float(np.mean(synthetic_scores)) if synthetic_scores else 0.50
         else:
             consensus_assessment = "INCONCLUSIVE"
             consensus_reason = "External AI vision providers returned inconclusive assessments."

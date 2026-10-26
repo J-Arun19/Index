@@ -528,11 +528,11 @@ class ImageAgent:
             xc_str = f"Xception: {raw_xcep_p:.1%}" if raw_xcep_p is not None else "N/A"
             vt_str = f"ViT: {raw_vit_p:.1%}" if raw_vit_p is not None else "N/A"
 
-            if decision.is_binary_fallback or decision.prediction == DecisionState.UNCERTAIN or decision.reliability_warning:
+            if decision.is_binary_fallback:
                 evidence_summary = (
                     f"Facial region analysis detected divergent or ambiguous signals between neural classifiers ({xc_str}, {vt_str}). "
-                    f"Classified as UNCERTAIN (uncertified). Provisional directional suggestion: {decision.primary_verdict} (calibrated probability: {f_p:.1%}). "
-                    "Notice: Indicators lack consensus; authenticity has NOT been established, and secondary manual verification is required."
+                    f"Classified as {decision.primary_verdict} with LOW CONFIDENCE (decision score: {f_p:.1%}). "
+                    "Notice: Indicators lack consensus; secondary manual verification is advised."
                 )
             elif decision.primary_verdict in ("FAKE", "DEEPFAKE"):
                 anomaly_cards = [c for c in (evidence_cards or []) if c.get("verdict_support") == "SUPPORTS_FAKE"]
@@ -563,15 +563,13 @@ class ImageAgent:
 
         canonical_v = (
             DecisionState.NOT_SUITABLE if decision.prediction == DecisionState.NOT_SUITABLE else
-            DecisionState.UNCERTAIN if (decision.is_binary_fallback or decision.prediction == DecisionState.UNCERTAIN or decision.original_verdict == DecisionState.UNCERTAIN) else
-            DecisionState.FAKE if decision.primary_verdict in ("FAKE", "DEEPFAKE") else
-            DecisionState.REAL if decision.primary_verdict in ("REAL", "LIKELY_REAL") else
-            DecisionState.UNCERTAIN
+            decision.primary_verdict if decision.primary_verdict in ("FAKE", "REAL") else
+            (DecisionState.FAKE if f_p >= 0.50 else DecisionState.REAL)
         )
-        conf_out = None if (decision.is_binary_fallback or canonical_v in (DecisionState.UNCERTAIN, DecisionState.NOT_SUITABLE)) else decision.confidence
+        conf_out = decision.confidence or round(max(f_p, 1.0 - f_p) * 100.0, 2)
         conf_level_out = (
             "Not Performed" if canonical_v == DecisionState.NOT_SUITABLE else
-            ("Provisional" if decision.is_binary_fallback else ("Uncertified" if canonical_v == DecisionState.UNCERTAIN else decision.confidence_level))
+            ("Low" if decision.is_binary_fallback else decision.confidence_level)
         )
 
         # Structured Model Inventory

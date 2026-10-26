@@ -132,17 +132,17 @@ class TestScoreSemanticsAndFusion(unittest.TestCase):
                                msg=f"Expected fake_probability ~0.618, but got {res['fake_probability']}")
         # The primary verdict / provisional suggestion must be FAKE (>= 0.50), NEVER REAL!
         self.assertEqual(res["primary_verdict"], "FAKE",
-                         msg=f"Provisional suggestion must be FAKE when prob >= 0.50, but got {res['primary_verdict']}")
-        self.assertEqual(res["provisional_suggestion"], "FAKE")
-        # Canonical verdict remains UNCERTAIN
-        self.assertEqual(res["canonical_verdict"], "UNCERTAIN")
+                         msg=f"Primary verdict must be FAKE when prob >= 0.50, but got {res['primary_verdict']}")
+        # Canonical verdict is FAKE under authoritative binary policy with Low Confidence
+        self.assertEqual(res["canonical_verdict"], "FAKE")
+        self.assertEqual(res["confidence_level"], "Low")
 
     def test_06_provisional_suggestion_strictly_consistent_with_probability(self):
         """
         Verify that:
-        - When fake_probability >= 0.50, provisional suggestion is FAKE.
-        - When fake_probability < 0.50, provisional suggestion is REAL.
-        - Canonical verdict remains UNCERTAIN when is_binary_fallback is True.
+        - When fake_probability >= 0.50, normalized verdict is FAKE.
+        - When fake_probability < 0.50, normalized verdict is REAL.
+        - is_binary_fallback is True for conflicting/marginal predictions.
         """
         # Case A: Leaning Fake (e.g. 0.58)
         v_fake, orig_fake, is_fallback_fake, warn_fake = PresentationDecisionPolicy.apply_presentation_policy(
@@ -154,7 +154,7 @@ class TestScoreSemanticsAndFusion(unittest.TestCase):
         self.assertEqual(v_fake, DecisionState.FAKE)
         self.assertTrue(is_fallback_fake)
         norm_v_fake = PresentationDecisionPolicy.normalize_verdict(v_fake, 0.58, is_binary_fallback=is_fallback_fake)
-        self.assertEqual(norm_v_fake, DecisionState.UNCERTAIN)
+        self.assertEqual(norm_v_fake, DecisionState.FAKE)
 
         # Case B: Leaning Real (e.g. 0.38)
         v_real, orig_real, is_fallback_real, warn_real = PresentationDecisionPolicy.apply_presentation_policy(
@@ -166,16 +166,15 @@ class TestScoreSemanticsAndFusion(unittest.TestCase):
         self.assertEqual(v_real, DecisionState.REAL)
         self.assertTrue(is_fallback_real)
         norm_v_real = PresentationDecisionPolicy.normalize_verdict(v_real, 0.38, is_binary_fallback=is_fallback_real)
-        self.assertEqual(norm_v_real, DecisionState.UNCERTAIN)
+        self.assertEqual(norm_v_real, DecisionState.REAL)
 
     def test_07_inwild_picture_jpeg_end_to_end_consistency(self):
         """
         End-to-end regression test for inwild_picture.jpeg:
         - Xception is ~0.43 (REAL)
         - ViT is ~0.99 (FAKE)
-        - Pipeline must abstain to UNCERTAIN
+        - Pipeline returns authoritative binary verdict FAKE with Low Confidence
         - Fake probability must be ~0.58 (never 30.5%!)
-        - Provisional suggestion must be FAKE (never REAL!)
         """
         path = "scratch/image_eval_set/inwild_picture.jpeg"
         if not os.path.exists(path):
@@ -184,13 +183,14 @@ class TestScoreSemanticsAndFusion(unittest.TestCase):
         agent = ImageAgent()
         res = agent.analyze(path, selected_providers=[])
 
-        self.assertEqual(res["canonical_verdict"], "UNCERTAIN")
+        self.assertEqual(res["canonical_verdict"], "FAKE")
+        self.assertEqual(res["confidence_level"], "Low")
         self.assertGreaterEqual(res["fake_probability"], 0.50,
                                 f"Expected fake_probability >= 0.50, got {res['fake_probability']}")
         self.assertLessEqual(res["fake_probability"], 0.70,
                              f"Expected fake_probability <= 0.70, got {res['fake_probability']}")
         self.assertEqual(res["primary_verdict"], "FAKE",
-                         f"Provisional suggestion must be FAKE, got {res['primary_verdict']}")
+                         f"Primary verdict must be FAKE, got {res['primary_verdict']}")
 
 if __name__ == "__main__":
     unittest.main()

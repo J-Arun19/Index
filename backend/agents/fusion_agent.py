@@ -406,16 +406,15 @@ class FusionAgent:
 
         canonical_state = (
             DecisionState.NOT_SUITABLE if final_verdict in (DecisionState.NOT_SUITABLE, "NOT_SUITABLE") else
-            DecisionState.UNCERTAIN if (is_binary_fallback or final_verdict == DecisionState.UNCERTAIN or original_verdict == DecisionState.UNCERTAIN) else
-            DecisionState.FAKE if primary_verdict in (DecisionState.FAKE, DecisionState.DEEPFAKE, "DEEPFAKE", "FAKE") else
-            DecisionState.REAL if primary_verdict in (DecisionState.REAL, "REAL") else
-            DecisionState.UNCERTAIN
+            primary_verdict if primary_verdict in (DecisionState.FAKE, DecisionState.REAL) else
+            (DecisionState.FAKE if fused_fake_p is not None and fused_fake_p >= 0.50 else
+             (DecisionState.REAL if fused_fake_p is not None else DecisionState.UNCERTAIN))
         )
 
-        conf_out = None if (is_binary_fallback or canonical_state in (DecisionState.UNCERTAIN, DecisionState.NOT_SUITABLE)) else final_confidence
+        conf_out = final_confidence
         conf_level_out = (
             "Not Performed" if canonical_state == DecisionState.NOT_SUITABLE else
-            ("Provisional" if is_binary_fallback else ("Uncertified" if canonical_state == DecisionState.UNCERTAIN else conf_level))
+            ("Low" if is_binary_fallback else conf_level)
         )
 
         return {
@@ -424,10 +423,10 @@ class FusionAgent:
             "final_verdict": canonical_state,
             "canonical_verdict": canonical_state,
             "canonicalVerdict": canonical_state,
-            "primary_verdict": primary_verdict,
-            "primaryVerdict": primary_verdict,
-            "provisional_suggestion": primary_verdict if is_binary_fallback else None,
-            "provisionalSuggestion": primary_verdict if is_binary_fallback else None,
+            "primary_verdict": canonical_state,
+            "primaryVerdict": canonical_state,
+            "provisional_suggestion": canonical_state if is_binary_fallback else None,
+            "provisionalSuggestion": canonical_state if is_binary_fallback else None,
             "abstention_code": abstention_code if canonical_state in (DecisionState.UNCERTAIN, DecisionState.NOT_SUITABLE) else None,
             "abstentionCode": abstention_code if canonical_state in (DecisionState.UNCERTAIN, DecisionState.NOT_SUITABLE) else None,
             "original_verdict": original_verdict,

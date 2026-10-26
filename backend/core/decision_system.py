@@ -67,28 +67,29 @@ class PresentationDecisionPolicy:
     ) -> str:
         """
         One centralized presentation mapping used consistently by the API,
-        frontend, history and PDF reports:
-        - REAL / LIKELY_REAL becomes REAL.
-        - FAKE / LIKELY_FAKE becomes FAKE.
-        - NOT_SUITABLE remains NOT_SUITABLE.
-        - UNCERTAIN, INCONCLUSIVE, or provisional binary fallbacks remain strictly UNCERTAIN.
+        frontend, history, and PDF reports:
+        - For supported media: strictly REAL or FAKE.
+        - Unsupported media remains NOT_SUITABLE.
+        - When specialists conflict or decision margin is ambiguous, returns
+          REAL or FAKE with is_binary_fallback=True (Low Confidence).
+        - UNCERTAIN is strictly reserved for unanalyzed / failed inference where
+          no valid model probability exists.
         """
         orig = str(original_verdict or "").strip().upper()
-        if is_binary_fallback or orig in ("UNCERTAIN", "INCONCLUSIVE"):
-            return DecisionState.UNCERTAIN
+        v = str(raw_verdict or "").strip().upper()
 
-        if not raw_verdict:
-            return DecisionState.UNCERTAIN
-
-        v = str(raw_verdict).strip().upper()
         if v in ("NOT_SUITABLE", "NOT SUITABLE", "UNSUPPORTED", "UNSUPPORTED MEDIA") or orig in ("NOT_SUITABLE", "NOT SUITABLE"):
             return DecisionState.NOT_SUITABLE
-        if v in ("UNCERTAIN", "INCONCLUSIVE"):
-            return DecisionState.UNCERTAIN
+
         if v in ("FAKE", "DEEPFAKE", "LIKELY_FAKE", "LIKELY FAKE", "SUSPICIOUS", "SUSPICIOUS - PROVISIONAL"):
             return DecisionState.FAKE
+
         if v in ("REAL", "LIKELY_REAL", "LIKELY REAL", "NO MANIPULATION DETECTED"):
             return DecisionState.REAL
+
+        # For internally UNCERTAIN / INCONCLUSIVE results on supported media:
+        if fake_probability is not None:
+            return DecisionState.FAKE if fake_probability >= 0.50 else DecisionState.REAL
 
         return DecisionState.UNCERTAIN
 
@@ -257,7 +258,11 @@ class DecisionResult:
             if reliability_warning is not None:
                 warning = reliability_warning
 
-        self.verdict = prediction
+        self.verdict = p_verdict if p_verdict in (DecisionState.FAKE, DecisionState.REAL) else (
+            DecisionState.NOT_SUITABLE if (prediction == DecisionState.NOT_SUITABLE or p_verdict == DecisionState.NOT_SUITABLE) else
+            (DecisionState.FAKE if fake_probability is not None and fake_probability >= 0.50 else
+             (DecisionState.REAL if fake_probability is not None else DecisionState.UNCERTAIN))
+        )
         self.primary_verdict = p_verdict
         if original_verdict is None and orig_v:
             self.original_verdict = orig_v
@@ -268,10 +273,21 @@ class DecisionResult:
         )
         self.raw_model_score = round(float(raw_model_score), 4) if raw_model_score is not None else None
 
-        # Do not invent confidence scores on UNCERTAIN or NOT_SUITABLE
-        if self.prediction in (DecisionState.UNCERTAIN, DecisionState.NOT_SUITABLE):
+        # Confidence handling
+        if self.prediction == DecisionState.NOT_SUITABLE or self.primary_verdict == DecisionState.NOT_SUITABLE:
             self.confidence = None
-            self.confidence_level = "Not Performed" if self.prediction == DecisionState.NOT_SUITABLE else "Uncertified"
+            self.confidence_level = "Not Performed"
+        elif fallback:
+            # Ambiguity or conflicting specialist models: Low Confidence binary result
+            conf_val = round(float(confidence), 2) if confidence is not None else (
+                round(float(max(self.fake_probability, 1.0 - self.fake_probability) * 100.0), 2)
+                if self.fake_probability is not None else 65.0
+            )
+            self.confidence = conf_val
+            self.confidence_level = "Low"
+        elif self.prediction == DecisionState.UNCERTAIN and fake_probability is None:
+            self.confidence = None
+            self.confidence_level = "Uncertified"
         else:
             self.confidence = round(float(confidence), 2) if confidence is not None else 85.0
             self.confidence_level = confidence_level if confidence_level in ["High", "Medium", "Low"] else (
@@ -280,7 +296,7 @@ class DecisionResult:
 
         self.uncertainty = round(float(uncertainty), 4) if uncertainty is not None else (
             0.0 if self.prediction == DecisionState.NOT_SUITABLE else (
-                0.75 if self.prediction == DecisionState.UNCERTAIN else 0.15
+                round(1.0 - abs(2.0 * self.fake_probability - 1.0), 4) if self.fake_probability is not None else 0.75
             )
         )
         self.evidence = evidence or []
@@ -303,20 +319,24 @@ class DecisionResult:
             "Upload a clear media file containing a visible human face."
             if self.prediction == DecisionState.NOT_SUITABLE
             else (
-                "Secondary manual verification or provenance inspection is recommended."
-                if self.prediction == DecisionState.UNCERTAIN
-                else "Forensic safety audit record generated."
+                "Secondary manual verification and provenance inspection are strongly recommended due to conflicting specialist evidence."
+                if fallback
+                else (
+                    "Secondary manual verification or provenance inspection is recommended."
+                    if self.prediction == DecisionState.UNCERTAIN
+                    else "Forensic safety audit record generated."
+                )
             )
         )
 
         self.is_binary_fallback = fallback
-        self.is_estimate = self.prediction == DecisionState.UNCERTAIN
+        self.is_estimate = bool(fallback or self.prediction == DecisionState.UNCERTAIN)
         self.reliability_warning = warning
         self.is_fallback_probability = bool(self.is_binary_fallback and self.original_verdict == DecisionState.UNCERTAIN)
         self.probability_source = "fallback_abstention_baseline" if self.is_fallback_probability else "calibrated_model_inference"
 
         if not user_facing_statement:
-            if self.prediction in (DecisionState.UNCERTAIN, DecisionState.NOT_SUITABLE):
+            if self.prediction in (DecisionState.UNCERTAIN, DecisionState.NOT_SUITABLE) and not fallback:
                 self.user_facing_statement = USER_FACING_STATEMENTS.get(self.prediction, "Analysis completed.")
             else:
                 self.user_facing_statement = USER_FACING_STATEMENTS.get(
@@ -327,16 +347,15 @@ class DecisionResult:
 
     def to_dict(self) -> Dict[str, Any]:
         canonical_verdict = (
-            DecisionState.NOT_SUITABLE if self.prediction == DecisionState.NOT_SUITABLE else
-            DecisionState.UNCERTAIN if (self.is_binary_fallback or self.prediction == DecisionState.UNCERTAIN or self.original_verdict == DecisionState.UNCERTAIN) else
-            DecisionState.FAKE if self.primary_verdict in (DecisionState.FAKE, "FAKE", DecisionState.DEEPFAKE, "DEEPFAKE") else
-            DecisionState.REAL if self.primary_verdict in (DecisionState.REAL, "REAL", DecisionState.LIKELY_REAL, "LIKELY_REAL") else
-            DecisionState.UNCERTAIN
+            DecisionState.NOT_SUITABLE if (self.prediction == DecisionState.NOT_SUITABLE or self.primary_verdict == DecisionState.NOT_SUITABLE) else
+            self.primary_verdict if self.primary_verdict in (DecisionState.FAKE, DecisionState.REAL) else
+            (DecisionState.FAKE if self.fake_probability is not None and self.fake_probability >= 0.50 else
+             (DecisionState.REAL if self.fake_probability is not None else DecisionState.UNCERTAIN))
         )
-        conf_out = None if (self.is_binary_fallback or canonical_verdict in (DecisionState.UNCERTAIN, DecisionState.NOT_SUITABLE)) else self.confidence
+        conf_out = None if canonical_verdict in (DecisionState.NOT_SUITABLE, DecisionState.UNCERTAIN) and self.confidence is None else self.confidence
         conf_level_out = (
             "Not Performed" if canonical_verdict == DecisionState.NOT_SUITABLE else
-            ("Provisional" if self.is_binary_fallback else ("Uncertified" if canonical_verdict == DecisionState.UNCERTAIN else self.confidence_level))
+            ("Low" if self.is_binary_fallback else ("Uncertified" if canonical_verdict == DecisionState.UNCERTAIN else self.confidence_level))
         )
         return {
             "prediction": canonical_verdict,

@@ -141,24 +141,29 @@ class ReportGenerator:
             banner_color = colors.HexColor('#fef2f2')
             text_color = colors.HexColor('#991b1b')
             border_color = colors.HexColor('#f43f5e')
-            verdict_str = "<b>VERDICT: FAKE</b><br/><font size=8 color='#991b1b'>Multi-signal consensus confirms deepfake manipulation patterns in media features.</font>"
-            conf_str = f"<b>Confidence: {conf_score}% ({conf_level} Confidence)</b>"
+            if is_provisional:
+                verdict_str = "<b>VERDICT: FAKE (LOW CONFIDENCE)</b><br/><font size=8 color='#991b1b'>Specialist detectors produced conflicting or marginal signals. Secondary manual review recommended.</font>"
+                conf_str = f"<b>Confidence: {conf_score}% (Low Confidence)</b>"
+            else:
+                verdict_str = "<b>VERDICT: FAKE</b><br/><font size=8 color='#991b1b'>Multi-signal consensus confirms deepfake manipulation patterns in media features.</font>"
+                conf_str = f"<b>Confidence: {conf_score}% ({conf_level} Confidence)</b>"
         elif canonical_v == "REAL":
             banner_color = colors.HexColor('#ecfdf5')
             text_color = colors.HexColor('#065f46')
             border_color = colors.HexColor('#10b981')
-            verdict_str = "<b>VERDICT: REAL</b><br/><font size=8 color='#047857'>Authentic natural media features observed. Notice: Absence of detected manipulation does not prove absolute authenticity.</font>"
-            conf_str = f"<b>Confidence: {conf_score}% ({conf_level} Confidence)</b>"
+            if is_provisional:
+                verdict_str = "<b>VERDICT: REAL (LOW CONFIDENCE)</b><br/><font size=8 color='#047857'>Specialist detectors produced conflicting or marginal signals. Secondary manual review recommended.</font>"
+                conf_str = f"<b>Confidence: {conf_score}% (Low Confidence)</b>"
+            else:
+                verdict_str = "<b>VERDICT: REAL</b><br/><font size=8 color='#047857'>Authentic natural media features observed. Notice: Absence of detected manipulation does not prove absolute authenticity.</font>"
+                conf_str = f"<b>Confidence: {conf_score}% ({conf_level} Confidence)</b>"
         else:
             canonical_v = "UNCERTAIN"
             banner_color = colors.HexColor('#fffbeb')
             text_color = colors.HexColor('#92400e')
             border_color = colors.HexColor('#f59e0b')
-            subtext = "Disagreement detected between specialist detectors. Authenticity has NOT been established; manual verification is required." if is_binary_fallback else "Media quality or indeterminate forensic signals prevent definitive classification."
-            verdict_str = f"<b>VERDICT: UNCERTAIN</b><br/><font size=8 color='#92400e'>{subtext}</font>"
-            if is_binary_fallback and primary_verdict in ("FAKE", "REAL"):
-                verdict_str += f"<br/><font size=7 color='#b45309'>Unverified model suggestion ({primary_verdict}, estimated probability: {fake_prob_pct}) — not an established authenticity verdict.</font>"
-            conf_str = "<b>Status: Uncertified / Provisional</b><br/><font size=8>Confidence: Not certified</font>"
+            verdict_str = "<b>VERDICT: UNCERTAIN (INFERENCE FAILURE)</b><br/><font size=8 color='#92400e'>Incomplete analysis or processing failure prevented definitive classification.</font>"
+            conf_str = "<b>Status: Processing Failure</b>"
 
 
         banner_data = [
@@ -240,8 +245,8 @@ class ReportGenerator:
              Paragraph("Face Region (BBox):", bold_label_style), Paragraph(bbox_str, body_style)],
             [Paragraph("Blur Metric (Laplacian):", bold_label_style), Paragraph(f"{blur_str} (Variance)", body_style),
              Paragraph("Resolution / Grid:", bold_label_style), Paragraph(str(res_val), body_style)],
-            [Paragraph("Estimated Fake Probability:", bold_label_style), Paragraph(fake_prob_pct, body_style),
-             Paragraph("Prediction Quality Tier:", bold_label_style), Paragraph("Provisional" if is_provisional else "Calibrated Standard", body_style)],
+            [Paragraph("Final Decision Fake Score:", bold_label_style), Paragraph(fake_prob_pct, body_style),
+             Paragraph("Prediction Quality Tier:", bold_label_style), Paragraph("Low Confidence / Fallback" if is_provisional else "Calibrated Standard", body_style)],
         ]
         to = Table(overview_data, colWidths=[120, 130, 120, 130])
         to.setStyle(TableStyle([

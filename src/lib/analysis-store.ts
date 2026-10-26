@@ -169,6 +169,8 @@ export function getCanonicalVerdict(item: any): {
   const rawPred = String(item.primary_verdict || item.primaryVerdict || item.prediction || "").trim().toUpperCase();
   const rawOrig = String(item.original_verdict || item.originalVerdict || "").trim().toUpperCase();
   const abstentionCode = item.abstention_code || item.abstentionCode || null;
+  const isBinaryFallback = Boolean(item.is_binary_fallback ?? item.isBinaryFallback ?? false);
+  const reliabilityWarning = item.reliability_warning || item.reliabilityWarning || null;
 
   if (rawCanonical === "NOT_SUITABLE" || rawVerdict === "NOT_SUITABLE" || rawPred === "NOT_SUITABLE" || rawOrig === "NOT_SUITABLE" || rawPred === "UNSUPPORTED") {
     return {
@@ -182,35 +184,45 @@ export function getCanonicalVerdict(item: any): {
 
   // Canonical verdict REAL or FAKE
   const effectiveVerdict = rawCanonical || rawVerdict || rawPred;
-  if (effectiveVerdict === "FAKE" || effectiveVerdict === "DEEPFAKE") {
+  if (effectiveVerdict === "FAKE" || effectiveVerdict === "DEEPFAKE" || rawPred === "FAKE" || rawPred === "DEEPFAKE") {
     return {
       canonicalVerdict: "FAKE",
       provisionalSuggestion: null,
-      isBinaryFallback: false,
-      reliabilityWarning: null,
+      isBinaryFallback: isBinaryFallback,
+      reliabilityWarning: reliabilityWarning,
+      abstentionCode: null,
     };
   }
 
-  if (effectiveVerdict === "REAL" || effectiveVerdict === "LIKELY_REAL" || effectiveVerdict === "NO MANIPULATION DETECTED") {
+  if (effectiveVerdict === "REAL" || effectiveVerdict === "LIKELY_REAL" || effectiveVerdict === "NO MANIPULATION DETECTED" || rawPred === "REAL" || rawPred === "LIKELY_REAL") {
     return {
       canonicalVerdict: "REAL",
       provisionalSuggestion: null,
-      isBinaryFallback: false,
-      reliabilityWarning: null,
+      isBinaryFallback: isBinaryFallback,
+      reliabilityWarning: reliabilityWarning,
+      abstentionCode: null,
     };
   }
 
-  // Truly UNCERTAIN
-  const isBinaryFallback = Boolean(item.is_binary_fallback ?? item.isBinaryFallback ?? false);
-  const explicitSuggestion = (item.provisional_suggestion || item.provisionalSuggestion) as "FAKE" | "REAL" | null;
-  const reliabilityWarning = item.reliability_warning || item.reliabilityWarning || null;
+  // If fake probability exists for supported media:
+  const fakeP = item.fake_probability ?? item.fakeProbability;
+  if (fakeP !== undefined && fakeP !== null) {
+    return {
+      canonicalVerdict: fakeP >= 0.50 ? "FAKE" : "REAL",
+      provisionalSuggestion: null,
+      isBinaryFallback: true,
+      reliabilityWarning: reliabilityWarning || "Specialist detectors produced ambiguous or conflicting evidence. Secondary manual verification is advised.",
+      abstentionCode: null,
+    };
+  }
 
+  // Truly UNCERTAIN: only when inference failed / unanalyzed
   return {
     canonicalVerdict: "UNCERTAIN",
-    provisionalSuggestion: isBinaryFallback ? explicitSuggestion : null,
+    provisionalSuggestion: null,
     isBinaryFallback: isBinaryFallback,
-    reliabilityWarning: reliabilityWarning || "Model indicators contain conflicting or ambiguous evidence. Secondary manual verification is advised.",
-    abstentionCode: abstentionCode || "INSUFFICIENT_EVIDENCE",
+    reliabilityWarning: reliabilityWarning || "Incomplete analysis or processing failure prevented classification.",
+    abstentionCode: abstentionCode || "INFERENCE_FAILURE",
   };
 }
 
@@ -219,8 +231,8 @@ export function getVerdictTheme(verdict: AnalysisVerdict, isProvisional = false)
     case "FAKE":
       return {
         verdict: "FAKE",
-        label: "FAKE",
-        badgeLabel: "FAKE",
+        label: isProvisional ? "FAKE (LOW CONFIDENCE)" : "FAKE",
+        badgeLabel: isProvisional ? "FAKE • Low Confidence" : "FAKE",
         textColor: "#f43f5e",
         bgColor: "#fef2f2",
         borderColor: "#f43f5e",
@@ -230,13 +242,15 @@ export function getVerdictTheme(verdict: AnalysisVerdict, isProvisional = false)
         badgeClass: "bg-rose-500/15 text-rose-400 border-rose-500/30",
         dotClass: "bg-rose-400",
         iconName: "AlertTriangle",
-        description: "Multi-signal consensus confirms deepfake manipulation patterns in media features.",
+        description: isProvisional
+          ? "Specialist models produced conflicting or marginal signals. Primary classification is FAKE; manual verification is advised."
+          : "Multi-signal consensus confirms deepfake manipulation patterns in media features.",
       };
     case "REAL":
       return {
         verdict: "REAL",
-        label: "REAL",
-        badgeLabel: "REAL",
+        label: isProvisional ? "REAL (LOW CONFIDENCE)" : "REAL",
+        badgeLabel: isProvisional ? "REAL • Low Confidence" : "REAL",
         textColor: "#10b981",
         bgColor: "#ecfdf5",
         borderColor: "#10b981",
@@ -246,7 +260,9 @@ export function getVerdictTheme(verdict: AnalysisVerdict, isProvisional = false)
         badgeClass: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
         dotClass: "bg-emerald-400",
         iconName: "ShieldCheck",
-        description: "Authentic natural media features observed. Notice: Absence of detected manipulation does not guarantee absolute authenticity.",
+        description: isProvisional
+          ? "Specialist models produced conflicting or marginal signals. Primary classification is REAL; absence of detected manipulation does not guarantee authenticity."
+          : "Authentic natural media features observed. Notice: Absence of detected manipulation does not guarantee absolute authenticity.",
       };
     case "NOT_SUITABLE":
       return {
@@ -269,7 +285,7 @@ export function getVerdictTheme(verdict: AnalysisVerdict, isProvisional = false)
       return {
         verdict: "UNCERTAIN",
         label: "UNCERTAIN",
-        badgeLabel: isProvisional ? "UNCERTAIN • Provisional" : "UNCERTAIN",
+        badgeLabel: "UNCERTAIN",
         textColor: "#f59e0b",
         bgColor: "#fffbeb",
         borderColor: "#f59e0b",
@@ -279,7 +295,7 @@ export function getVerdictTheme(verdict: AnalysisVerdict, isProvisional = false)
         badgeClass: "bg-amber-500/15 text-amber-400 border-amber-500/30",
         dotClass: "bg-amber-400",
         iconName: "HelpCircle",
-        description: "Indicators lack consensus or are ambiguous. Authenticity has NOT been established.",
+        description: "Processing failure or incomplete model evaluation prevented classification.",
       };
   }
 }
@@ -292,17 +308,18 @@ export function formatBackendAnalysis(item: any, apiUrl?: string): AnalysisResul
   const isFake = canonicalVerdict === "FAKE";
   const isReal = canonicalVerdict === "REAL";
 
-  const isUncertified = isBinaryFallback || isUncertain || isNotSuitable;
   const rawConf = typeof item.confidence === "number" ? item.confidence : (typeof item.confidence_score === "number" ? item.confidence_score : null);
-  const conf = isUncertified ? null : (rawConf !== null ? Math.round(rawConf) : null);
+  const conf = (isNotSuitable || (isUncertain && rawConf === null))
+    ? null
+    : (rawConf !== null ? Math.round(rawConf) : (item.fake_probability !== undefined ? Math.round(Math.max(item.fake_probability, 1 - item.fake_probability) * 100) : 65));
 
-  let confLevel = "Uncertified";
+  let confLevel = "Low";
   if (isNotSuitable) {
     confLevel = "Not Performed";
-  } else if (isBinaryFallback) {
-    confLevel = "Provisional";
   } else if (isUncertain) {
     confLevel = "Uncertified";
+  } else if (isBinaryFallback) {
+    confLevel = "Low";
   } else if (conf !== null) {
     confLevel = conf >= 80 ? "High" : conf >= 60 ? "Medium" : "Low";
   }

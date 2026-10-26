@@ -533,23 +533,32 @@ function ResultPage() {
                   {theme.label}
                 </div>
 
-                {/* Subordinated Warning Banner if Uncertain or Provisional */}
-                {isUncertain && (
+                {/* Subordinated Warning Banner if Low Confidence or Uncertain */}
+                {isBinaryFallback && (
                   <div className="mt-3 flex items-start gap-2.5 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-200 shadow-sm">
                     <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
                     <div className="space-y-1">
                       <div className="font-semibold text-amber-300 flex items-center gap-2">
-                        <span>
-                          {isBinaryFallback ? "Provisional Prediction Notice" : "Uncertain Verdict Active"}
+                        <span>LOW CONFIDENCE WARNING</span>
+                        <span className="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-mono text-amber-200">
+                          Specialist Disagreement / Ambiguous Margin
                         </span>
-                        {provisionalSuggestion && (
-                          <span className="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-mono text-amber-200">
-                            Unverified model suggestion ({provisionalSuggestion}) — not an established authenticity verdict
-                          </span>
-                        )}
                       </div>
                       <p className="text-[11px] text-amber-300/90 leading-relaxed">
-                        {reliabilityWarning || "The decision system abstained due to conflicting detector signals or image quality limits. Authenticity has NOT been established."}
+                        {reliabilityWarning || "Specialist neural detectors or vision providers produced conflicting assessments. The primary verdict reflects weighted ensemble evidence; secondary manual verification is advised."}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {isUncertain && !isBinaryFallback && (
+                  <div className="mt-3 flex items-start gap-2.5 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-200 shadow-sm">
+                    <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
+                    <div className="space-y-1">
+                      <div className="font-semibold text-amber-300">
+                        <span>Incomplete Evaluation</span>
+                      </div>
+                      <p className="text-[11px] text-amber-300/90 leading-relaxed">
+                        {reliabilityWarning || "Analysis could not be completed reliably due to processing limits or missing model evaluation."}
                       </p>
                     </div>
                   </div>
@@ -578,17 +587,17 @@ function ResultPage() {
                   <div className="mt-3 flex flex-wrap gap-2">
                     <span className={cn(
                       "inline-flex items-center rounded px-2 py-0.5 text-[10px] font-semibold border",
-                      (isBinaryFallback || isUncertain || activeReport.confidenceLevel === "Uncertified" || activeReport.confidenceLevel === "Provisional")
+                      (isBinaryFallback || activeReport.confidenceLevel === "Low")
                         ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
                         : activeReport.confidenceLevel === "High"
                         ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                         : activeReport.confidenceLevel === "Medium"
                         ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                        : "bg-rose-500/10 text-rose-400 border-rose-500/20",
+                        : "bg-slate-800 text-slate-400 border-slate-700",
                     )}>
-                      {(isBinaryFallback || isUncertain || activeReport.confidenceLevel === "Uncertified" || activeReport.confidenceLevel === "Provisional")
-                        ? "Status: Uncertified"
-                        : `${activeReport.confidenceLevel} Confidence`}
+                      {isBinaryFallback
+                        ? "Low Confidence"
+                        : (activeReport.confidenceLevel ? `${activeReport.confidenceLevel} Confidence` : "Standard Evaluated")}
                     </span>
                     {activeReport.fakeProbability !== undefined && (
                       <span className="inline-flex items-center rounded px-2 py-0.5 text-[10px] font-semibold border border-slate-700 bg-slate-800 text-slate-300 font-mono">
@@ -657,13 +666,13 @@ function ResultPage() {
               <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
                 Decision Layer Metrics (Score Separation)
               </h3>
-              <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
+              <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                 <div className="rounded border border-slate-800 bg-slate-950/60 p-3">
                   <div className="text-[10px] uppercase text-slate-400 font-semibold">Raw Fused Specialist Score</div>
                   <div className="mt-1 text-base font-bold font-mono text-slate-200">
                     {activeReport.rawModelScore !== undefined ? `${(activeReport.rawModelScore * 100).toFixed(1)}%` : "N/A"}
                   </div>
-                  <div className="mt-0.5 text-[10px] text-slate-500">Pre-temperature fusion of available neural scores</div>
+                  <div className="mt-0.5 text-[10px] text-slate-500">Uncalibrated ensemble score across neural specialists</div>
                 </div>
                 <div className="rounded border border-slate-800 bg-slate-950/60 p-3">
                   <div className="text-[10px] uppercase text-slate-400 font-semibold">Final Fake Score</div>
@@ -671,14 +680,30 @@ function ResultPage() {
                     {activeReport.fakeProbability !== undefined ? `${(activeReport.fakeProbability * 100).toFixed(1)}%` : "N/A"}
                   </div>
                   <div className="mt-0.5 text-[10px] text-slate-500">
-                    {activeReport.decision?.score_type === "temperature_scaled_score"
-                      ? `Temperature-scaled (T=${activeReport.decision?.temperature ?? "unknown"}); calibration fit is not checkpoint-bound`
-                      : "Decision-adjusted score; not a validated probability"}
+                    Calibrated multi-signal decision score
+                  </div>
+                </div>
+                <div className="rounded border border-slate-800 bg-slate-950/60 p-3">
+                  <div className="text-[10px] uppercase text-slate-400 font-semibold">Estimated Fake Probability</div>
+                  <div className="mt-1 text-base font-bold font-mono text-indigo-400">
+                    {activeReport.fakeProbability !== undefined ? `${(activeReport.fakeProbability * 100).toFixed(1)}%` : "N/A"}
+                  </div>
+                  <div className="mt-0.5 text-[10px] text-slate-500">
+                    Temperature-calibrated posterior probability estimate
+                  </div>
+                </div>
+                <div className="rounded border border-slate-800 bg-slate-950/60 p-3">
+                  <div className="text-[10px] uppercase text-slate-400 font-semibold">Uncertainty</div>
+                  <div className="mt-1 text-base font-bold font-mono text-amber-400">
+                    {activeReport.uncertainty !== undefined ? `${(activeReport.uncertainty * 100).toFixed(1)}%` : "N/A"}
+                  </div>
+                  <div className="mt-0.5 text-[10px] text-slate-500">
+                    Decision margin ambiguity (1 - |2p - 1|)
                   </div>
                 </div>
               </div>
-              <div className="mt-2 text-[10px] text-slate-400">
-                <span className="font-semibold text-slate-300">Safety Policy:</span> Samples between 35% and 65% calibrated probability or with contradictory evidence automatically abstain to UNCERTAIN.
+              <div className="mt-3 text-[10px] text-slate-400">
+                <span className="font-semibold text-slate-300">Authoritative Decision Policy:</span> Successfully analyzed supported media resolves to a primary REAL or FAKE verdict. When models conflict or fall in the ambiguous margin, a LOW CONFIDENCE warning and manual verification recommendation are assigned.
               </div>
             </div>
           )}
@@ -861,10 +886,21 @@ function ResultPage() {
                   )}
                 </div>
 
-                {/* Consensus Statement */}
+                {/* Consensus / Disagreement Statement */}
                 {mv?.consensus_reason && (
-                  <div className="mt-3 rounded border border-slate-800 bg-slate-950/40 p-2.5 text-[11px] text-slate-300">
-                    <span className="font-semibold text-sky-400">Consensus:</span> {mv.consensus_reason}
+                  <div className={cn(
+                    "mt-3 rounded border p-2.5 text-[11px]",
+                    mv.consensus_assessment === "DISAGREEMENT"
+                      ? "border-amber-500/30 bg-amber-950/20 text-amber-200"
+                      : "border-slate-800 bg-slate-950/40 text-slate-300"
+                  )}>
+                    <span className={cn(
+                      "font-semibold",
+                      mv.consensus_assessment === "DISAGREEMENT" ? "text-amber-400" : "text-sky-400"
+                    )}>
+                      {mv.consensus_assessment === "DISAGREEMENT" ? "Provider Disagreement:" : "Provider Assessment:"}
+                    </span>{" "}
+                    {mv.consensus_reason}
                   </div>
                 )}
               </div>

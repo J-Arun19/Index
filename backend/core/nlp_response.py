@@ -52,33 +52,38 @@ def generate_nlp_response(decision_data: Any, question: Optional[str] = None) ->
             "Please upload a clear image containing a visible human face."
         )
     elif primary_verdict in (DecisionState.FAKE, "FAKE", "DEEPFAKE"):
-        answer = (
-            f"Based on SatyaDrishti forensic analysis, this media is classified as FAKE{conf_str}. "
-            f"Deepfake detected / high likelihood of manipulation based on forensic anomaly patterns. "
-            f"Estimated fake probability: {fake_prob_pct}. "
-            f"Reason: {reason}"
-        )
-    elif primary_verdict in (DecisionState.REAL, "REAL"):
-        answer = (
-            f"Based on SatyaDrishti forensic analysis, this media is classified as REAL{conf_str}. "
-            f"No strong evidence of manipulation was detected across classifier and forensic checks. "
-            f"Notice: Absence of detected manipulation does not guarantee absolute authenticity. This does not prove authenticity and does not prove absolute authenticity."
-        )
-    else:  # UNCERTAIN
         if is_binary_fallback:
             answer = (
-                f"SatyaDrishti has classified this media as UNCERTAIN (uncertified). "
-                f"Specialist detectors produced ambiguous or conflicting indicators. "
-                f"Provisional directional indicator: tends toward {raw_primary} (estimated fake probability: {fake_prob_pct}). "
-                f"Notice: {reliability_warning or 'Authenticity has NOT been established; secondary manual verification is advised.'} "
-                f"Reason: {reason}"
+                f"Based on SatyaDrishti forensic analysis, this media is classified as FAKE (LOW CONFIDENCE). "
+                f"Warning: {reliability_warning or 'Specialist detectors or vision providers produced conflicting assessments. Secondary manual verification is advised.'} "
+                f"Decision fake score: {fake_prob_pct}. Reason: {reason}"
             )
         else:
             answer = (
-                f"SatyaDrishti cannot determine this reliably from the available evidence. "
-                f"The result is UNCERTAIN. Reason: {reason} "
-                f"Additional verification or higher-quality source media is recommended."
+                f"Based on SatyaDrishti forensic analysis, this media is classified as FAKE{conf_str}. "
+                f"Deepfake detected / high likelihood of manipulation based on forensic anomaly patterns. "
+                f"Estimated fake probability: {fake_prob_pct}. "
+                f"Reason: {reason}"
             )
+    elif primary_verdict in (DecisionState.REAL, "REAL"):
+        if is_binary_fallback:
+            answer = (
+                f"Based on SatyaDrishti forensic analysis, this media is classified as REAL (LOW CONFIDENCE). "
+                f"Warning: {reliability_warning or 'Specialist detectors or vision providers produced conflicting assessments. Secondary manual verification is advised.'} "
+                f"Notice: Absence of detected manipulation does not guarantee absolute authenticity. Reason: {reason}"
+            )
+        else:
+            answer = (
+                f"Based on SatyaDrishti forensic analysis, this media is classified as REAL{conf_str}. "
+                f"No strong evidence of manipulation was detected across classifier and forensic checks. "
+                f"Notice: Absence of detected manipulation does not guarantee absolute authenticity. This does not prove authenticity and does not prove absolute authenticity."
+            )
+    else:  # UNCERTAIN
+        answer = (
+            f"SatyaDrishti could not complete a reliable evaluation due to missing checkpoints or processing error. "
+            f"The result is UNCERTAIN. Reason: {reason} "
+            f"Additional verification or higher-quality source media is recommended."
+        )
 
 
     return {

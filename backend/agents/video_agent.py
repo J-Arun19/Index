@@ -689,15 +689,17 @@ class VideoAgent:
 
         canonical_v = (
             DecisionState.NOT_SUITABLE if decision.prediction == DecisionState.NOT_SUITABLE else
-            DecisionState.UNCERTAIN if (decision.is_binary_fallback or decision.prediction == DecisionState.UNCERTAIN or decision.original_verdict == DecisionState.UNCERTAIN) else
-            DecisionState.FAKE if decision.primary_verdict in ("FAKE", "DEEPFAKE") else
-            DecisionState.REAL if decision.primary_verdict in ("REAL", "LIKELY_REAL") else
-            DecisionState.UNCERTAIN
+            decision.primary_verdict if decision.primary_verdict in ("FAKE", "REAL") else
+            (DecisionState.FAKE if decision.fake_probability is not None and decision.fake_probability >= 0.50 else
+             (DecisionState.REAL if decision.fake_probability is not None else DecisionState.UNCERTAIN))
         )
-        conf_out = None if (decision.is_binary_fallback or canonical_v in (DecisionState.UNCERTAIN, DecisionState.NOT_SUITABLE)) else decision.confidence
+        conf_out = decision.confidence or (
+            round(max(decision.fake_probability, 1.0 - decision.fake_probability) * 100.0, 2)
+            if decision.fake_probability is not None else None
+        )
         conf_level_out = (
             "Not Performed" if canonical_v == DecisionState.NOT_SUITABLE else
-            ("Provisional" if decision.is_binary_fallback else ("Uncertified" if canonical_v == DecisionState.UNCERTAIN else decision.confidence_level))
+            ("Low" if decision.is_binary_fallback else decision.confidence_level)
         )
 
         mean_xc = primary_track_info.get("mean_xcep_score") if primary_track_info else None
@@ -709,7 +711,7 @@ class VideoAgent:
                 "task": "Frame-Level Facial Manipulation Baseline",
                 "predicted_class": ("FAKE" if mean_sp >= 0.50 else "REAL") if mean_sp is not None else "UNAVAILABLE",
                 "raw_score": round(mean_sp, 4) if mean_sp is not None else None,
-                "calibrated_prob": round(mean_sp, 4) if mean_sp is not None else None,
+                "calibrated_prob": None,
                 "calibration_status": "Uncalibrated / Raw Softmax",
                 "status": "SUCCESS" if mean_sp is not None else "UNAVAILABLE",
                 "limitations": "Frame-level baseline CNN; lacks temporal landmark or lip-synchronization modeling."
@@ -719,7 +721,7 @@ class VideoAgent:
                 "task": "Sampled Frame Face-Swap & Boundary Detection",
                 "predicted_class": ("FAKE" if mean_xc >= 0.50 else "REAL") if mean_xc is not None else "UNAVAILABLE",
                 "raw_score": round(mean_xc, 4) if mean_xc is not None else None,
-                "calibrated_prob": round(mean_xc, 4) if mean_xc is not None else None,
+                "calibrated_prob": None,
                 "calibration_status": "DeepfakeBench Benchmark Softmax",
                 "status": "SUCCESS" if mean_xc is not None else "UNAVAILABLE",
                 "limitations": "Trained on video compression; evaluated independently across sampled keyframes."
@@ -729,7 +731,7 @@ class VideoAgent:
                 "task": "Sampled Frame Synthetic Generative Classifier",
                 "predicted_class": ("FAKE" if mean_vt >= 0.50 else "REAL") if mean_vt is not None else "UNAVAILABLE",
                 "raw_score": round(mean_vt, 4) if mean_vt is not None else None,
-                "calibrated_prob": round(mean_vt, 4) if mean_vt is not None else None,
+                "calibrated_prob": None,
                 "calibration_status": "Raw Softmax",
                 "status": "SUCCESS" if mean_vt is not None else "UNAVAILABLE",
                 "limitations": "Fine-tuned on synthetic generation artifacts across face crops."
