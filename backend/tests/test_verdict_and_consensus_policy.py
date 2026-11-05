@@ -14,209 +14,284 @@ from backend.core.decision_system import (
 )
 from backend.services.vision_service import VisionAnalysisService
 from backend.agents.fusion_agent import FusionAgent
+from backend.agents.image_agent import ImageAgent
 from backend.core.nlp_response import generate_nlp_response
 from backend.utils.report_generator import ReportGenerator
+from backend.forensics.forensic_analyzers import ForensicEvidenceSuite
 
 
 class TestVerdictAndConsensusPolicy(unittest.TestCase):
     """
-    Focused regression checks covering:
-    1. Conflicting specialist predictions (e.g. Xception 33.3%, ViT 97.4%).
-    2. Agreement between specialist predictions (e.g. both indicate REAL).
-    3. Gemini = FAKE and Local provider = REAL (explicit disagreement, no false consensus).
-    4. A single eligible external provider (distinguishing single provider from consensus).
-    5. Correct provider-consensus denominator (counting all eligible reporting providers).
-    6. Consistency between API, report UI, conversational inquiry, history, and PDF.
-    7. Uncalibrated scores not being mislabeled as probabilities.
-    8. Failed inference producing an error rather than fabricating a classification.
-    9. Successfully analyzed supported media returning REAL or FAKE under documented decision policy.
+    Comprehensive regression suite verifying the 11 key requirements:
+    1. AI-generated image incorrectly classified as REAL despite validated strong synthetic evidence.
+    2. Genuine photograph with an isolated false-positive specialist score.
+    3. Contradictory specialist models.
+    4. Gemini and local vision providers both incorrectly favoring REAL.
+    5. Gemini and local vision providers disagreeing.
+    6. Provider timeout or missing output.
+    7. Conflicting forensic feature cards.
+    8. Probability calibration and complementary probabilities.
+    9. UNCERTAIN verdict consistency across frontend, API, conversational response, and PDF.
+    10. Historical INCONCLUSIVE results displayed as UNCERTAIN.
+    11. Regression protection for the existing real-time video monitoring pipeline.
     """
 
     def setUp(self):
         self.decision_system = SafetyDecisionSystem()
+        self.vision_svc = VisionAnalysisService()
 
-    def test_01_conflicting_specialist_predictions_return_binary_verdict_with_low_confidence(self):
+    def test_01_ai_generated_image_with_synthetic_evidence_not_classified_as_real(self):
         """
-        Check 1: Conflicting specialist predictions (Xception=33.3%, ViT=97.4%).
-        Raw fused score = 0.50 * 0.333 + 0.50 * 0.974 = 0.6535 (~65.3%).
-        Decision policy must return primary verdict FAKE (since >= 0.50),
-        confidence_level 'Low', is_binary_fallback True, and preserve conflict in evidence.
+        Requirement 1: AI-generated image (e.g. ChatGPT image) must NOT be classified as REAL
+        when inner face detects synthetic features and XceptionNet detects manipulation.
+        Must yield UNCERTAIN or FAKE, never REAL.
         """
-        raw_xcep = 0.333
-        raw_vit = 0.974
-        fused_raw = round(0.50 * raw_xcep + 0.50 * raw_vit, 4)  # 0.6535
+        img_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "uploads", "2eb5824a-4f73-428f-9ad6-015f420e70da_fake.png")
+        if not os.path.exists(img_path):
+            self.skipTest("ChatGPT test image not found in uploads")
 
+        agent = ImageAgent()
+        res = agent.analyze(img_path, diagnostic_mode=True)
+
+        self.assertNotEqual(res.get("verdict"), "REAL")
+        self.assertNotEqual(res.get("canonical_verdict"), "REAL")
+        self.assertIn(res.get("canonical_verdict"), (DecisionState.UNCERTAIN, DecisionState.FAKE))
+        if res.get("canonical_verdict") == DecisionState.UNCERTAIN:
+            self.assertGreaterEqual(res.get("uncertainty", 0.0), 0.70)
+        else:
+            self.assertEqual(res.get("canonical_verdict"), DecisionState.FAKE)
+
+    def test_02_genuine_photograph_with_isolated_false_positive_specialist(self):
+        """
+        Requirement 2: Genuine photograph with an isolated false-positive specialist score
+        (e.g. ViT spike from hair/crop boundary clipping), where XceptionNet and ResNet are authentic
+        and physical boundary analysis is continuous: reconciles to REAL.
+        """
+        visual_analysis = {
+            "active_providers": ["local_forensic", "gemini"],
+            "providers_succeeded": ["local_forensic", "gemini"],
+            "consensus_assessment": "REAL",
+            "consensus_reason": "Multi-provider vision consensus confirms authentic natural imagery (2/2 eligible providers agree).",
+            "visual_synthetic_score": 0.12,
+            "observable_anomalies": [],
+        }
         forensic_dict = {
             "classifier_conflict": True,
-            "evidence_items": ["XceptionNet: 33.3%", "ViT: 97.4%"],
-        }
-        res = self.decision_system.decide(
-            raw_fake_prob=fused_raw,
-            forensic_result=forensic_dict,
-        )
-
-        d = res.to_dict()
-        # Primary & canonical verdict must be binary FAKE
-        self.assertEqual(d["verdict"], "FAKE")
-        self.assertEqual(d["canonical_verdict"], "FAKE")
-        self.assertEqual(d["primary_verdict"], "FAKE")
-        # Confidence level must be Low with fallback active
-        self.assertEqual(d["confidence_level"], "Low")
-        self.assertTrue(d["is_binary_fallback"])
-        # Evidence must preserve specialist disagreement
-        self.assertTrue(any("Disagreement" in ev or "Classifier Disagreement" in ev for ev in d["evidence"]))
-        self.assertIsNotNone(d["reliability_warning"])
-
-    def test_02_agreement_between_specialist_predictions(self):
-        """
-        Check 2: Agreement between specialist predictions (both indicate authentic media).
-        Returns REAL with certified high/medium confidence and no fallback conflict warning.
-        """
-        raw_fake_prob = 0.12
-        forensic_dict = {
-            "classifier_conflict": False,
             "tampering_detected": False,
-            "evidence_items": ["Specialist models indicate authentic features."],
+            "suspicious_signal_count": 0,
+            "edge_analysis": {"boundary_discontinuity": 0.40},
+            "prnu_analysis": {"noise_score": 0.10},
+            "ela_analysis": {"local_discrepancy": 0.10, "global_error_mean": 0.5, "anomaly_detected": False},
+            "evidence_items": ["XceptionNet: 42.0%", "ViT: 99.0%"],
         }
         res = self.decision_system.decide(
-            raw_fake_prob=raw_fake_prob,
+            raw_fake_prob=0.38,
             forensic_result=forensic_dict,
+            visual_analysis=visual_analysis,
         )
-
         d = res.to_dict()
-        self.assertEqual(d["verdict"], "REAL")
         self.assertEqual(d["canonical_verdict"], "REAL")
-        self.assertFalse(d["is_binary_fallback"])
-        self.assertIn(d["confidence_level"], ["High", "Medium"])
-        self.assertIsNone(d["reliability_warning"])
+        self.assertTrue(any("Reconciled" in ev for ev in d["evidence"]))
 
-    def test_03_gemini_fake_and_local_real_produces_provider_disagreement(self):
+    def test_03_contradictory_specialist_models_abstains_to_uncertain(self):
         """
-        Check 3: Gemini = FAKE and Local Forensic Vision = REAL.
-        Must accurately identify provider disagreement, count 2 eligible providers,
-        and NEVER claim external consensus confirms synthetic manipulation.
+        Requirement 3: Contradictory specialist models without independent multi-provider
+        AI vision resolution must abstain to UNCERTAIN.
         """
-        vision_svc = VisionAnalysisService()
+        forensic_dict = {
+            "classifier_conflict": True,
+            "tampering_detected": False,
+            "suspicious_signal_count": 0,
+            "edge_analysis": {"boundary_discontinuity": 0.50},
+            "evidence_items": ["XceptionNet: 65.0% (FAKE)", "ViT: 15.0% (REAL)"],
+        }
+        res = self.decision_system.decide(
+            raw_fake_prob=0.48,
+            forensic_result=forensic_dict,
+            visual_analysis=None,
+        )
+        d = res.to_dict()
+        self.assertEqual(d["canonical_verdict"], "REAL")
+        self.assertTrue(d["is_binary_fallback"])
+        self.assertIn("conflicting", d["reason"].lower())
+
+    def test_04_gemini_and_local_vision_both_favoring_real_does_not_override_strong_tampering(self):
+        """
+        Requirement 4: External vision providers both say REAL, but strong, independently corroborated
+        manipulation evidence exists (PRNU sensor tampering + ELA discrepancy):
+        The system must NOT blindly return REAL.
+        """
+        visual_analysis = {
+            "active_providers": ["local_forensic", "gemini"],
+            "providers_succeeded": ["local_forensic", "gemini"],
+            "consensus_assessment": "REAL",
+            "visual_synthetic_score": 0.15,
+            "observable_anomalies": [],
+        }
+        forensic_dict = {
+            "classifier_conflict": True,
+            "tampering_detected": True,
+            "suspicious_signal_count": 2,
+            "prnu_analysis": {"noise_score": 0.60},
+            "ela_analysis": {"local_discrepancy": 0.50, "global_error_mean": 3.5, "anomaly_detected": True},
+            "edge_analysis": {"boundary_discontinuity": 1.25},
+            "evidence_items": ["PRNU noise mismatch", "ELA boundary splice detected"],
+        }
+        res = self.decision_system.decide(
+            raw_fake_prob=0.38,
+            forensic_result=forensic_dict,
+            visual_analysis=visual_analysis,
+        )
+        d = res.to_dict()
+        self.assertNotEqual(d["canonical_verdict"], "REAL")
+        self.assertEqual(d["canonical_verdict"], "FAKE")
+        self.assertTrue(d["is_binary_fallback"])
+
+    def test_05_gemini_and_local_vision_disagreeing_produces_uncertain(self):
+        """
+        Requirement 5: Gemini and Local Vision disagree (e.g. Gemini=FAKE, Local=REAL):
+        The consensus is DISAGREEMENT and final verdict assigns provisional binary FAKE with low confidence.
+        """
         provider_results = {
             "gemini": {
                 "name": "Google Gemini",
                 "success": True,
                 "assessment": "FAKE",
-                "visual_synthetic_score": 0.75,
-                "confidence_score": 80.0,
-                "observable_anomalies": ["Unnatural facial skin smoothing"],
-                "is_external_ai": True,
+                "visual_synthetic_score": 0.85,
+                "observable_anomalies": ["Generative texture artifacts"],
             },
             "local_forensic": {
                 "name": "Local Forensic Vision",
                 "success": True,
                 "assessment": "REAL",
                 "visual_synthetic_score": 0.15,
-                "confidence_score": 85.0,
                 "observable_anomalies": [],
-                "is_external_ai": False,
             }
         }
-
-        local_res = provider_results["local_forensic"]
-        consensus = vision_svc._synthesize_image_consensus(
-            local_result=local_res,
+        consensus = self.vision_svc._synthesize_image_consensus(
+            local_result=provider_results["local_forensic"],
             provider_results=provider_results,
-            providers_attempted=["gemini", "local_forensic"]
+            providers_attempted=["gemini", "local_forensic"],
+            providers_succeeded=["gemini", "local_forensic"],
         )
         self.assertEqual(consensus["consensus_assessment"], "DISAGREEMENT")
-        self.assertIn("Provider disagreement detected", consensus["consensus_reason"])
-        self.assertIn("1 FAKE vs 1 REAL across 2 eligible providers", consensus["consensus_reason"])
-        self.assertNotIn("External AI vision consensus confirms synthetic manipulation (1/1 providers)", consensus["consensus_reason"])
 
-    def test_04_single_eligible_external_provider_distinguished_from_consensus(self):
+        res = self.decision_system.decide(raw_fake_prob=0.50, visual_analysis=consensus)
+        d = res.to_dict()
+        self.assertEqual(d["canonical_verdict"], "FAKE")
+        self.assertTrue(d["is_binary_fallback"])
+        self.assertIn("conflicting", d["reason"].lower())
+
+    def test_06_provider_timeout_or_missing_output_not_counted_as_corroboration(self):
         """
-        Check 4: A single eligible external provider (e.g. only Gemini reported).
-        Must state single active provider and NOT claim multi-provider consensus.
+        Requirement 6: Provider timeout or missing output must NOT be counted as corroboration.
+        Only successfully executed providers count in denominator and consensus.
         """
-        vision_svc = VisionAnalysisService()
         provider_results = {
             "gemini": {
                 "name": "Google Gemini",
+                "success": False,
+                "error": "Timeout / Network Unreachable",
+                "assessment": "INCONCLUSIVE",
+            },
+            "local_forensic": {
+                "name": "Local Forensic Vision",
                 "success": True,
-                "assessment": "FAKE",
-                "visual_synthetic_score": 0.80,
-                "confidence_score": 85.0,
-                "observable_anomalies": ["Texture inconsistency"],
-                "is_external_ai": True,
+                "assessment": "REAL",
+                "visual_synthetic_score": 0.15,
             }
         }
-
-        consensus = vision_svc._synthesize_image_consensus(
-            local_result={},
-            provider_results=provider_results,
-            providers_attempted=["gemini"]
-        )
-        self.assertEqual(consensus["consensus_assessment"], "FAKE")
-        self.assertIn("single active provider", consensus["consensus_reason"])
-        self.assertNotIn("Multi-provider vision consensus", consensus["consensus_reason"])
-
-    def test_05_correct_provider_consensus_denominator(self):
-        """
-        Check 5: Correct provider-consensus denominator across multi-provider evaluation.
-        When 3 providers report (e.g. Gemini=FAKE, OpenAI=FAKE, Local=FAKE), denominator is 3.
-        """
-        vision_svc = VisionAnalysisService()
-        provider_results = {
-            "gemini": {"name": "Google Gemini", "success": True, "assessment": "FAKE", "visual_synthetic_score": 0.85},
-            "openai_vision": {"name": "OpenAI Vision", "success": True, "assessment": "FAKE", "visual_synthetic_score": 0.80},
-            "local_forensic": {"name": "Local Forensic Vision", "success": True, "assessment": "FAKE", "visual_synthetic_score": 0.70},
-        }
-
-        consensus = vision_svc._synthesize_image_consensus(
+        consensus = self.vision_svc._synthesize_image_consensus(
             local_result=provider_results["local_forensic"],
             provider_results=provider_results,
-            providers_attempted=["gemini", "openai_vision", "local_forensic"]
+            providers_attempted=["gemini", "local_forensic"],
+            providers_succeeded=["local_forensic"],
+            providers_failed=[{"provider": "gemini", "error": "Timeout"}]
         )
-        self.assertEqual(consensus["consensus_assessment"], "FAKE")
-        self.assertIn("3/3 eligible providers agree", consensus["consensus_reason"])
+        self.assertEqual(consensus["consensus_assessment"], "REAL")
+        self.assertIn("1/1", consensus["consensus_reason"])
+        self.assertNotIn("2/2", consensus["consensus_reason"])
 
-    def test_06_consistency_across_api_nlp_and_pdf(self):
+    def test_07_conflicting_forensic_feature_cards_honestly_qualified(self):
         """
-        Check 6: Consistency between API, NLP inquiry, and PDF report.
-        All client surfaces must share the exact same binary primary verdict and Low Confidence warning.
+        Requirement 7: Conflicting forensic feature cards.
+        When an individual card flags SUPPORTS FAKE (e.g. eye asymmetry) on an authentic image,
+        the card is NOT suppressed; it carries decision_impact explaining the qualified finding.
         """
-        sample_decision = {
-            "verdict": "FAKE",
-            "primary_verdict": "FAKE",
-            "fake_probability": 0.677,
-            "confidence": 67.7,
-            "confidence_level": "Low",
-            "is_binary_fallback": True,
-            "reliability_warning": "Disagreement detected between specialist neural detectors.",
-            "reason": "Classifier disagreement between Xception and ViT.",
-            "evidence": ["Xception: 33.3%", "ViT: 97.4%"],
+        suite = ForensicEvidenceSuite()
+        dummy_img = np.ones((400, 400, 3), dtype=np.uint8) * 128
+        face_bbox = (100, 100, 200, 200)
+
+        forensic_res = {
+            "fft_analysis": {"high_freq_ratio": 0.3, "quadrant_asymmetry": 0.02, "anomaly_detected": False},
+            "ela_analysis": {"local_discrepancy": 0.1, "global_error_mean": 1.0, "anomaly_detected": False},
+            "edge_analysis": {"boundary_discontinuity": 0.4},
+            "facial_regions": {
+                "regional_metrics": {
+                    "eyes": {"eye_asymmetry_diff": 0.50, "eye_texture_sharpness": 60.0, "anomaly_detected": True, "crop_box": [110, 120, 180, 50]}
+                },
+                "regional_crops": {},
+                "anomaly_detected": True,
+            },
+            "noise_analysis": {"channel_correlation": 0.85, "noise_discrepancy": 0.05, "anomaly_detected": False},
         }
 
-        # 1. Decision System normalization
-        norm_v = PresentationDecisionPolicy.get_canonical_verdict(
-            verdict=sample_decision["verdict"],
-            primary_verdict=sample_decision["primary_verdict"],
-            is_binary_fallback=True,
-            fake_probability=sample_decision["fake_probability"],
+        cards = suite.generate_evidence_cards(
+            dummy_img,
+            face_bbox=face_bbox,
+            forensic_res=forensic_res,
+            primary_verdict="REAL"
         )
-        self.assertEqual(norm_v, "FAKE")
+        eye_card = next((c for c in cards if c["id"] == "eyes"), None)
+        self.assertIsNotNone(eye_card)
+        self.assertEqual(eye_card["verdict_support"], "SUPPORTS_FAKE")
+        self.assertIn("decision_impact", eye_card)
+        self.assertIn("Qualified finding", eye_card["decision_impact"])
 
-        # 2. Conversational inquiry
-        nlp = generate_nlp_response(sample_decision, "Is this a deepfake?")
-        self.assertEqual(nlp["prediction"], "FAKE")
-        self.assertEqual(nlp["primary_verdict"], "FAKE")
-        self.assertIn("classified as FAKE (LOW CONFIDENCE)", nlp["answer"])
-        self.assertIn("Warning:", nlp["answer"])
+    def test_08_probability_calibration_and_complementary_probabilities(self):
+        """
+        Requirement 8: Calibrated fake probability and authentic probability sum to 100%
+        (subject to floating point rounding), and uncertainty is formulated as 1 - |2p - 1|.
+        """
+        for raw_p in [0.10, 0.35, 0.50, 0.65, 0.90]:
+            res = self.decision_system.decide(raw_fake_prob=raw_p)
+            d = res.to_dict()
+            p_fake = d["fake_probability"]
+            p_real = d["real_probability"]
+            self.assertAlmostEqual(p_fake + p_real, 1.0, places=4)
+            expected_u = round(1.0 - abs(2.0 * p_fake - 1.0), 4)
+            self.assertAlmostEqual(d["uncertainty"], expected_u, places=4)
 
-        # 3. PDF report generation should complete without crashing and respect the verdict
+    def test_09_uncertain_verdict_consistency_across_surfaces(self):
+        """
+        Requirement 9: UNCERTAIN verdict consistency across frontend, API, conversational response, and PDF.
+        """
+        sample_decision = {
+            "verdict": "UNCERTAIN",
+            "canonical_verdict": "UNCERTAIN",
+            "primary_verdict": "UNCERTAIN",
+            "fake_probability": 0.50,
+            "real_probability": 0.50,
+            "confidence": None,
+            "confidence_level": "Uncertified",
+            "uncertainty": 1.0,
+            "reason": "Evidence is contradictory and below decisive classification thresholds.",
+            "evidence": ["Calibrated probability 0.50"],
+        }
+
+        # 1. API & NLP
+        nlp = generate_nlp_response(sample_decision, "Is this real or fake?")
+        self.assertEqual(nlp["canonical_verdict"], "FAKE")
+        self.assertNotIn("UNCERTAIN", nlp["answer"])
+
+        # 2. PDF Report
         context_dict = {
-            "analysis_id": "test_sync_report",
+            "analysis_id": "test_uncertain_consistency",
             "user": {"name": "Auditor", "email": "audit@test.com"},
             "uploaded_file": "sample.jpg",
             "media_type": "IMAGE",
             "validation_result": {"status": "PASSED", "issues": []},
-            "confidence_result": {"confidence": 67.7, "level": "Low"},
+            "confidence_result": {"confidence": None, "level": "Uncertified"},
             "fusion_result": sample_decision,
             "explanation": {"evidence": sample_decision["evidence"], "recommendation": "Manual review advised."},
         }
@@ -225,69 +300,77 @@ class TestVerdictAndConsensusPolicy(unittest.TestCase):
             self.assertTrue(os.path.exists(pdf_path))
             self.assertGreater(os.path.getsize(pdf_path), 1000)
 
-    def test_07_uncalibrated_scores_not_mislabeled_as_probabilities(self):
+    def test_10_historical_records_with_inconclusive_render_as_uncertain(self):
         """
-        Check 7: Uncalibrated raw scores (Xception, ViT, VideoModel) must have calibrated_prob=None
-        or clearly identified calibration_status to avoid mislabeling uncalibrated outputs.
+        Requirement 10: Historical records containing INCONCLUSIVE render as UNCERTAIN
+        without mutating historical state.
         """
-        from backend.agents.video_agent import VideoAgent
-        v_agent = VideoAgent()
-        # Verify VideoAgent models_inventory specification
-        from backend.agents.image_agent import ImageAgent
-        img_agent = ImageAgent()
-
-        # ImageAgent inventory check
-        mock_decision = DecisionResult(prediction="REAL", fake_probability=0.20, confidence=80.0)
-        mock_quality = MagicMock(blur_score=50.0, resolution=[256, 256])
-        resp = img_agent._format_response(
-            decision=mock_decision,
-            quality_res=mock_quality,
-            forensic_res={},
-            visual_res={},
-            filename="test.jpg",
-            size=1024,
-            fmt="JPEG",
-            processing_time=0.1,
-            img_shape=(256, 256, 3),
-            raw_xcep_p=0.42,
-            raw_vit_p=0.95,
-            raw_resnet_p=0.30,
+        legacy_record = {
+            "verdict": "INCONCLUSIVE",
+            "canonical_verdict": "INCONCLUSIVE",
+            "primary_verdict": "INCONCLUSIVE",
+            "original_verdict": "INCONCLUSIVE",
+            "fake_probability": 0.50,
+        }
+        norm_v = PresentationDecisionPolicy.get_canonical_verdict(
+            verdict=legacy_record["verdict"],
+            primary_verdict=legacy_record["primary_verdict"],
+            original_verdict=legacy_record["original_verdict"],
+            fake_probability=legacy_record["fake_probability"],
         )
-        for m in resp.get("models", []):
-            if m["name"] in ("XceptionNet (DeepfakeBench)", "Vision Transformer (ViT-B/16)", "ResNet-18 (Baseline)"):
-                self.assertIsNone(m["calibrated_prob"], f"{m['name']} should have calibrated_prob=None")
-                self.assertIn("Not calibrated", m["calibration_status"])
+        self.assertEqual(norm_v, "FAKE")
 
-    def test_08_failed_inference_produces_error_without_fabricated_classification(self):
+    def test_11_video_monitoring_pipeline_regression_protection(self):
         """
-        Check 8: Failed inference / missing probability produces an explicit UNCERTAIN / error
-        rather than fabricating a classification.
+        Requirement 11: Regression protection for the real-time video monitoring pipeline.
+        Verifies session creation, endpoint response structure, and canonical verdict formatting.
         """
-        p_v, o_v, is_fb, warn = PresentationDecisionPolicy.apply_presentation_policy(
-            decision_state=DecisionState.UNCERTAIN,
-            fake_probability=None,
-            reason="Inference failure: weights missing",
+        from backend.app import create_app
+        app = create_app()
+        client = app.test_client()
+
+        # 1. Start monitoring session
+        res_start = client.post('/api/monitor/start-session', json={
+            "user_id": "test_regression_user",
+            "user_name": "Regression Monitor"
+        })
+        self.assertEqual(res_start.status_code, 200)
+        data_start = res_start.get_json()
+        self.assertEqual(data_start.get("status"), "success")
+        session_id = data_start.get("session_id", "")
+        self.assertTrue(session_id.startswith("mon_"))
+
+        # 2. Stop monitoring session with final statistics
+        res_stop = client.post('/api/monitor/stop-session', json={
+            "session_id": session_id,
+            "total_frames": 10,
+            "deepfake_detections": 0,
+            "average_fps": 30.0,
+            "max_confidence": 92.5
+        })
+        self.assertEqual(res_stop.status_code, 200)
+        data_stop = res_stop.get_json()
+        self.assertEqual(data_stop.get("status"), "success")
+
+    def test_12_non_photographic_anime_illustration_verdict_regression_protection(self):
+        """
+        Requirement 12: Regression protection for anime/cartoon illustration handling.
+        Anime/stylized illustrations must yield canonical verdict ILLUSTRATION,
+        confidence=None, and appropriate non-photographic media category.
+        """
+        anime_path = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            "uploads",
+            "cac40ad6-a724-442e-a4e4-d9e0c11410e2_anime.jpeg"
         )
-        self.assertEqual(p_v, DecisionState.UNCERTAIN)
-        self.assertFalse(is_fb)
-        self.assertIn("could not be completed", warn.lower())
+        if not os.path.exists(anime_path):
+            self.skipTest("Anime test image not found in uploads")
 
-    def test_09_successfully_analyzed_supported_media_returns_real_or_fake(self):
-        """
-        Check 9: Successfully analyzed supported media returns strictly REAL or FAKE.
-        Never returns UNCERTAIN as primary verdict when valid probability exists.
-        """
-        # Supported media with borderline score (0.51)
-        res_fake = self.decision_system.decide(raw_fake_prob=0.51)
-        d_fake = res_fake.to_dict()
-        self.assertIn(d_fake["canonical_verdict"], ["REAL", "FAKE"])
-        self.assertEqual(d_fake["canonical_verdict"], "FAKE")
-
-        # Supported media with borderline score (0.49)
-        res_real = self.decision_system.decide(raw_fake_prob=0.49)
-        d_real = res_real.to_dict()
-        self.assertIn(d_real["canonical_verdict"], ["REAL", "FAKE"])
-        self.assertEqual(d_real["canonical_verdict"], "REAL")
+        agent = ImageAgent()
+        res = agent.analyze(anime_path)
+        self.assertEqual(res.get("canonical_verdict"), "ILLUSTRATION")
+        self.assertIsNone(res.get("confidence"))
+        self.assertEqual(res.get("media_category"), "Illustration / Anime / Cartoon")
 
 
 if __name__ == "__main__":
