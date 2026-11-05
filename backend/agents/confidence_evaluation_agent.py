@@ -4,11 +4,15 @@ class ConfidenceEvaluationAgent:
         Evaluates the confidence score of the analysis output and assigns a tier and recommendation.
         """
         verdict = agent_output.get("verdict") or agent_output.get("prediction")
-        if verdict == "NOT_SUITABLE":
+        if verdict in ("NOT_SUITABLE", "ILLUSTRATION"):
             return {
                 "confidence": None,
                 "level": "Not Performed",
-                "recommendation": "Upload a clear image containing a visible human face."
+                "recommendation": (
+                    "Upload a natural photograph for facial deepfake detection."
+                    if verdict == "ILLUSTRATION"
+                    else "Upload a clear image containing a visible human face."
+                ),
             }
 
         confidence = agent_output.get("confidence_score", 0)

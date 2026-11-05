@@ -157,7 +157,9 @@ class Orchestrator:
             status = "Success"
             context.active_agents.append(agent_name)
         except Exception as e:
-            logger.error(f"Primary Agent {agent_name} failed: {e}")
+            import traceback
+            traceback.print_exc()
+            logger.error(f"Primary Agent {agent_name} failed: {e}", exc_info=True)
             context.add_log(agent_name, "Failed", start, time.time())
             context.failures.append({"agent": agent_name, "error": str(e)})
             raise RuntimeError(f"Primary specialist analysis failed: {str(e)}") from e
@@ -225,9 +227,9 @@ class Orchestrator:
         decision_reason = ""
         should_trigger_artifact = False
         
-        if primary_verdict == "NOT_SUITABLE":
+        if primary_verdict in ("NOT_SUITABLE", "ILLUSTRATION"):
             should_trigger_artifact = False
-            decision_reason = "ArtifactAgent skipped: Media is unsupported for facial forensic analysis (no face detected)."
+            decision_reason = f"ArtifactAgent skipped: Media is {primary_verdict} (facial deepfake models bypassed)."
         elif primary_confidence < PipelineConfig.AGENTIC_CONFIDENCE_THRESHOLD:
             should_trigger_artifact = True
             decision_reason = f"ArtifactAgent activated: primary confidence {round(primary_confidence, 2)} < threshold {PipelineConfig.AGENTIC_CONFIDENCE_THRESHOLD}"
@@ -275,7 +277,23 @@ class Orchestrator:
             logger.error(f"Fusion Agent failed: {e}")
             context.add_log("Fusion Agent", "Failed", start, time.time())
             raise e
-        context.add_log("Fusion Agent", status, start, time.time())
+        canonical_v = fusion_res.get("canonical_verdict") or fusion_res.get("verdict") or fusion_res.get("primary_verdict")
+        fusion_summary = {
+            "canonical_verdict": canonical_v,
+            "primary_verdict": canonical_v,
+            "fake_probability": fusion_res.get("fake_probability"),
+            "real_probability": fusion_res.get("real_probability"),
+            "raw_model_score": fusion_res.get("raw_model_score"),
+            "uncertainty": fusion_res.get("uncertainty"),
+            "confidence": fusion_res.get("confidence"),
+            "confidence_level": fusion_res.get("confidence_level"),
+            "models": fusion_res.get("models", []),
+            "visual_analysis": fusion_res.get("visual_analysis", {}),
+            "features": fusion_res.get("features", {}),
+            "is_binary_fallback": bool(fusion_res.get("is_binary_fallback", False)),
+            "reliability_warning": fusion_res.get("reliability_warning"),
+        }
+        context.add_log("Fusion Agent", status, start, time.time(), metadata=fusion_summary)
 
         # 8. Explanation Agent
         start = time.time()
@@ -289,7 +307,6 @@ class Orchestrator:
                 explanation_features["artifact_anomaly"] = context.artifact_agent_result.get("verdict") == "DEEPFAKE"
                 explanation_features["anomaly_score"] = context.artifact_agent_result.get("anomaly_score", 0.0)
 
-            canonical_v = fusion_res.get("canonical_verdict") or fusion_res.get("verdict") or fusion_res.get("primary_verdict")
             explanation_res = self.explanation_agent.explain(
                 verdict=canonical_v,
                 confidence_level=fusion_res.get("confidence_level", conf_res.get("level")),
@@ -298,6 +315,9 @@ class Orchestrator:
                 evidence=fusion_res.get("evidence", []),
                 reason=fusion_res.get("reason"),
                 user_facing_statement=fusion_res.get("user_facing_statement"),
+                models=fusion_res.get("models", []),
+                visual_analysis=fusion_res.get("visual_analysis", {}),
+                measurements=agent_res.get("measurements", {}),
             )
             context.explanation = explanation_res
             
@@ -306,6 +326,26 @@ class Orchestrator:
             fusion_res["evidence"] = explanation_res.get("evidence", [])
             fusion_res["recommendation"] = explanation_res.get("recommendation", "N/A")
             fusion_res["user_facing_statement"] = explanation_res.get("user_facing_statement")
+            fusion_res["explanation"] = explanation_res.get("explanation") or fusion_res.get("explanation")
+            fusion_res["summary"] = explanation_res.get("summary") or explanation_res.get("user_facing_statement")
+
+            # Synchronize primary specialist result so no sub-agent leaks contradictory explanations
+            if context.image_agent_result:
+                context.image_agent_result["canonical_verdict"] = canonical_v
+                context.image_agent_result["verdict"] = canonical_v
+                context.image_agent_result["primary_verdict"] = canonical_v
+                context.image_agent_result["summary"] = fusion_res["summary"]
+                context.image_agent_result["user_facing_statement"] = fusion_res["user_facing_statement"]
+                context.image_agent_result["recommendation"] = fusion_res["recommendation"]
+                context.image_agent_result["evidence"] = fusion_res["evidence"]
+            if context.video_agent_result:
+                context.video_agent_result["canonical_verdict"] = canonical_v
+                context.video_agent_result["verdict"] = canonical_v
+                context.video_agent_result["primary_verdict"] = canonical_v
+                context.video_agent_result["summary"] = fusion_res["summary"]
+                context.video_agent_result["user_facing_statement"] = fusion_res["user_facing_statement"]
+                context.video_agent_result["recommendation"] = fusion_res["recommendation"]
+                context.video_agent_result["evidence"] = fusion_res["evidence"]
             status = "Success"
         except Exception as e:
             logger.error(f"Explanation Agent failed: {e}")
@@ -326,6 +366,129 @@ class Orchestrator:
             context.add_log("PDF Report Generator", "Failed", start, time.time())
         else:
             context.add_log("PDF Report Generator", status, start, time.time())
+
+        # Save persistent canonical analysis JSON artifact
+        try:
+            import json
+            import datetime
+            backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            reports_dir = os.path.join(backend_dir, 'reports')
+            os.makedirs(reports_dir, exist_ok=True)
+            canonical_json_path = os.path.join(reports_dir, f"analysis_{context.analysis_id}.json")
+            persisted_record = {
+                "id": context.analysis_id,
+                "fileName": context.uploaded_file,
+                "fileType": context.media_type,
+                "verdict": canonical_v,
+                "prediction": canonical_v,
+                "canonical_verdict": canonical_v,
+                "canonicalVerdict": canonical_v,
+                "primary_verdict": canonical_v,
+                "primaryVerdict": canonical_v,
+                "original_verdict": fusion_res.get("original_verdict", canonical_v),
+                "originalVerdict": fusion_res.get("original_verdict", canonical_v),
+                "is_binary_fallback": bool(fusion_res.get("is_binary_fallback", False)),
+                "isBinaryFallback": bool(fusion_res.get("is_binary_fallback", False)),
+                "is_estimate": bool(fusion_res.get("is_estimate", False)),
+                "isEstimate": bool(fusion_res.get("is_estimate", False)),
+                "reliability_warning": fusion_res.get("reliability_warning"),
+                "reliabilityWarning": fusion_res.get("reliability_warning"),
+                "confidence": fusion_res.get("confidence"),
+                "confidenceLevel": fusion_res.get("confidence_level"),
+                "confidence_level": fusion_res.get("confidence_level"),
+                "fakeProbability": fusion_res.get("fake_probability"),
+                "fake_probability": fusion_res.get("fake_probability"),
+                "realProbability": fusion_res.get("real_probability"),
+                "real_probability": fusion_res.get("real_probability"),
+                "rawModelScore": fusion_res.get("raw_model_score"),
+                "raw_model_score": fusion_res.get("raw_model_score"),
+                "uncertainty": fusion_res.get("uncertainty"),
+                "models": fusion_res.get("models", []),
+                "visual_analysis": fusion_res.get("visual_analysis", {}),
+                "visualAnalysis": fusion_res.get("visual_analysis", {}),
+                "features": fusion_res.get("features", {}),
+                "quality_gate": fusion_res.get("quality_gate", {}),
+                "qualityGate": fusion_res.get("quality_gate", {}),
+                "evidence_cards": fusion_res.get("evidence_cards", []),
+                "evidenceCards": fusion_res.get("evidence_cards", []),
+                "evidence_snapshots": fusion_res.get("evidence_snapshots", []),
+                "evidenceSnapshots": fusion_res.get("evidence_snapshots", []),
+                "sequence_aggregation": fusion_res.get("sequence_aggregation") or {},
+                "sequenceAggregation": fusion_res.get("sequence_aggregation") or {},
+                "tracked_faces": fusion_res.get("tracked_faces") or [],
+                "trackedFaces": fusion_res.get("tracked_faces") or [],
+                "frame_evidence_timeline": fusion_res.get("frame_evidence_timeline") or [],
+                "frameEvidenceTimeline": fusion_res.get("frame_evidence_timeline") or [],
+                "audio_visual_sync": fusion_res.get("audio_visual_sync") or {},
+                "audioVisualSync": fusion_res.get("audio_visual_sync") or {},
+                "temporal_metrics": fusion_res.get("temporal_metrics") or {},
+                "temporalMetrics": fusion_res.get("temporal_metrics") or {},
+                "metadata": fusion_res.get("metadata") or {},
+                "total_duration_seconds": fusion_res.get("total_duration_seconds"),
+                "totalDurationSeconds": fusion_res.get("total_duration_seconds"),
+                "extracted_frames_count": fusion_res.get("extracted_frames_count"),
+                "extractedFramesCount": fusion_res.get("extracted_frames_count"),
+                "analyzed_frames_count": fusion_res.get("analyzed_frames_count"),
+                "analyzedFramesCount": fusion_res.get("analyzed_frames_count"),
+                "tracked_faces_count": fusion_res.get("tracked_faces_count"),
+                "trackedFacesCount": fusion_res.get("tracked_faces_count"),
+                "first_analyzed_timestamp": fusion_res.get("first_analyzed_timestamp"),
+                "firstAnalyzedTimestamp": fusion_res.get("first_analyzed_timestamp"),
+                "last_analyzed_timestamp": fusion_res.get("last_analyzed_timestamp"),
+                "lastAnalyzedTimestamp": fusion_res.get("last_analyzed_timestamp"),
+                "temporal_coverage_percentage": fusion_res.get("temporal_coverage_percentage"),
+                "temporalCoveragePercentage": fusion_res.get("temporal_coverage_percentage"),
+                "evidence": fusion_res.get("evidence", []),
+                "explanation": fusion_res.get("explanation"),
+                "reason": fusion_res.get("reason"),
+                "recommendation": fusion_res.get("recommendation"),
+                "user_facing_statement": fusion_res.get("user_facing_statement"),
+                "userFacingStatement": fusion_res.get("user_facing_statement"),
+                "timeline": context.agent_logs,
+                "reportUrl": f"/api/analysis/report/{context.analysis_id}.pdf",
+                "report_url": f"/api/analysis/report/{context.analysis_id}.pdf",
+                "analysis_version": "2.4.0",
+                "analysisVersion": "2.4.0",
+                "model_version": {
+                    "pipeline": "2.4.0",
+                    "xception": "v2.0_c23",
+                    "vit": "v1.5_patch16_224",
+                    "sbi": "v1.2",
+                    "fusion": "v2.4_calibrated"
+                },
+                "modelVersion": {
+                    "pipeline": "2.4.0",
+                    "xception": "v2.0_c23",
+                    "vit": "v1.5_patch16_224",
+                    "sbi": "v1.2",
+                    "fusion": "v2.4_calibrated"
+                },
+                "agent_disagreements": fusion_res.get("agent_disagreements") or {
+                    "disagreement_detected": bool(fusion_res.get("is_binary_fallback") or fusion_res.get("disagreement_detected")),
+                    "conflicting_components": [m.get("name") for m in fusion_res.get("models", []) if m.get("prediction") != canonical_v]
+                },
+                "agentDisagreements": fusion_res.get("agent_disagreements") or {
+                    "disagreement_detected": bool(fusion_res.get("is_binary_fallback") or fusion_res.get("disagreement_detected")),
+                    "conflicting_components": [m.get("name") for m in fusion_res.get("models", []) if m.get("prediction") != canonical_v]
+                },
+                "forensic_findings": {
+                    "evidence_cards_count": len(fusion_res.get("evidence_cards", [])),
+                    "evidence_items": fusion_res.get("evidence", []),
+                    "features_summary": {k: v for k, v in (fusion_res.get("features") or {}).items() if isinstance(v, (int, float, str, bool))}
+                },
+                "forensicFindings": {
+                    "evidence_cards_count": len(fusion_res.get("evidence_cards", [])),
+                    "evidence_items": fusion_res.get("evidence", []),
+                    "features_summary": {k: v for k, v in (fusion_res.get("features") or {}).items() if isinstance(v, (int, float, str, bool))}
+                },
+                "user_feedback": None,
+                "userFeedback": None,
+                "createdAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            }
+            with open(canonical_json_path, 'w', encoding='utf-8') as jf:
+                json.dump(persisted_record, jf, indent=2)
+        except Exception as ej:
+            logger.warning(f"Failed to save canonical analysis JSON artifact: {ej}")
 
         # 8. Save Analysis History (Consistent with Primary Verdict Single Source of Truth)
         start = time.time()
