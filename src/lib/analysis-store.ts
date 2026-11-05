@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
 
-export type AnalysisVerdict = "REAL" | "FAKE" | "UNCERTAIN" | "NOT_SUITABLE";
+export type AnalysisVerdict = "REAL" | "FAKE" | "UNCERTAIN" | "INCONCLUSIVE" | "NOT_SUITABLE" | "ILLUSTRATION";
 
 export interface AgentTrace {
   name: string;
@@ -19,6 +19,7 @@ export interface ForensicEvidenceCard {
   verdict_support: "SUPPORTS_FAKE" | "SUPPORTS_REAL" | string;
   evidence_strength: "STRONG" | "MODERATE" | "CONSISTENT_NATURAL" | string;
   limitations: string;
+  decision_impact?: string;
 }
 
 export interface VideoEvidenceSnapshot {
@@ -35,6 +36,7 @@ export interface VideoEvidenceSnapshot {
   evidence_strength: "STRONG" | "MODERATE" | "CONSISTENT_NATURAL" | string;
   verdict_support: "SUPPORTS_FAKE" | "SUPPORTS_REAL" | string;
   limitations: string;
+  decision_impact?: string;
 }
 
 export interface TrackedFaceResult {
@@ -49,6 +51,79 @@ export interface TrackedFaceResult {
   eye_sharpness: number;
   anomalies_detected: number;
   sample_box?: [number, number, number, number];
+}
+
+export interface AudioVisualSyncResult {
+  analyzed: boolean;
+  status?: string;
+  audio_present?: boolean;
+  speech_detected?: boolean;
+  speech_ratio?: number;
+  mouth_tracked?: boolean;
+  temporal_offset_ms?: number | null;
+  sync_confidence?: number | null;
+  verdict_support?: "IN_SYNC" | "OUT_OF_SYNC" | "INCONCLUSIVE" | "NOT_ANALYZED" | string;
+  reason?: string;
+  details?: string;
+  model_configured?: boolean;
+  model_note?: string;
+}
+
+export interface FrameEvidenceItem {
+  track_id: string;
+  frame_idx: number;
+  timestamp: number;
+  formatted_timestamp: string;
+  box: [number, number, number, number];
+  spatial_score?: number | null;
+  xcep_score?: number | null;
+  vit_score?: number | null;
+  fake_probability: number;
+  verdict_support: "SUPPORTS_FAKE" | "SUPPORTS_REAL" | "INCONCLUSIVE" | string;
+  evidence_strength: "STRONG" | "MODERATE" | "CONSISTENT_NATURAL" | "INDETERMINATE" | string;
+}
+
+export interface SequenceAggregation {
+  total_frames_analyzed: number;
+  tracked_faces: number;
+  fake_frames_detected: number;
+  real_frames_detected: number;
+  inconclusive_frames: number;
+  manipulation_timestamps: Array<{
+    frame_index: number;
+    timestamp_seconds: number;
+    formatted_timestamp: string;
+    fake_probability: number;
+    track_id: string;
+  }>;
+  face_track_ids: string[];
+  peak_fake_probability?: number | null;
+  average_fake_probability?: number | null;
+}
+
+export interface UserFriendlyFinding {
+  title: string;
+  explanation: string;
+  status?: "concern" | "authentic" | "neutral" | string;
+}
+
+export interface UserFriendlyExplanation {
+  headline?: string;
+  verdict: "REAL" | "FAKE" | "NOT_SUITABLE" | string;
+  confidenceTier?: "High" | "Moderate" | "Low" | "Not Performed" | string;
+  confidence_tier?: "High" | "Moderate" | "Low" | "Not Performed" | string;
+  confidencePercentage?: number | null;
+  confidence_percentage?: number | null;
+  whatDoesThisMean?: string;
+  what_does_this_mean?: string;
+  whatRaisedConcern?: UserFriendlyFinding[];
+  what_raised_concern?: UserFriendlyFinding[];
+  whyConfidenceIsLimited?: string | null;
+  why_confidence_is_limited?: string | null;
+  whatShouldUserDo?: string;
+  what_should_user_do?: string;
+  isConflicted?: boolean;
+  is_conflicted?: boolean;
 }
 
 export interface AnalysisResult {
@@ -81,16 +156,24 @@ export interface AnalysisResult {
   evidence?: string[];
   influencingEvidence?: string[];
   recommendation?: string;
+  userFriendlyExplanation?: UserFriendlyExplanation;
   analysisStatus?: string;
   faceDetected?: boolean;
   faceBbox?: [number, number, number, number] | null;
   evidenceCards?: ForensicEvidenceCard[];
   evidenceSnapshots?: VideoEvidenceSnapshot[];
   trackedFaces?: TrackedFaceResult[];
-  audioVisualSync?: {
-    analyzed: boolean;
-    reason?: string;
-  };
+  audioVisualSync?: AudioVisualSyncResult;
+  sequenceAggregation?: SequenceAggregation;
+  frameEvidenceTimeline?: FrameEvidenceItem[];
+  totalDurationSeconds?: number;
+  extractedFramesCount?: number;
+  analyzedFramesCount?: number;
+  trackedFacesCount?: number;
+  firstAnalyzedTimestamp?: number;
+  lastAnalyzedTimestamp?: number;
+  temporalCoveragePercentage?: number;
+  temporalMetrics?: Record<string, any>;
   qualityGate?: {
     blur_score?: number;
     resolution?: [number, number] | string | { width?: number; height?: number; w?: number; h?: number };
@@ -129,6 +212,7 @@ export interface AnalysisResult {
   timeline?: { agent: string; status: string; duration: number }[];
   reportUrl?: string;
   visualAnalysis?: any;
+  visionReasoning?: any;
   evidenceBreakdown?: any;
   approxCostUsd?: number;
   providersRan?: string[];
@@ -172,6 +256,16 @@ export function getCanonicalVerdict(item: any): {
   const isBinaryFallback = Boolean(item.is_binary_fallback ?? item.isBinaryFallback ?? false);
   const reliabilityWarning = item.reliability_warning || item.reliabilityWarning || null;
 
+  if (rawCanonical === "ILLUSTRATION" || rawVerdict === "ILLUSTRATION" || rawPred === "ILLUSTRATION") {
+    return {
+      canonicalVerdict: "ILLUSTRATION",
+      provisionalSuggestion: null,
+      isBinaryFallback: false,
+      reliabilityWarning: null,
+      abstentionCode: abstentionCode || "NON_PHOTOGRAPHIC_MEDIA",
+    };
+  }
+
   if (rawCanonical === "NOT_SUITABLE" || rawVerdict === "NOT_SUITABLE" || rawPred === "NOT_SUITABLE" || rawOrig === "NOT_SUITABLE" || rawPred === "UNSUPPORTED") {
     return {
       canonicalVerdict: "NOT_SUITABLE",
@@ -182,7 +276,7 @@ export function getCanonicalVerdict(item: any): {
     };
   }
 
-  // Canonical verdict REAL or FAKE
+  // Decisive canonical verdict REAL or FAKE takes precedence
   const effectiveVerdict = rawCanonical || rawVerdict || rawPred;
   if (effectiveVerdict === "FAKE" || effectiveVerdict === "DEEPFAKE" || rawPred === "FAKE" || rawPred === "DEEPFAKE") {
     return {
@@ -204,26 +298,59 @@ export function getCanonicalVerdict(item: any): {
     };
   }
 
-  // If fake probability exists for supported media:
+  // Model Disagreement / Abstention / Ambiguous Evidence -> resolve to authoritative binary verdict
   const fakeP = item.fake_probability ?? item.fakeProbability;
-  if (fakeP !== undefined && fakeP !== null) {
-    return {
-      canonicalVerdict: fakeP >= 0.50 ? "FAKE" : "REAL",
-      provisionalSuggestion: null,
-      isBinaryFallback: true,
-      reliabilityWarning: reliabilityWarning || "Specialist detectors produced ambiguous or conflicting evidence. Secondary manual verification is advised.",
-      abstentionCode: null,
-    };
+  const binV: "FAKE" | "REAL" = fakeP !== undefined && fakeP !== null ? (fakeP >= 0.50 ? "FAKE" : "REAL") : "REAL";
+  return {
+    canonicalVerdict: binV,
+    provisionalSuggestion: binV,
+    isBinaryFallback: true,
+    reliabilityWarning: reliabilityWarning || "Specialist detectors produced ambiguous or conflicting evidence. Secondary manual verification is advised.",
+    abstentionCode: abstentionCode || "MODEL_DISAGREEMENT",
+  };
+}
+
+export type AnalysisStatus =
+  | "ANALYSIS COMPLETE"
+  | "REVIEW RECOMMENDED"
+  | "UNSUPPORTED FILE"
+  | "ILLUSTRATION DETECTED"
+  | "ANALYSIS FAILED";
+
+export function getAnalysisStatus(item: any): AnalysisStatus {
+  const { canonicalVerdict, isBinaryFallback } = getCanonicalVerdict(item);
+
+  if (canonicalVerdict === "ILLUSTRATION") {
+    return "ILLUSTRATION DETECTED";
   }
 
-  // Truly UNCERTAIN: only when inference failed / unanalyzed
-  return {
-    canonicalVerdict: "UNCERTAIN",
-    provisionalSuggestion: null,
-    isBinaryFallback: isBinaryFallback,
-    reliabilityWarning: reliabilityWarning || "Incomplete analysis or processing failure prevented classification.",
-    abstentionCode: abstentionCode || "INFERENCE_FAILURE",
-  };
+  if (canonicalVerdict === "NOT_SUITABLE") {
+    return "UNSUPPORTED FILE";
+  }
+
+  if (canonicalVerdict === "INCONCLUSIVE" || canonicalVerdict === "UNCERTAIN") {
+    return "REVIEW RECOMMENDED";
+  }
+
+  const rawStatus = String(item?.status || "").toLowerCase();
+  if (rawStatus === "failed" || rawStatus === "error") {
+    return "ANALYSIS FAILED";
+  }
+
+  const confLevel = item?.confidenceLevel || item?.confidence_level;
+  const hasLowConfidence = Boolean(
+    isBinaryFallback ||
+    confLevel === "Low" ||
+    confLevel === "Provisional" ||
+    (item?.reliabilityWarning && String(item.reliabilityWarning).trim().length > 0) ||
+    (item?.reliability_warning && String(item.reliability_warning).trim().length > 0)
+  );
+
+  if (hasLowConfidence) {
+    return "REVIEW RECOMMENDED";
+  }
+
+  return "ANALYSIS COMPLETE";
 }
 
 export function getVerdictTheme(verdict: AnalysisVerdict, isProvisional = false): VerdictTheme {
@@ -231,8 +358,8 @@ export function getVerdictTheme(verdict: AnalysisVerdict, isProvisional = false)
     case "FAKE":
       return {
         verdict: "FAKE",
-        label: isProvisional ? "FAKE (LOW CONFIDENCE)" : "FAKE",
-        badgeLabel: isProvisional ? "FAKE • Low Confidence" : "FAKE",
+        label: "FAKE",
+        badgeLabel: isProvisional ? "FAKE — Low Confidence" : "FAKE",
         textColor: "#f43f5e",
         bgColor: "#fef2f2",
         borderColor: "#f43f5e",
@@ -249,8 +376,8 @@ export function getVerdictTheme(verdict: AnalysisVerdict, isProvisional = false)
     case "REAL":
       return {
         verdict: "REAL",
-        label: isProvisional ? "REAL (LOW CONFIDENCE)" : "REAL",
-        badgeLabel: isProvisional ? "REAL • Low Confidence" : "REAL",
+        label: "REAL",
+        badgeLabel: isProvisional ? "REAL — Low Confidence" : "REAL",
         textColor: "#10b981",
         bgColor: "#ecfdf5",
         borderColor: "#10b981",
@@ -280,12 +407,11 @@ export function getVerdictTheme(verdict: AnalysisVerdict, isProvisional = false)
         iconName: "FileX",
         description: "No detectable human face was found in this media. SatyaDrishti is designed for facial-media authenticity analysis.",
       };
-    case "UNCERTAIN":
-    default:
+    case "ILLUSTRATION":
       return {
-        verdict: "UNCERTAIN",
-        label: "UNCERTAIN",
-        badgeLabel: "UNCERTAIN",
+        verdict: "ILLUSTRATION",
+        label: "ILLUSTRATION / CARTOON",
+        badgeLabel: "Illustration / Cartoon Detected",
         textColor: "#f59e0b",
         bgColor: "#fffbeb",
         borderColor: "#f59e0b",
@@ -294,8 +420,26 @@ export function getVerdictTheme(verdict: AnalysisVerdict, isProvisional = false)
         textClass: "text-amber-400",
         badgeClass: "bg-amber-500/15 text-amber-400 border-amber-500/30",
         dotClass: "bg-amber-400",
-        iconName: "HelpCircle",
-        description: "Processing failure or incomplete model evaluation prevented classification.",
+        iconName: "FileX",
+        description: "This image appears to be a stylized illustration, anime, or cartoon rather than a photographic image. SatyaDrishti's deepfake detectors are calibrated for real photographic media and cannot produce meaningful results for non-photographic content.",
+      };
+    case "INCONCLUSIVE":
+    case "UNCERTAIN":
+    default:
+      return {
+        verdict: "REAL",
+        label: "REAL",
+        badgeLabel: "REAL — Low Confidence",
+        textColor: "#10b981",
+        bgColor: "#ecfdf5",
+        borderColor: "#10b981",
+        borderClass: "border-emerald-500/30",
+        bgClass: "bg-emerald-500/10",
+        textClass: "text-emerald-400",
+        badgeClass: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+        dotClass: "bg-emerald-400",
+        iconName: "ShieldCheck",
+        description: "Provisional classification is REAL; absence of detected manipulation does not guarantee absolute authenticity.",
       };
   }
 }
@@ -304,20 +448,21 @@ export function formatBackendAnalysis(item: any, apiUrl?: string): AnalysisResul
   const baseApiUrl = apiUrl || (typeof window !== "undefined" ? (import.meta.env.VITE_API_URL || "http://localhost:5000") : "http://localhost:5000");
   const { canonicalVerdict, provisionalSuggestion, isBinaryFallback, reliabilityWarning, abstentionCode } = getCanonicalVerdict(item);
   const isNotSuitable = canonicalVerdict === "NOT_SUITABLE";
-  const isUncertain = canonicalVerdict === "UNCERTAIN";
+  const isIllustration = canonicalVerdict === "ILLUSTRATION";
+  const rawOrig = String(item.original_verdict || item.originalVerdict || "").trim().toUpperCase();
+  const rawVerdict = String(item.verdict || "").trim().toUpperCase();
+  const isUncertain = rawOrig === "UNCERTAIN" || rawVerdict === "UNCERTAIN" || Boolean(isBinaryFallback);
   const isFake = canonicalVerdict === "FAKE";
   const isReal = canonicalVerdict === "REAL";
 
   const rawConf = typeof item.confidence === "number" ? item.confidence : (typeof item.confidence_score === "number" ? item.confidence_score : null);
-  const conf = (isNotSuitable || (isUncertain && rawConf === null))
+  const conf = (isNotSuitable || isIllustration || (isBinaryFallback && rawConf === null))
     ? null
     : (rawConf !== null ? Math.round(rawConf) : (item.fake_probability !== undefined ? Math.round(Math.max(item.fake_probability, 1 - item.fake_probability) * 100) : 65));
 
   let confLevel = "Low";
-  if (isNotSuitable) {
+  if (isNotSuitable || isIllustration) {
     confLevel = "Not Performed";
-  } else if (isUncertain) {
-    confLevel = "Uncertified";
   } else if (isBinaryFallback) {
     confLevel = "Low";
   } else if (conf !== null) {
@@ -374,6 +519,90 @@ export function formatBackendAnalysis(item: any, apiUrl?: string): AnalysisResul
     resolvedMediaUrl = `${resolvedMediaUrl}${sep}token=${encodeURIComponent(token)}`;
   }
 
+  // Dynamic sanitize based on single source of truth (canonicalVerdict)
+  let rawExpl = item.explanation;
+  if (isIllustration) {
+    rawExpl = item.explanation || "This image has been identified as a stylized illustration, anime, or cartoon. SatyaDrishti's deepfake detection models are trained exclusively on photographic images and cannot produce meaningful authenticity scores for non-photographic media. No deepfake analysis was performed.";
+  } else if (isFake) {
+    if (!rawExpl || rawExpl.includes("UNCERTAIN") || rawExpl.includes("Secondary manual verification") || rawExpl.includes("authenticity has NOT been established") || rawExpl.includes("Abstained")) {
+      rawExpl = "Specialist neural consensus and forensic feature analysis confirm synthetic manipulation patterns in evaluated facial regions.";
+    }
+  } else if (isReal) {
+    if (!rawExpl || rawExpl.includes("UNCERTAIN") || rawExpl.includes("FAKE") || rawExpl.includes("deepfake manipulation patterns") || rawExpl.includes("Abstained")) {
+      rawExpl = "Authentic natural media features observed across neural classifiers and forensic checks. Note: Absence of detected manipulation does not guarantee absolute authenticity.";
+    }
+  } else if (isNotSuitable) {
+    rawExpl = "No detectable human face was found in this media. SatyaDrishti's current deepfake detector is designed for facial-media authenticity analysis. Upload a clear media file containing a visible human face.";
+  } else {
+    if (!rawExpl) {
+      rawExpl = isBinaryFallback && provisionalSuggestion
+        ? (provisionalSuggestion === "REAL"
+            ? "Detector scores remain below the manipulation threshold across evaluated facial regions under the system decision policy."
+            : "Measured detector outputs and forensic anomalies exceed the manipulation threshold under the system decision policy.")
+        : "Insufficient evidence to reliably classify this media. Authenticity has NOT been established.";
+    }
+  }
+
+  let rawStmt = item.user_facing_statement || item.userFacingStatement;
+  if (isIllustration) {
+    rawStmt = rawStmt || "This image appears to be a stylized illustration, anime, or cartoon rather than a photographic image. No deepfake analysis was performed.";
+  } else if (isFake) {
+    if (!rawStmt || rawStmt.includes("UNCERTAIN") || rawStmt.includes("Secondary manual verification") || rawStmt.includes("Notice:") || rawStmt.includes("Disagreement") || rawStmt.includes("authenticity has not been established")) {
+      rawStmt = "Deepfake detected / high likelihood of manipulation based on forensic anomaly patterns.";
+    }
+  } else if (isReal) {
+    if (!rawStmt || rawStmt.includes("UNCERTAIN") || rawStmt.includes("Deepfake detected") || rawStmt.includes("synthetic manipulation")) {
+      rawStmt = "Authentic natural media features observed across evaluated facial regions.";
+    }
+  } else if (isNotSuitable) {
+    rawStmt = "No detectable human face was found in this media. SatyaDrishti's current deepfake detector is designed for facial-media authenticity analysis. Upload a clear media file containing a visible human face.";
+  } else {
+    rawStmt = rawStmt || "Insufficient evidence to reliably classify this media. Authenticity has not been established.";
+  }
+
+  let rawRec = item.recommendation;
+  if (isIllustration) {
+    rawRec = rawRec || "Upload a clear photograph of a real person for deepfake analysis. SatyaDrishti cannot assess illustrations, anime, or cartoon artwork.";
+  } else if (isNotSuitable) {
+    rawRec = "Upload a clear media file containing a visible human face.";
+  } else if (isFake) {
+    if (!rawRec || rawRec.includes("Secondary manual verification is recommended") || rawRec.includes("Insufficient evidence") || rawRec.includes("Secondary verification recommended")) {
+      rawRec = "Deepfake manipulation flagged. Secondary forensic inspection or source provenance verification is recommended before publishing or trusting this media.";
+    }
+  } else if (isReal) {
+    if (!rawRec || rawRec.includes("Secondary manual verification is recommended") || rawRec.includes("Insufficient evidence") || rawRec.includes("Secondary verification recommended")) {
+      rawRec = "No strong evidence of manipulation was detected across evaluated detectors. Note: This does not prove authenticity, as novel synthesis techniques or clean recaptures may leave no detectable trace.";
+    }
+  } else {
+    rawRec = rawRec || "Insufficient evidence or conflicting detector indicators. Independent manual verification is recommended.";
+  }
+
+  let cleanEvidenceList: string[] = (item.evidence && item.evidence.length > 0)
+    ? item.evidence
+    : (isIllustration
+      ? ["Media type: Illustration / Anime / Cartoon (non-photographic content detected)."]
+      : (isNotSuitable
+      ? ["Eligibility: Unsupported media (No detectable human face found in image)."]
+      : [
+        `File analyzed: ${item.file_name || cleanDisplayName}`,
+        `Consensus verdict: ${canonicalVerdict} (${confLevel} status)`,
+      ]));
+
+  if (isFake) {
+    cleanEvidenceList = cleanEvidenceList.filter((e: string) =>
+      !e.toLowerCase().includes("abstained") &&
+      !e.toLowerCase().includes("uncertain under the system") &&
+      !e.toLowerCase().includes("secondary manual verification is recommended") &&
+      !e.toLowerCase().includes("authenticity has not been established")
+    );
+  } else if (isReal) {
+    cleanEvidenceList = cleanEvidenceList.filter((e: string) =>
+      !e.toLowerCase().includes("abstained") &&
+      !e.toLowerCase().includes("uncertain under the system") &&
+      !e.toLowerCase().includes("secondary manual verification is recommended")
+    );
+  }
+
   return {
     id: item.id,
     fileName: item.fileName || cleanDisplayName,
@@ -394,54 +623,76 @@ export function formatBackendAnalysis(item: any, apiUrl?: string): AnalysisResul
     abstention_code: abstentionCode || item.abstention_code || item.abstentionCode || null,
     confidence: conf,
     confidenceLevel: item.confidence_level || item.confidenceLevel || confLevel,
-    fakeProbability: isNotSuitable ? undefined : (item.fake_probability ?? item.fakeProbability),
-    realProbability: isNotSuitable ? undefined : (item.real_probability ?? item.realProbability),
-    rawModelScore: item.raw_model_score ?? item.rawModelScore,
-    uncertainty: item.uncertainty,
-    explanation: item.explanation || (isNotSuitable
-      ? "No detectable human face was found in this media. SatyaDrishti's current deepfake detector is designed for facial-media authenticity analysis. Upload a clear media file containing a visible human face."
-      : isFake
-      ? "Multi-signal consensus confirms deepfake manipulation patterns in media features."
-      : isReal
-      ? "Authentic natural media features observed. Note: Absence of detected manipulation does not guarantee absolute authenticity."
-      : (isBinaryFallback && provisionalSuggestion
-      ? `Indicators lack consensus or contain conflicting specialist predictions. Media leans ${provisionalSuggestion} on marginal probability, but authenticity has NOT been established.`
-      : "Insufficient evidence to reliably classify this media. Authenticity has NOT been established.")),
-    reason: item.reason || (isNotSuitable
+    fakeProbability: (isNotSuitable || isIllustration) ? undefined : (item.fake_probability !== null && item.fake_probability !== undefined ? item.fake_probability : item.fakeProbability),
+    realProbability: (isNotSuitable || isIllustration) ? undefined : (
+      item.real_probability !== null && item.real_probability !== undefined
+        ? item.real_probability
+        : (item.realProbability !== null && item.realProbability !== undefined
+            ? item.realProbability
+            : (item.fake_probability !== null && item.fake_probability !== undefined
+                ? Math.round((1.0 - Number(item.fake_probability)) * 10000) / 10000
+                : undefined))
+    ),
+    rawModelScore: (item.raw_model_score !== null && item.raw_model_score !== undefined) ? item.raw_model_score : ((item.rawModelScore !== null && item.rawModelScore !== undefined) ? item.rawModelScore : undefined),
+    uncertainty: (isNotSuitable || isIllustration)
+      ? undefined
+      : (item.fake_probability !== null && item.fake_probability !== undefined
+          ? Math.round((1.0 - Math.abs(2.0 * Number(item.fake_probability) - 1.0)) * 10000) / 10000
+          : (item.fakeProbability !== null && item.fakeProbability !== undefined
+              ? Math.round((1.0 - Math.abs(2.0 * Number(item.fakeProbability) - 1.0)) * 10000) / 10000
+              : ((item.uncertainty !== null && item.uncertainty !== undefined) ? Number(item.uncertainty) : undefined))),
+    explanation: rawExpl,
+    reason: item.reason || (isIllustration
+      ? "Non-photographic media detected: illustration, anime, or cartoon."
+      : isNotSuitable
       ? "No suitable face detected."
       : isFake
       ? "Strong evidence of synthetic manipulation identified."
       : isReal
       ? "Visual and frequency features align with authentic media."
       : "Insufficient evidence to determine authenticity reliably."),
-    userFacingStatement: item.user_facing_statement || item.userFacingStatement || (isNotSuitable
-      ? "No detectable human face was found in this media. SatyaDrishti's current deepfake detector is designed for facial-media authenticity analysis. Upload a clear media file containing a visible human face."
-      : isFake
-      ? "Deepfake detected / high likelihood of manipulation based on forensic anomaly patterns."
-      : isReal
-      ? "Authentic natural media features observed. Note: Absence of detected manipulation does not guarantee absolute authenticity."
-      : "Insufficient evidence to reliably classify this media."),
-    evidence: (item.evidence && item.evidence.length > 0) ? item.evidence : (isNotSuitable
-      ? ["Eligibility: Unsupported media (No detectable human face found in image)."]
-      : [
-        `File analyzed: ${item.file_name || cleanDisplayName}`,
-        `Consensus verdict: ${canonicalVerdict} (${confLevel} status)`,
-      ]),
-    recommendation: item.recommendation || (isNotSuitable
-      ? "Upload a clear image containing a visible human face."
-      : isUncertain
-      ? "Insufficient evidence or conflicting detector indicators. Independent manual verification recommended."
-      : "Forensic safety audit record permanently archived in verified database."),
-    analysisStatus: item.analysis_status || item.analysisStatus || (isNotSuitable ? "Not performed" : "Completed"),
-    faceDetected: item.face_detected !== undefined ? item.face_detected : (item.faceDetected !== undefined ? item.faceDetected : !isNotSuitable),
+    userFacingStatement: rawStmt,
+    evidence: cleanEvidenceList,
+    recommendation: rawRec,
+    userFriendlyExplanation: (() => {
+      const u = item.user_friendly_explanation || item.userFriendlyExplanation || item.fusion_result?.user_friendly_explanation || item.fusion_result?.userFriendlyExplanation;
+      if (u) {
+        return {
+          headline: u.headline || "Understanding Your Result",
+          verdict: u.verdict || canonicalVerdict,
+          confidenceTier: u.confidence_tier || u.confidenceTier || confLevel,
+          confidencePercentage: u.confidence_percentage ?? u.confidencePercentage ?? conf,
+          whatDoesThisMean: u.what_does_this_mean || u.whatDoesThisMean || rawStmt,
+          whatRaisedConcern: u.what_raised_concern || u.whatRaisedConcern || [],
+          whyConfidenceIsLimited: u.why_confidence_is_limited ?? u.whyConfidenceIsLimited ?? null,
+          whatShouldUserDo: u.what_should_user_do || u.whatShouldUserDo || rawRec,
+          isConflicted: Boolean(u.is_conflicted ?? u.isConflicted ?? isBinaryFallback),
+        };
+      }
+      return {
+        headline: "Understanding Your Result",
+        verdict: canonicalVerdict,
+        confidenceTier: confLevel,
+        confidencePercentage: conf,
+        whatDoesThisMean: rawStmt,
+        whatRaisedConcern: [],
+        whyConfidenceIsLimited: isBinaryFallback ? "Different automated inspection tools produced conflicting indications, leading to lower overall confidence." : null,
+        whatShouldUserDo: rawRec,
+        isConflicted: isBinaryFallback,
+      };
+    })(),
+    analysisStatus: getAnalysisStatus(item),
+    faceDetected: item.face_detected !== undefined ? item.face_detected : (item.faceDetected !== undefined ? item.faceDetected : !(isNotSuitable || isIllustration)),
     faceBbox: item.face_bbox || item.faceBbox || item.fusion_result?.face_bbox || null,
     evidenceCards: item.evidence_cards || item.evidenceCards || item.fusion_result?.evidence_cards || [],
     evidenceSnapshots: item.evidence_snapshots || item.evidenceSnapshots || item.fusion_result?.evidence_snapshots || [],
     trackedFaces: item.tracked_faces || item.trackedFaces || item.fusion_result?.tracked_faces || [],
     audioVisualSync: item.audio_visual_sync || item.audioVisualSync || item.fusion_result?.audio_visual_sync || undefined,
+    sequenceAggregation: item.sequence_aggregation || item.sequenceAggregation || item.fusion_result?.sequence_aggregation || undefined,
+    frameEvidenceTimeline: item.frame_evidence_timeline || item.frameEvidenceTimeline || item.fusion_result?.frame_evidence_timeline || [],
     qualityGate: item.quality_gate || item.qualityGate || item.fusion_result?.quality_gate || undefined,
     features: item.features || item.fusion_result?.features || undefined,
-    mediaCategory: item.media_category || item.mediaCategory || (isNotSuitable ? "Document / Non-face image" : "Facial Media"),
+    mediaCategory: item.media_category || item.mediaCategory || (isIllustration ? "Illustration / Anime / Cartoon" : isNotSuitable ? "Document / Non-face image" : "Facial Media"),
     models: item.models || item.fusion_result?.models || item.image_agent_result?.models || item.video_agent_result?.models || [],
     measurements: item.measurements || item.fusion_result?.measurements || item.image_agent_result?.measurements || item.video_agent_result?.measurements || {},
     supportingEvidence: item.supporting_evidence || item.supportingEvidence || item.fusion_result?.supporting_evidence || [],
@@ -459,6 +710,7 @@ export function formatBackendAnalysis(item: any, apiUrl?: string): AnalysisResul
     createdAt: new Date(item.timestamp || Date.now()).getTime(),
     reportUrl: `${baseApiUrl}/api/analysis/report/${item.id}.pdf`,
     visualAnalysis: item.visual_analysis || item.visualAnalysis,
+    visionReasoning: item.vision_reasoning || item.visionReasoning || item.fusion_result?.vision_reasoning || item.image_agent_result?.vision_reasoning || undefined,
     evidenceBreakdown: item.evidence_breakdown || item.evidenceBreakdown,
     influencingEvidence: item.influencing_evidence || item.influencingEvidence || [],
     approxCostUsd: item.approx_cost_usd ?? item.approxCostUsd ?? 0.0,

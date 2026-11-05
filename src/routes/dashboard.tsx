@@ -1,5 +1,6 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { AdminFeedbackReviewHub } from "@/components/AdminFeedbackReviewHub";
 import {
   Activity,
   ShieldCheck,
@@ -13,11 +14,17 @@ import {
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useAnalysisState, analysisStore, AnalysisVerdict, formatBackendAnalysis, getCanonicalVerdict, getVerdictTheme } from "@/lib/analysis-store";
+import { useAnalysisState, analysisStore, AnalysisVerdict, formatBackendAnalysis, getCanonicalVerdict, getVerdictTheme, getAnalysisStatus } from "@/lib/analysis-store";
 import { cn } from "@/lib/utils";
-import { useAuthState } from "@/lib/auth-store";
+import { useAuthState, authStore } from "@/lib/auth-store";
 
 export const Route = createFileRoute("/dashboard")({
+  beforeLoad: async () => {
+    const isAuthed = await authStore.ensureInitialized();
+    if (!isAuthed || !authStore.get().user) {
+      throw redirect({ to: "/login" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "SatyaDrishti | Dashboard" },
@@ -31,6 +38,7 @@ function DashboardPage() {
   const navigate = useNavigate();
   const { history } = useAnalysisState();
   const { user, isInitialized } = useAuthState();
+  const [activeTab, setActiveTab] = useState<"overview" | "feedback_review">("overview");
 
   useEffect(() => {
     if (isInitialized && !user) {
@@ -50,7 +58,18 @@ function DashboardPage() {
     const fetchHistory = async () => {
       try {
         const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-        const res = await fetch(`${API_URL}/api/history?user_id=${encodeURIComponent(String(user.id))}`);
+        const token = authStore.getToken();
+        const headers: Record<string, string> = {};
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+        const res = await fetch(`${API_URL}/api/history?user_id=${encodeURIComponent(String(user.id))}`, { headers });
+        if (res.status === 401) {
+          console.warn("Session expired or invalid on backend; signing out.");
+          await authStore.signOut();
+          navigate({ to: "/login" });
+          return;
+        }
         if (res.ok) {
           const data = await res.json();
           if (data.status === "success" && Array.isArray(data.history)) {
@@ -68,16 +87,31 @@ function DashboardPage() {
       }
     };
     fetchHistory();
-  }, [user, isInitialized]);
+  }, [user, isInitialized, navigate]);
+
+  if (!isInitialized) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-sky-500 border-t-transparent" />
+          <p className="text-xs font-mono text-slate-400">Verifying session security...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   const firstName = user?.name ? user.name.split(" ")[0] : "Researcher";
 
   const total = history.length;
   const real = history.filter((h) => getCanonicalVerdict(h).canonicalVerdict === "REAL").length;
   const fake = history.filter((h) => getCanonicalVerdict(h).canonicalVerdict === "FAKE").length;
-  const uncertain = history.filter((h) => {
-    const cv = getCanonicalVerdict(h).canonicalVerdict;
-    return cv === "UNCERTAIN" || cv === "NOT_SUITABLE";
+  const reviewRecommended = history.filter((h) => {
+    const cv = getCanonicalVerdict(h);
+    return cv.isBinaryFallback || cv.canonicalVerdict === "NOT_SUITABLE" || cv.canonicalVerdict === "ILLUSTRATION";
   }).length;
   const certifiedAnalyses = history.filter((h) => typeof h.confidence === "number" && h.confidence !== null);
   const accuracy =
@@ -150,6 +184,36 @@ function DashboardPage() {
         </div>
       </section>
 
+      {/* Navigation Mode Switcher */}
+      <div className="mb-6 flex border-b border-border/80">
+        <button
+          onClick={() => setActiveTab("overview")}
+          className={cn(
+            "flex items-center gap-2 border-b-2 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors",
+            activeTab === "overview"
+              ? "border-sky-500 text-sky-400 bg-slate-900/40"
+              : "border-transparent text-slate-400 hover:text-slate-200"
+          )}
+        >
+          <Activity className="h-3.5 w-3.5" />
+          Forensic Operations & Media Ledger
+        </button>
+        <button
+          onClick={() => setActiveTab("feedback_review")}
+          className={cn(
+            "flex items-center gap-2 border-b-2 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors",
+            activeTab === "feedback_review"
+              ? "border-sky-500 text-sky-400 bg-slate-900/40"
+              : "border-transparent text-slate-400 hover:text-slate-200"
+          )}
+        >
+          <ShieldCheck className="h-3.5 w-3.5" />
+          Feedback Review & Model Governance
+        </button>
+      </div>
+
+      {activeTab === "overview" ? (
+        <>
       {/* Metric Modules Row */}
       <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => {
@@ -217,7 +281,7 @@ function DashboardPage() {
                 {history.map((h) => {
                   const { canonicalVerdict, provisionalSuggestion, isBinaryFallback } = getCanonicalVerdict(h);
                   const theme = getVerdictTheme(canonicalVerdict, isBinaryFallback);
-                  const isUncertified = isBinaryFallback || canonicalVerdict === "UNCERTAIN" || canonicalVerdict === "NOT_SUITABLE" || h.confidence === null;
+                  const status = getAnalysisStatus(h);
 
                   return (
                     <tr
@@ -248,19 +312,29 @@ function DashboardPage() {
                             <span className={cn("h-1.5 w-1.5 rounded-full", theme.dotClass)} />
                             {theme.label}
                           </span>
-                          {provisionalSuggestion && (
-                            <span className="inline-flex items-center rounded bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 text-[9px] font-medium text-amber-300" title="Unverified model suggestion — not an established authenticity verdict">
-                              Unverified: {provisionalSuggestion}
+                          {status === "REVIEW RECOMMENDED" && (
+                            <span className="inline-flex items-center rounded bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 text-[9px] font-medium text-amber-300" title="Review Recommended">
+                              Review Recommended
                             </span>
                           )}
                         </div>
                       </td>
                       <td className="px-4 py-2.5 text-slate-300 font-mono">
-                        {isUncertified ? "Not certified" : `${h.confidence}%`}
+                        {status === "UNSUPPORTED FILE" ? (
+                          <span className="text-slate-500 text-[11px]">— (Unsupported)</span>
+                        ) : status === "ANALYSIS FAILED" ? (
+                          <span className="text-rose-400 text-[11px]">Failed</span>
+                        ) : typeof h.confidence === "number" && h.confidence !== null ? (
+                          `${h.confidence}%`
+                        ) : status === "REVIEW RECOMMENDED" ? (
+                          <span className="text-amber-400 text-[11px]">Review</span>
+                        ) : (
+                          <span className="text-slate-400 text-[11px]">—</span>
+                        )}
                       </td>
-                    <td className="px-4 py-2.5 text-slate-400">
-                      {formatRelative(h.createdAt)}
-                    </td>
+                      <td className="px-4 py-2.5 text-slate-400">
+                        {formatRelative(h.createdAt)}
+                      </td>
                     <td className="px-4 py-2.5 text-right">
                       <Button
                         asChild
@@ -284,6 +358,10 @@ function DashboardPage() {
           </div>
         )}
       </section>
+        </>
+      ) : (
+        <AdminFeedbackReviewHub />
+      )}
     </AppShell>
   );
 }

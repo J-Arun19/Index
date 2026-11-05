@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import {
   useCallback,
   useEffect,
@@ -20,11 +20,17 @@ import {
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { analysisStore, type AnalysisResult, type AnalysisVerdict, getCanonicalVerdict } from "@/lib/analysis-store";
-import { useAuthState } from "@/lib/auth-store";
+import { analysisStore, type AnalysisResult, type AnalysisVerdict, getCanonicalVerdict, getAnalysisStatus } from "@/lib/analysis-store";
+import { useAuthState, authStore } from "@/lib/auth-store";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/analysis")({
+  beforeLoad: async () => {
+    const isAuthed = await authStore.ensureInitialized();
+    if (!isAuthed || !authStore.get().user) {
+      throw redirect({ to: "/login" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "SatyaDrishti | New Analysis" },
@@ -108,6 +114,21 @@ function AnalysisPage() {
     };
   }, [previewUrl]);
 
+  if (!isInitialized) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-sky-500 border-t-transparent" />
+          <p className="text-xs font-mono text-slate-400">Verifying session security...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
   const fileType = file ? detectClientMediaType(file) : null;
   const currentStages = getPipelineStages(fileType);
 
@@ -143,6 +164,19 @@ function AnalysisPage() {
     setSelected(null);
   }, [setSelected]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      (window as any).__SATYA_SET_FILE__ = setSelected;
+      (window as any).__SATYA_ANALYZE__ = analyze;
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        delete (window as any).__SATYA_SET_FILE__;
+        delete (window as any).__SATYA_ANALYZE__;
+      }
+    };
+  }, [setSelected, analyze]);
+
   function onDrop(e: DragEvent<HTMLDivElement>) {
     e.preventDefault();
     setDragOver(false);
@@ -163,6 +197,8 @@ function AnalysisPage() {
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const token = authStore.getToken();
+      const authHeader: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
 
       // 1. Upload to Flask backend
       const formData = new FormData();
@@ -174,6 +210,7 @@ function AnalysisPage() {
 
       const uploadResponse = await fetch(`${API_URL}/api/upload`, {
         method: "POST",
+        headers: authHeader,
         body: formData,
       });
 
@@ -191,6 +228,7 @@ function AnalysisPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...authHeader,
         },
         body: JSON.stringify({
           file_id: backendId,
@@ -216,18 +254,16 @@ function AnalysisPage() {
 
       const { canonicalVerdict, provisionalSuggestion, isBinaryFallback, reliabilityWarning } = getCanonicalVerdict(fusionResult);
       const isNotSuitable = canonicalVerdict === "NOT_SUITABLE";
-      const isUncertain = canonicalVerdict === "UNCERTAIN";
-      const isUncertified = isBinaryFallback || isUncertain || isNotSuitable;
+      const isIllustration = canonicalVerdict === "ILLUSTRATION";
+      const isAnalysisIncomplete = isNotSuitable || isIllustration;
       const rawConf = typeof fusionResult.confidence === "number" ? fusionResult.confidence : null;
-      const confidence = isUncertified ? null : (rawConf !== null ? Math.round(rawConf) : null);
+      const confidence = isAnalysisIncomplete ? null : (rawConf !== null ? Math.round(rawConf) : null);
 
       let confidenceLevel = fusionResult.confidence_level;
-      if (isNotSuitable) {
+      if (isNotSuitable || isIllustration) {
         confidenceLevel = "Not Performed";
       } else if (isBinaryFallback) {
-        confidenceLevel = "Provisional";
-      } else if (isUncertain) {
-        confidenceLevel = "Uncertified";
+        confidenceLevel = "Low";
       } else if (confidence !== null) {
         confidenceLevel = confidence >= 80 ? "High" : confidence >= 60 ? "Medium" : "Low";
       }
@@ -237,6 +273,10 @@ function AnalysisPage() {
         : uploadData.saved_filename
         ? `${API_URL}/api/analysis/uploads/${uploadData.saved_filename}?token=${uploadData.token || ""}&file_id=${backendId}`
         : `${API_URL}/api/analysis/uploads/${backendId}_${file.name}?file_id=${backendId}`;
+
+      const rawOrigVerdict = String(fusionResult.original_verdict || fusionResult.originalVerdict || "").trim().toUpperCase();
+      const rawVerdict = String(fusionResult.verdict || "").trim().toUpperCase();
+      const isUncertain = rawOrigVerdict === "UNCERTAIN" || rawVerdict === "UNCERTAIN" || Boolean(isBinaryFallback);
 
       const result: AnalysisResult = {
         id: backendId,
@@ -255,7 +295,7 @@ function AnalysisPage() {
         isEstimate: isBinaryFallback || isUncertain,
         reliabilityWarning: reliabilityWarning || fusionResult.reliability_warning,
         confidence: confidence,
-        confidenceLevel: confidenceLevel || "Uncertified",
+        confidenceLevel: confidenceLevel || "Standard",
         fakeProbability: isNotSuitable ? undefined : fusionResult.fake_probability,
         realProbability: isNotSuitable ? undefined : fusionResult.real_probability,
         rawModelScore: isNotSuitable ? undefined : fusionResult.raw_model_score,
@@ -263,7 +303,7 @@ function AnalysisPage() {
         reason: fusionResult.reason,
         userFacingStatement: fusionResult.user_facing_statement,
         explanation: fusionResult.explanation,
-        analysisStatus: fusionResult.analysis_status || (isNotSuitable ? "Not performed" : "Completed"),
+        analysisStatus: getAnalysisStatus(fusionResult),
         faceDetected: fusionResult.face_detected !== undefined ? fusionResult.face_detected : !isNotSuitable,
         faceBbox: fusionResult.face_bbox || null,
         evidenceCards: fusionResult.evidence_cards || [],
